@@ -5,8 +5,13 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\" --ignore-path .prettierignore",
+    "check-types": "turbo run check-types",
+    "db:migrate:up": "turbo run migrate:up --filter=@repo/db",
+    "db:migrate:down": "turbo run migrate:down --filter=@repo/db",
+    "db:migrate:status": "turbo run migrate:status --filter=@repo/db",
+    "db:migration:create": "pnpm --filter @repo/db migration:create"
   },
   "devDependencies": {
     "prettier": "^3.7.4",
@@ -16,5 +21,9 @@
   "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "kysely": "^0.29.2",
+    "pg": "^8.21.0"
   }
 }

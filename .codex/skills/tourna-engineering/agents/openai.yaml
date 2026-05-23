@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tourna Engineering"
+  short_description: "Implement Tourna with strong architectural discipline"
+  default_prompt: "Use $tourna-engineering to implement or refactor work in the Tourna monorepo while preserving strong package boundaries and long-term maintainability."

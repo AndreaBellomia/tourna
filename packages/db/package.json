@@ -1,0 +1,44 @@
+{
+  "name": "@repo/db",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "tsup src/index.ts --dts --watch",
+    "build": "tsup src/index.ts --dts",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write \"src/**/*.ts\" \"migrations/**/*.ts\"",
+    "migrate:up": "dotenv -e ../../.env -- tsx src/migrate-cli.ts up",
+    "migrate:down": "dotenv -e ../../.env -- tsx src/migrate-cli.ts down",
+    "migrate:status": "dotenv -e ../../.env -- tsx src/migrate-cli.ts status",
+    "migration:create": "dotenv -e ../../.env -- tsx scripts/create-migration.ts"
+  },
+  "devDependencies": {
+    "@repo/domain": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.15.3",
+    "@types/pg": "^8.20.0",
+    "dotenv-cli": "^7.1.0",
+    "eslint": "^9.39.1",
+    "prettier": "^3.4.2",
+    "tsup": "^8.5.1",
+    "tsx": "^4.22.3",
+    "typescript": "5.9.2"
+  },
+  "dependencies": {
+    "kysely": "^0.29.2",
+    "pg": "^8.21.0",
+    "umzug": "^3.8.3"
+  }
+}

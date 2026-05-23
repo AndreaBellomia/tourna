@@ -1,0 +1,38 @@
+{
+  "name": "@repo/redis",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "tsup src/index.ts --dts --watch",
+    "build": "tsup src/index.ts --dts",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write \"src/**/*.ts\" \"migrations/**/*.ts\""
+  },
+  "devDependencies": {
+    "@repo/domain": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/jest": "^30.0.0",
+    "@types/msgpack-lite": "^0.1.12",
+    "@types/node": "^22.15.3",
+    "eslint": "^9.39.1",
+    "prettier": "^3.4.2",
+    "tsup": "^8.5.1",
+    "typescript": "5.9.2"
+  },
+  "dependencies": {
+    "ioredis": "^5.10.1",
+    "msgpack-lite": "^0.1.26",
+    "zod": "^4.4.3"
+  }
+}

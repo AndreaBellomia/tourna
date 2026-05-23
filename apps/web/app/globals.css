@@ -1,30 +1,78 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@import "tailwindcss";
+
+@source "../../../packages/ui/src";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #f7f5ee;
+  --foreground: #171712;
+  --card: #fffdf8;
+  --card-foreground: #171712;
+  --popover: #fffdf8;
+  --popover-foreground: #171712;
+  --primary: #131816;
+  --primary-foreground: #f8f5ec;
+  --secondary: #e9e2d3;
+  --secondary-foreground: #1f231f;
+  --muted: #eee8db;
+  --muted-foreground: #6e6a5e;
+  --accent: #b8ff3d;
+  --accent-foreground: #13200d;
+  --destructive: #d94a3d;
+  --destructive-foreground: #fff8f3;
+  --success: #087f5b;
+  --success-foreground: #f3fff9;
+  --border: #ded6c4;
+  --input: #d8cfbc;
+  --ring: #16a085;
+  --radius: 0.5rem;
 }
 
 html,
 body {
+  min-height: 100%;
   max-width: 100vw;
   overflow-x: hidden;
 }
 
 body {
-  color: var(--foreground);
+  margin: 0;
   background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  letter-spacing: 0;
 }
 
 * {
   box-sizing: border-box;
-  padding: 0;
-  margin: 0;
 }
 
 a {
@@ -32,19 +80,7 @@ a {
   text-decoration: none;
 }
 
-.imgDark {
-  display: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-
-  .imgLight {
-    display: none;
-  }
-  .imgDark {
-    display: unset;
-  }
+button,
+input {
+  font: inherit;
 }
