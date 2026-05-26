@@ -1,62 +1,113 @@
 # Tourna
 
-> Tournament management platform for e-sports and traditional competitions, built as a long-term monorepo with strong architectural boundaries and portfolio-grade engineering standards.
+<p align="center">
+  <strong>Tournament management platform for e-sports and traditional competitions.</strong>
+</p>
 
-## Overview
+<p align="center">
+  Built as a long-term monorepo focused on maintainability, explicit architecture, typed boundaries, and portfolio-grade engineering quality.
+</p>
 
-Tourna is designed with two parallel goals:
+<p align="center">
+  <img alt="Monorepo" src="https://img.shields.io/badge/monorepo-turborepo-black?style=for-the-badge">
+  <img alt="Frontend" src="https://img.shields.io/badge/frontend-Next.js%2016-111827?style=for-the-badge">
+  <img alt="Backend" src="https://img.shields.io/badge/backend-NestJS%2011-EA2845?style=for-the-badge">
+  <img alt="Language" src="https://img.shields.io/badge/language-TypeScript-3178C6?style=for-the-badge">
+  <img alt="License" src="https://img.shields.io/badge/license-PolyForm%20Noncommercial-blue?style=for-the-badge">
+</p>
 
-1. build a real application for managing tournaments, scrims, registrations, roles, and event progress
-2. build a public codebase that demonstrates solid software engineering, not just feature delivery
-
-This repository is intentionally optimized for maintainability, clarity, and long-term evolution. The target is not "it works", but "it works well, is explainable, and can scale without collapsing into accidental complexity".
+---
 
 ## Table of Contents
 
-- [Vision](#vision)
-- [Product Scope](#product-scope)
-- [Engineering Goals](#engineering-goals)
+- [Why This Project Exists](#why-this-project-exists)
+- [What Tourna Is](#what-tourna-is)
+- [Portfolio Intent](#portfolio-intent)
+- [Core Product Areas](#core-product-areas)
+- [Architecture Snapshot](#architecture-snapshot)
 - [Monorepo Structure](#monorepo-structure)
 - [Tech Stack](#tech-stack)
-- [Development Workflow](#development-workflow)
+- [Engineering Standards](#engineering-standards)
+- [Local Development](#local-development)
 - [Quality Gates](#quality-gates)
+- [Roadmap Direction](#roadmap-direction)
 - [Licensing](#licensing)
 - [Collaboration](#collaboration)
 - [Project Instructions](#project-instructions)
 
-## Vision
+## Why This Project Exists
 
-Tourna is meant to support competitive ecosystems with different levels of complexity:
+Tourna exists for two reasons at the same time:
+
+1. build a real application for managing tournaments, scrims, registrations, roles, and operational flows
+2. build a public repository that demonstrates mature software engineering, not just feature delivery
+
+This is not intended to be a fast prototype or a vibe-coded demo. The codebase is being shaped as something that should still make sense after growth, refactors, and new contributors.
+
+## What Tourna Is
+
+Tourna is a platform for managing competitive events across both e-sports and traditional formats.
+
+The product direction includes:
 
 - structured tournaments
 - scrims and friendly matches
-- registrations and participation flows
-- role-based access and scoped permissions
-- event progress and operational management
+- player and team registrations
+- membership and role-based access
+- tournament progress and event operations
 
-The implementation strategy favors explicit boundaries and deliberate architecture so the codebase can grow without becoming opaque.
+The goal is to support increasingly complex workflows without losing clarity in either product behavior or code ownership.
 
-## Product Scope
+## Portfolio Intent
 
-Current and near-term focus areas:
+This repository is meant to show how I think about software when the target is not only correctness, but also:
 
-| Area | Goal |
+- architectural discipline
+- long-term maintainability
+- explicit contracts and boundaries
+- scalable project organization
+- code that stays understandable under change
+
+In practical terms, Tourna is as much about codebase stewardship as it is about features.
+
+## Core Product Areas
+
+| Area | Focus |
 | --- | --- |
-| Authentication | Secure login, signup, refresh, and session handling |
-| Authorization | Scoped permissions and membership-driven access |
+| Authentication | Secure signup, login, refresh, session lifecycle |
+| Authorization | Scoped permissions, memberships, access policies |
 | Tournament Core | Tournament lifecycle and related entities |
-| Participation | Registration and access flows |
-| Operations | Event progress and management tooling |
+| Participation | Registration and participation flows |
+| Operations | Event progress, management tooling, administrative workflows |
 
-## Engineering Goals
+## Architecture Snapshot
 
-The repository follows a few non-negotiable principles:
+```text
+apps/web
+  -> UI composition, routes, interaction flows
+  -> depends on contracts + ui
 
-- keep apps thin and packages intentional
-- make boundaries explicit between transport, contracts, domain, persistence, cache, and UI
-- prefer refactors and durable design over shortcuts
-- treat lint, type safety, and tests as quality gates
-- use the project as a learning vehicle for advanced codebase stewardship
+apps/api
+  -> transport, modules, guards, orchestration
+  -> depends on contracts + domain + db + redis + authorization
+
+packages/contracts
+  -> shared request/response schemas and DTOs
+
+packages/domain
+  -> framework-agnostic domain vocabulary and types
+
+packages/db
+  -> persistence schema, Kysely integration, migrations
+
+packages/redis
+  -> cache/session models and engines
+
+packages/ui
+  -> reusable presentational primitives
+```
+
+The design principle is simple: keep apps thin, keep package ownership explicit, and prevent product logic from dissolving into framework glue.
 
 ## Monorepo Structure
 
@@ -64,12 +115,13 @@ The repository follows a few non-negotiable principles:
 | --- | --- |
 | `apps/web` | Next.js frontend |
 | `apps/api` | NestJS API with Fastify |
-| `packages/contracts` | Shared Zod schemas and DTOs |
-| `packages/domain` | Framework-agnostic domain types and vocabulary |
-| `packages/db` | Kysely integration, schemas, migrations |
-| `packages/redis` | Redis engines, models, and cache/session primitives |
+| `packages/contracts` | Shared Zod schemas and Nest-facing DTOs |
+| `packages/domain` | Framework-agnostic domain types and shared vocabulary |
+| `packages/db` | PostgreSQL integration, schema typing, migrations |
+| `packages/redis` | Redis engines, models, cache and session primitives |
+| `packages/authorization` | Shared authorization primitives and ability logic |
 | `packages/ui` | Shared UI primitives |
-| `.codex` | Project-local instructions for Codex and AI-assisted workflows |
+| `.codex` | Repository-local instructions for AI-assisted engineering workflows |
 
 ## Tech Stack
 
@@ -82,28 +134,41 @@ The repository follows a few non-negotiable principles:
 | Cache / Sessions | Redis |
 | Monorepo | pnpm, Turborepo |
 | Language | TypeScript |
+| Tooling | ESLint, Prettier, Jest |
 
-## Development Workflow
+## Engineering Standards
 
-Install dependencies:
+The repository follows a few non-negotiable standards:
+
+- prefer durable design over the shortest implementation
+- keep contracts, domain, transport, persistence, and UI concerns separate
+- avoid convenience abstractions that blur ownership
+- treat lint, type safety, and tests as required quality gates
+- refactor around touched areas when it improves structural clarity
+
+If a change works but degrades the architecture, it is not considered good enough.
+
+## Local Development
+
+### Install dependencies
 
 ```sh
 pnpm install
 ```
 
-Start infrastructure:
+### Start infrastructure
 
 ```sh
 docker compose -f docker/docker-compose.yml up -d
 ```
 
-Run the frontend:
+### Run the frontend
 
 ```sh
 pnpm --filter web dev
 ```
 
-Run the API:
+### Run the API
 
 ```sh
 pnpm --filter api dev
@@ -119,40 +184,54 @@ pnpm check-types
 pnpm test
 ```
 
-Use filtered commands when the change is local, but do not skip validation on touched areas.
+Use filtered commands for narrow changes when appropriate, but do not skip validation on the code you touched.
+
+## Roadmap Direction
+
+The current direction of the project is centered around:
+
+- strengthening tournament domain modeling
+- expanding registration and participation workflows
+- growing authorization coverage around event scopes
+- increasing test depth on critical product flows
+- preserving a clean architecture while the feature surface expands
 
 ## Licensing
 
-This repository uses the [PolyForm Noncommercial 1.0.0](/Users/andreabellomia/project/tourna/LICENSE) license.
+This repository is released under [PolyForm Noncommercial 1.0.0](/Users/andreabellomia/project/tourna/LICENSE).
 
 In practical terms:
 
-- use is allowed for noncommercial purposes
+- noncommercial use is allowed
 - resale is not allowed
-- offering this code or derivative versions as a paid product or paid service is not allowed
+- offering this code, modified versions, or derivative versions as a paid product or paid service is not allowed
 - commercial exceptions require explicit written authorization from the author
 
-This means the repository is source-available, not classic open source.
+This is a source-available repository, not a classic open source one.
 
 ## Collaboration
 
 Collaboration is welcome, but it is coordinated.
 
-Anyone interested in contributing must contact the author before starting substantial work. See [CONTRIBUTING.md](/Users/andreabellomia/project/tourna/CONTRIBUTING.md).
+Anyone interested in contributing should contact the author before starting substantial work or opening a large pull request.
 
-Author contact:
+See [CONTRIBUTING.md](/Users/andreabellomia/project/tourna/CONTRIBUTING.md) for the collaboration policy.
+
+**Author**
 
 - Andrea Bellomia
 - andreabellomia2001@gmail.com
 
 ## Project Instructions
 
-Repository-specific AI and engineering instructions live here:
+Repository-specific engineering and AI workflow instructions live here:
 
 - [AGENTS.md](/Users/andreabellomia/project/tourna/AGENTS.md)
 - [.codex/AGENTS.md](/Users/andreabellomia/project/tourna/.codex/AGENTS.md)
 - [.codex/README.md](/Users/andreabellomia/project/tourna/.codex/README.md)
 
-## Notes
+---
 
-If you want to discuss collaboration, licensing exceptions, or commercial derogations, contact the author directly before using the code in those contexts.
+<p align="center">
+  Tourna is being built as a serious application and as a serious codebase.
+</p>
