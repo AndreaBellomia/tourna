@@ -5,22 +5,16 @@ describe('SessionService', () => {
     createSession: jest.fn(),
     rotateRefreshToken: jest.fn(),
     revokeSession: jest.fn(),
+    getUserSessions: jest.fn(),
   }
 
   const kvMock = {
     get: jest.fn(),
   }
 
-  const zsetMock = {
-    zrange: jest.fn(),
-    zrem: jest.fn(),
-    zremrangebyscore: jest.fn(),
-  }
-
   const redisMock = {
     engine: {
       kv: kvMock,
-      zset: zsetMock,
     },
     getClient: jest.fn(),
   }
@@ -128,26 +122,33 @@ describe('SessionService', () => {
 
   describe('getUserSessions', () => {
     it('returns active sessions for a user', async () => {
-      zsetMock.zrange.mockResolvedValue(['s-1', 's-2'])
-      const session1 = { userId: 'u-1', tokenHash: 'h-1' }
-      const session2 = { userId: 'u-1', tokenHash: 'h-2' }
-      kvMock.get.mockResolvedValueOnce(session1).mockResolvedValueOnce(session2)
+      const sessions = [
+        {
+          sessionId: 's-1',
+          lastSeenAt: Date.now(),
+          data: { userId: 'u-1', tokenHash: 'h-1' },
+        },
+        {
+          sessionId: 's-2',
+          lastSeenAt: Date.now(),
+          data: { userId: 'u-1', tokenHash: 'h-2' },
+        },
+      ]
+      scriptsMock.getUserSessions.mockResolvedValue(sessions)
 
       const result = await service.getUserSessions('u-1')
 
-      expect(result).toHaveLength(2)
-      expect(result[0]).toEqual({ sessionId: 's-1', data: session1 })
+      expect(scriptsMock.getUserSessions).toHaveBeenCalledWith('u-1')
+      expect(result).toEqual(sessions)
     })
 
-    it('removes ghost entries where session data no longer exists', async () => {
-      zsetMock.zrange.mockResolvedValue(['s-1', 's-ghost'])
-      const session1 = { userId: 'u-1', tokenHash: 'h-1' }
-      kvMock.get.mockResolvedValueOnce(session1).mockResolvedValueOnce(null)
+    it('returns an empty list when no sessions are found', async () => {
+      scriptsMock.getUserSessions.mockResolvedValue([])
 
       const result = await service.getUserSessions('u-1')
 
-      expect(result).toHaveLength(1)
-      expect(zsetMock.zrem).toHaveBeenCalledTimes(1)
+      expect(scriptsMock.getUserSessions).toHaveBeenCalledWith('u-1')
+      expect(result).toEqual([])
     })
   })
 })

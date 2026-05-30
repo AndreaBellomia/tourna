@@ -15,7 +15,7 @@
     "dev": "tsup src/index.ts --dts --watch",
     "build": "tsup",
     "check-types": "tsc --noEmit",
-    "test": "pnpm --filter api exec jest --config ../../jest.packages.config.cjs --runTestsByPath ../../packages/redis/src/**/*.spec.ts",
+    "test": "pnpm --filter api exec jest --config ../../jest.packages.config.cjs --testPathPatterns packages/redis/src/.*\\.spec\\.ts$ --passWithNoTests",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write \"src/**/*.ts\" \"migrations/**/*.ts\""
   },
