@@ -57,28 +57,25 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string): Promise<AuthResponse> {
-    const tokenHash = this.tokens.hashToken(refreshToken)
-    const result = await this.sessions.findSessionByRefreshToken(tokenHash)
-
-    if (!result) throw new UnauthorizedException()
-
-    const { session, sessionId } = result
+    const oldTokenHash = this.tokens.hashToken(refreshToken)
 
     const newSessionId = randomUUID()
     const newRefreshToken = this.tokens.generateRefreshToken()
     const newTokenHash = this.tokens.hashToken(newRefreshToken)
 
-    const accessToken = this.tokens.generateAccessToken({
-      userId: session.userId,
-      sessionId: newSessionId,
+    const result = await this.sessions.rotateRefreshToken({
+      oldTokenHash,
+      newSessionId,
+      newTokenHash,
     })
 
-    await this.sessions.rotateRefreshToken(sessionId, {
+    if (result.status !== 'OK') {
+      throw new UnauthorizedException()
+    }
+
+    const accessToken = this.tokens.generateAccessToken({
+      userId: result.userId,
       sessionId: newSessionId,
-      userId: session.userId,
-      tokenHash: newTokenHash,
-      userAgent: session.userAgent,
-      ip: session.ip,
     })
 
     return { accessToken, refreshToken: newRefreshToken, sessionId: newSessionId }

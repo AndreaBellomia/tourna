@@ -20,20 +20,27 @@
 
 ## Table of Contents
 
-- [Why This Project Exists](#why-this-project-exists)
-- [What Tourna Is](#what-tourna-is)
-- [Portfolio Intent](#portfolio-intent)
-- [Core Product Areas](#core-product-areas)
-- [Architecture Snapshot](#architecture-snapshot)
-- [Monorepo Structure](#monorepo-structure)
-- [Tech Stack](#tech-stack)
-- [Engineering Standards](#engineering-standards)
-- [Local Development](#local-development)
-- [Quality Gates](#quality-gates)
-- [Roadmap Direction](#roadmap-direction)
-- [Licensing](#licensing)
-- [Collaboration](#collaboration)
-- [Project Instructions](#project-instructions)
+- [Tourna](#tourna)
+  - [Table of Contents](#table-of-contents)
+  - [Why This Project Exists](#why-this-project-exists)
+  - [What Tourna Is](#what-tourna-is)
+  - [Portfolio Intent](#portfolio-intent)
+  - [Core Product Areas](#core-product-areas)
+  - [Architecture Snapshot](#architecture-snapshot)
+  - [Monorepo Structure](#monorepo-structure)
+  - [Tech Stack](#tech-stack)
+  - [Engineering Standards](#engineering-standards)
+  - [Recent Platform Additions](#recent-platform-additions)
+  - [Local Development](#local-development)
+    - [Install dependencies](#install-dependencies)
+    - [Start infrastructure](#start-infrastructure)
+    - [Run the frontend](#run-the-frontend)
+    - [Run the API](#run-the-api)
+  - [Quality Gates](#quality-gates)
+  - [Roadmap Direction](#roadmap-direction)
+  - [Licensing](#licensing)
+  - [Collaboration](#collaboration)
+  - [Project Instructions](#project-instructions)
 
 ## Why This Project Exists
 
@@ -72,13 +79,13 @@ In practical terms, Tourna is as much about codebase stewardship as it is about 
 
 ## Core Product Areas
 
-| Area | Focus |
-| --- | --- |
-| Authentication | Secure signup, login, refresh, session lifecycle |
-| Authorization | Scoped permissions, memberships, access policies |
-| Tournament Core | Tournament lifecycle and related entities |
-| Participation | Registration and participation flows |
-| Operations | Event progress, management tooling, administrative workflows |
+| Area            | Focus                                                        |
+| --------------- | ------------------------------------------------------------ |
+| Authentication  | Secure signup, login, refresh, session lifecycle             |
+| Authorization   | Scoped permissions, memberships, access policies             |
+| Tournament Core | Tournament lifecycle and related entities                    |
+| Participation   | Registration and participation flows                         |
+| Operations      | Event progress, management tooling, administrative workflows |
 
 ## Architecture Snapshot
 
@@ -101,7 +108,7 @@ packages/db
   -> persistence schema, Kysely integration, migrations
 
 packages/redis
-  -> cache/session models and engines
+  -> cache/session models, typed pipelines, Lua scripts
 
 packages/ui
   -> reusable presentational primitives
@@ -111,30 +118,30 @@ The design principle is simple: keep apps thin, keep package ownership explicit,
 
 ## Monorepo Structure
 
-| Path | Responsibility |
-| --- | --- |
-| `apps/web` | Next.js frontend |
-| `apps/api` | NestJS API with Fastify |
-| `packages/contracts` | Shared Zod schemas and Nest-facing DTOs |
-| `packages/domain` | Framework-agnostic domain types and shared vocabulary |
-| `packages/db` | PostgreSQL integration, schema typing, migrations |
-| `packages/redis` | Redis engines, models, cache and session primitives |
-| `packages/authorization` | Shared authorization primitives and ability logic |
-| `packages/ui` | Shared UI primitives |
-| `.codex` | Repository-local instructions for AI-assisted engineering workflows |
+| Path                     | Responsibility                                                       |
+| ------------------------ | -------------------------------------------------------------------- |
+| `apps/web`               | Next.js frontend                                                     |
+| `apps/api`               | NestJS API with Fastify                                              |
+| `packages/contracts`     | Shared Zod schemas and Nest-facing DTOs                              |
+| `packages/domain`        | Framework-agnostic domain types and shared vocabulary                |
+| `packages/db`            | PostgreSQL integration, schema typing, migrations                    |
+| `packages/redis`         | Redis engines, models, pipeline/multi, Lua-backed session primitives |
+| `packages/authorization` | Shared authorization primitives and ability logic                    |
+| `packages/ui`            | Shared UI primitives                                                 |
+| `.codex`                 | Repository-local instructions for AI-assisted engineering workflows  |
 
 ## Tech Stack
 
-| Layer | Technology |
-| --- | --- |
-| Frontend | Next.js 16, React 19 |
-| Backend | NestJS 11, Fastify, Swagger |
-| Contracts | Zod |
-| Persistence | PostgreSQL, Kysely |
-| Cache / Sessions | Redis |
-| Monorepo | pnpm, Turborepo |
-| Language | TypeScript |
-| Tooling | ESLint, Prettier, Jest |
+| Layer            | Technology                  |
+| ---------------- | --------------------------- |
+| Frontend         | Next.js 16, React 19        |
+| Backend          | NestJS 11, Fastify, Swagger |
+| Contracts        | Zod                         |
+| Persistence      | PostgreSQL, Kysely          |
+| Cache / Sessions | Redis                       |
+| Monorepo         | pnpm, Turborepo             |
+| Language         | TypeScript                  |
+| Tooling          | ESLint, Prettier, Jest      |
 
 ## Engineering Standards
 
@@ -147,6 +154,19 @@ The repository follows a few non-negotiable standards:
 - refactor around touched areas when it improves structural clarity
 
 If a change works but degrades the architecture, it is not considered good enough.
+
+## Recent Platform Additions
+
+The infrastructure layer has recently been strengthened in a few places that matter to day-to-day development:
+
+- `packages/redis` now includes typed `pipeline()` and `multi()` support on top of the existing engines
+- Redis scripts are versioned and reusable through the Lua runner in `packages/redis`
+- auth session flows now use shared Redis primitives instead of app-local orchestration
+- the Redis package documentation now explains how to define models, pipelines, multi blocks, and Lua scripts
+
+If you are touching cache, sessions, or composed Redis logic, start with [packages/redis/README.md](packages/redis/README.md).
+
+If you are touching persistence or migrations, start with [packages/db/README.md](packages/db/README.md).
 
 ## Local Development
 

@@ -1,5 +1,5 @@
 import { AuthResponseSchema, type LoginInput, type SignupInput } from '@repo/contracts/auth'
-import { apiEndpoints } from './endpoints'
+import { apiEndpoints, apiUrl } from './endpoints'
 import { apiRequest } from './http'
 
 export function login(payload: LoginInput) {
@@ -16,4 +16,18 @@ export function signup(payload: SignupInput) {
     body: payload,
     cache: 'no-store',
   })
+}
+
+export async function logout(accessToken: string): Promise<void> {
+  const response = await fetch(apiUrl(apiEndpoints.auth.logout), {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok && response.status !== 401) {
+    throw new Error(`Logout failed: ${response.status}`)
+  }
 }

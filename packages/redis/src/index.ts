@@ -13,5 +13,8 @@ export * from './engine/hash.engine'
 export * from './engine/list.engine'
 export * from './engine/set.engine'
 export * from './engine/zset.engine'
+export { buildModelKey, decodeModelValue, validateModelValue } from './engine/base.engine'
 
+export * from './pipeline'
+export * from './scripts'
 export * from './features'

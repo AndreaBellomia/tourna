@@ -1,7 +1,6 @@
-import { sql } from 'kysely'
-import { type DbMigration } from '../src/migrator'
+import { sql, type Kysely } from 'kysely'
 
-export const up: DbMigration = async ({ context: db }) => {
+export async function up(db: Kysely<never>): Promise<void> {
   await db.schema
     .createType('user_role')
     .asEnum(['admin', 'organizer', 'team_manager', 'player'])
@@ -81,7 +80,7 @@ export const up: DbMigration = async ({ context: db }) => {
     .execute()
 }
 
-export const down: DbMigration = async ({ context: db }) => {
+export async function down(db: Kysely<never>): Promise<void> {
   await db.schema.dropTable('matches').execute()
   await db.schema.dropTable('teams').execute()
   await db.schema.dropTable('tournaments').execute()

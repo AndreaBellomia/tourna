@@ -1,13 +1,14 @@
-import type { Metadata } from "next"
-import { cookies } from "next/headers"
-import { notFound, redirect } from "next/navigation"
-import { CalendarDays, RadioTower, ShieldCheck, Trophy } from "lucide-react"
-import { Badge } from "@repo/ui/badge"
-import { Button } from "@repo/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card"
-import { authCookieNames } from "../../../lib/auth/cookies"
-import { isLocale, type Locale, withLocale } from "../../../lib/i18n/config"
-import { getMessages } from "../../../lib/i18n/messages"
+import type { Metadata } from 'next'
+import { cookies } from 'next/headers'
+import { notFound, redirect } from 'next/navigation'
+import { CalendarDays, RadioTower, ShieldCheck, Trophy } from 'lucide-react'
+import { Badge } from '@repo/ui/badge'
+import { Button } from '@repo/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/card'
+import { authCookieNames } from '../../../lib/auth/cookies'
+import { logout as revokeSession } from '../../../lib/api/auth'
+import { isLocale, type Locale, withLocale } from '../../../lib/i18n/config'
+import { getMessages } from '../../../lib/i18n/messages'
 
 type DashboardPageProps = {
   params: Promise<{ locale: string }>
@@ -15,7 +16,7 @@ type DashboardPageProps = {
 
 export async function generateMetadata({ params }: DashboardPageProps): Promise<Metadata> {
   const { locale } = await params
-  const messages = getMessages(isLocale(locale) ? locale : "it")
+  const messages = getMessages(isLocale(locale) ? locale : 'it')
 
   return {
     title: messages.metadata.dashboardTitle,
@@ -34,13 +35,13 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const cookieStore = await cookies()
   const sessionId = cookieStore.get(authCookieNames.sessionId)?.value
   const stats = [
-    { label: messages.dashboard.stats.tournaments, value: "0", icon: Trophy },
-    { label: messages.dashboard.stats.liveMatches, value: "0", icon: RadioTower },
-    { label: messages.dashboard.stats.session, value: "OK", icon: ShieldCheck },
+    { label: messages.dashboard.stats.tournaments, value: '0', icon: Trophy },
+    { label: messages.dashboard.stats.liveMatches, value: '0', icon: RadioTower },
+    { label: messages.dashboard.stats.session, value: 'OK', icon: ShieldCheck },
   ]
 
   if (!cookieStore.has(authCookieNames.accessToken)) {
-    redirect(withLocale(locale, "/login"))
+    redirect(withLocale(locale, '/login'))
   }
 
   return (
@@ -108,13 +109,22 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
 }
 
 async function logout(locale: Locale) {
-  "use server"
+  'use server'
 
   const cookieStore = await cookies()
+  const accessToken = cookieStore.get(authCookieNames.accessToken)?.value
+
+  if (accessToken) {
+    try {
+      await revokeSession(accessToken)
+    } catch {
+      // Best-effort: clear cookies even if backend revocation fails
+    }
+  }
 
   cookieStore.delete(authCookieNames.accessToken)
   cookieStore.delete(authCookieNames.refreshToken)
   cookieStore.delete(authCookieNames.sessionId)
 
-  redirect(withLocale(locale, "/login"))
+  redirect(withLocale(locale, '/login'))
 }

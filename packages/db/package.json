@@ -17,10 +17,11 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write \"src/**/*.ts\" \"migrations/**/*.ts\"",
-    "migrate:up": "dotenv -e ../../.env -- tsx src/migrate-cli.ts up",
-    "migrate:down": "dotenv -e ../../.env -- tsx src/migrate-cli.ts down",
-    "migrate:status": "dotenv -e ../../.env -- tsx src/migrate-cli.ts status",
-    "migration:create": "dotenv -e ../../.env -- tsx scripts/create-migration.ts"
+    "migrate:up": "dotenv -e ../../.env -- kysely migrate latest",
+    "migrate:down": "dotenv -e ../../.env -- kysely migrate down",
+    "migrate:status": "dotenv -e ../../.env -- kysely migrate list",
+    "migrate:step-up": "dotenv -e ../../.env -- kysely migrate up",
+    "migration:create": "dotenv -e ../../.env -- kysely migrate make"
   },
   "devDependencies": {
     "@repo/domain": "workspace:*",
@@ -31,6 +32,7 @@
     "@types/pg": "^8.20.0",
     "dotenv-cli": "^7.1.0",
     "eslint": "^9.39.1",
+    "kysely-ctl": "^0.21.0",
     "prettier": "^3.4.2",
     "tsup": "^8.5.1",
     "tsx": "^4.22.3",
@@ -38,7 +40,6 @@
   },
   "dependencies": {
     "kysely": "^0.29.2",
-    "pg": "^8.21.0",
-    "umzug": "^3.8.3"
+    "pg": "^8.21.0"
   }
 }

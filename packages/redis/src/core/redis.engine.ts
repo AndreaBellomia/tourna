@@ -4,6 +4,7 @@ import { RedisKVEngine } from '../engine/kv.engine'
 import { RedisListEngine } from '../engine/list.engine'
 import { RedisSetEngine } from '../engine/set.engine'
 import { RedisZSetEngine } from '../engine/zset.engine'
+import { RedisPipeline } from '../pipeline/redis.pipeline'
 
 export class RedisEngine {
   readonly kv: RedisKVEngine
@@ -18,6 +19,14 @@ export class RedisEngine {
     this.list = new RedisListEngine(client)
     this.set = new RedisSetEngine(client)
     this.zset = new RedisZSetEngine(client)
+  }
+
+  pipeline(): RedisPipeline {
+    return new RedisPipeline(this.client.pipeline())
+  }
+
+  multi(): RedisPipeline {
+    return new RedisPipeline(this.client.multi())
   }
 
   async ping() {

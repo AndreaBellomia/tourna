@@ -1,7 +1,7 @@
 /** @type {import('jest').Config} */
 module.exports = {
   rootDir: '.',
-  moduleFileExtensions: ['js', 'json', 'ts'],
+  moduleFileExtensions: ['js', 'json', 'ts', 'lua'],
   testEnvironment: 'node',
   transform: {
     '^.+\\.(t|j)s$': [
@@ -14,5 +14,6 @@ module.exports = {
         },
       },
     ],
+    '\\.lua$': '<rootDir>/jest.lua-transform.cjs',
   },
 }
