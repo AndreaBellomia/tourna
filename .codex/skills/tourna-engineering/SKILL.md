@@ -9,7 +9,9 @@ description: Guide for implementing, refactoring, reviewing, or planning work in
 
 1. Read `references/product-context.md` for every non-trivial task.
 2. Read `references/architecture.md` when the change affects module boundaries, data flow, shared packages, persistence, or public contracts.
-3. Read `references/workflow.md` when deciding whether to proceed, refactor, ask questions, or validate.
+3. Read `references/implementation-patterns.md` when touching NestJS modules, Redis, queue/worker, database, email, storage, contracts, or reusable package APIs.
+4. Read `references/testing-and-docs.md` when adding behavior, changing public package APIs, migrations, worker jobs, Redis scripts, email templates, storage flows, or docs.
+5. Read `references/workflow.md` when deciding whether to proceed, refactor, ask questions, or validate.
 
 Do not load every reference file by default. Pull only the files needed for the current task.
 
@@ -26,5 +28,6 @@ Do not load every reference file by default. Pull only the files needed for the 
 - Place code in the correct layer.
 - Keep public contracts explicit and typed.
 - Add or update tests when behavior changes.
+- Update documentation when package ownership, contracts, operational flows, or implementation conventions change.
 - Validate with the narrowest relevant commands first, then broader ones if needed.
 - State assumptions, tradeoffs, and skipped validation explicitly in the final report.

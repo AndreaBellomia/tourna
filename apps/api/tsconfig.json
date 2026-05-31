@@ -3,11 +3,25 @@
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "bundler",
-    "customConditions": ["source"],
+    "customConditions": [
+      "source"
+    ],
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
     "incremental": true,
-    "types": ["jest", "node"]
+    "types": [
+      "jest",
+      "node"
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "@app/shared": [
+        "libs/shared/src"
+      ],
+      "@app/shared/*": [
+        "libs/shared/src/*"
+      ]
+    }
   }
 }

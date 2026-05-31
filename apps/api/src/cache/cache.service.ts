@@ -33,6 +33,28 @@ export class CacheService {
     await this.redis.getClient().del(key)
   }
 
+  async deleteByPrefix(prefix: string | readonly string[]): Promise<number> {
+    const normalizedPrefix = typeof prefix === 'string' ? prefix : rawBuildKey(...prefix)
+    const pattern = `${normalizedPrefix}:*`
+    let cursor = '0'
+    let deleted = 0
+    const client = this.redis.getClient()
+
+    do {
+      const [nextCursor, keys] = (await client.scan(cursor, 'MATCH', pattern, 'COUNT', 100)) as [
+        string,
+        string[],
+      ]
+      cursor = nextCursor
+
+      if (keys.length > 0) {
+        deleted += await client.del(...keys)
+      }
+    } while (cursor !== '0')
+
+    return deleted
+  }
+
   async getOrSet<T>(key: string[], factory: () => Promise<T>, ttl?: number): Promise<T> {
     const cached = await this.get<T>(rawBuildKey(...key))
 

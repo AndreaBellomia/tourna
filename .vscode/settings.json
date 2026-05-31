@@ -18,5 +18,18 @@
   },
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.turbo": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/node_modules": true,
+    "**/coverage": true,
+    "**/.pnpm-store": true
   }
 }

@@ -6,11 +6,13 @@ describe('CacheService', () => {
   const getBuffer = jest.fn()
   const set = jest.fn()
   const del = jest.fn()
+  const scan = jest.fn()
   const redisMock = {
     getClient: () => ({
       getBuffer,
       set,
       del,
+      scan,
     }),
   } as unknown as RedisService
 
@@ -33,6 +35,20 @@ describe('CacheService', () => {
   it('deletes values by key', async () => {
     await service.del('k')
     expect(del).toHaveBeenCalledWith('k')
+  })
+
+  it('deletes values by key prefix using scan batches', async () => {
+    scan
+      .mockResolvedValueOnce(['12', ['http:v1:tournaments:locale:it:a']])
+      .mockResolvedValueOnce(['0', ['http:v1:tournaments:locale:en:b']])
+    del.mockResolvedValueOnce(1).mockResolvedValueOnce(1)
+
+    await expect(service.deleteByPrefix(['http', 'v1', 'tournaments'])).resolves.toBe(2)
+
+    expect(scan).toHaveBeenNthCalledWith(1, '0', 'MATCH', 'http:v1:tournaments:*', 'COUNT', 100)
+    expect(scan).toHaveBeenNthCalledWith(2, '12', 'MATCH', 'http:v1:tournaments:*', 'COUNT', 100)
+    expect(del).toHaveBeenNthCalledWith(1, 'http:v1:tournaments:locale:it:a')
+    expect(del).toHaveBeenNthCalledWith(2, 'http:v1:tournaments:locale:en:b')
   })
 
   it('returns cached falsy values without calling factory', async () => {

@@ -12,6 +12,7 @@ import { CacheModule } from './cache/cache.module'
 import { AuthorizationModule } from './authorization/authorization.module'
 import { QueueModule } from './queue/queue.module'
 import { StorageModule } from './storage/storage.module'
+import { ApiCacheInterceptor } from './cache/api-cache.interceptor'
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -47,6 +48,10 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     {
       provide: APP_PIPE,
       useClass: ZodValidationPipe,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ApiCacheInterceptor,
     },
     {
       provide: APP_INTERCEPTOR,

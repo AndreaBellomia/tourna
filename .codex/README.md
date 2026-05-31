@@ -52,6 +52,8 @@ Use references for detail that is too heavy for the default prompt:
 - product context
 - architecture boundaries
 - workflow rules
+- implementation patterns
+- testing and documentation expectations
 - package responsibilities
 - decision heuristics
 
@@ -62,4 +64,5 @@ Split by topic so the agent can read only what matters.
 - Prefer stable guidance over temporary implementation details.
 - Record decision rules, not verbose prose.
 - State where code belongs, how to validate it, and when to stop and ask.
+- Keep examples tied to patterns that already exist in the repository.
 - Update these files when the architecture, standards, or common mistakes change.
