@@ -96,7 +96,11 @@ apps/web
 
 apps/api
   -> transport, modules, guards, orchestration
-  -> depends on contracts + domain + db + redis + authorization
+  -> depends on contracts + domain + db + redis + queue + authorization
+
+apps/worker
+  -> BullMQ processors, cron registration, background orchestration
+  -> depends on queue + domain/db packages as features mature
 
 packages/contracts
   -> shared request/response schemas and DTOs
@@ -110,6 +114,9 @@ packages/db
 packages/redis
   -> cache/session models, typed pipelines, Lua scripts
 
+packages/queue
+  -> BullMQ queue names, job contracts, producer helpers, cron definitions
+
 packages/ui
   -> reusable presentational primitives
 ```
@@ -122,10 +129,12 @@ The design principle is simple: keep apps thin, keep package ownership explicit,
 | ------------------------ | -------------------------------------------------------------------- |
 | `apps/web`               | Next.js frontend                                                     |
 | `apps/api`               | NestJS API with Fastify                                              |
+| `apps/worker`            | NestJS application context for BullMQ workers and cron jobs          |
 | `packages/contracts`     | Shared Zod schemas and Nest-facing DTOs                              |
 | `packages/domain`        | Framework-agnostic domain types and shared vocabulary                |
 | `packages/db`            | PostgreSQL integration, schema typing, migrations                    |
 | `packages/redis`         | Redis engines, models, pipeline/multi, Lua-backed session primitives |
+| `packages/queue`         | BullMQ contracts, producers, queue names, and cron registrations     |
 | `packages/authorization` | Shared authorization primitives and ability logic                    |
 | `packages/ui`            | Shared UI primitives                                                 |
 | `.codex`                 | Repository-local instructions for AI-assisted engineering workflows  |
@@ -139,6 +148,7 @@ The design principle is simple: keep apps thin, keep package ownership explicit,
 | Contracts        | Zod                         |
 | Persistence      | PostgreSQL, Kysely          |
 | Cache / Sessions | Redis                       |
+| Background Jobs  | BullMQ                      |
 | Monorepo         | pnpm, Turborepo             |
 | Language         | TypeScript                  |
 | Tooling          | ESLint, Prettier, Jest      |
@@ -160,11 +170,14 @@ If a change works but degrades the architecture, it is not considered good enoug
 The infrastructure layer has recently been strengthened in a few places that matter to day-to-day development:
 
 - `packages/redis` now includes typed `pipeline()` and `multi()` support on top of the existing engines
+- `apps/worker` and `packages/queue` provide BullMQ-backed background jobs and cron registration
 - Redis scripts are versioned and reusable through the Lua runner in `packages/redis`
 - auth session flows now use shared Redis primitives instead of app-local orchestration
 - the Redis package documentation now explains how to define models, pipelines, multi blocks, and Lua scripts
 
 If you are touching cache, sessions, or composed Redis logic, start with [packages/redis/README.md](packages/redis/README.md).
+
+If you are touching async work, cron jobs, or queue producers, start with [docs/background-jobs.md](docs/background-jobs.md).
 
 If you are touching persistence or migrations, start with [packages/db/README.md](packages/db/README.md).
 
@@ -192,6 +205,12 @@ pnpm --filter web dev
 
 ```sh
 pnpm --filter api dev
+```
+
+### Run the worker
+
+```sh
+pnpm --filter worker dev
 ```
 
 ## Quality Gates

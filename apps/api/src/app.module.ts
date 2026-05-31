@@ -10,6 +10,7 @@ import { RedisClientModule } from './redis/redis.module'
 import { AuthModule } from './auth/auth.module'
 import { CacheModule } from './cache/cache.module'
 import { AuthorizationModule } from './authorization/authorization.module'
+import { QueueModule } from './queue/queue.module'
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -36,6 +37,7 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     AuthModule,
     CacheModule,
     AuthorizationModule,
+    QueueModule,
   ],
   controllers: [AppController],
   providers: [

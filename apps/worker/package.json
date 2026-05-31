@@ -1,7 +1,7 @@
 {
-  "name": "api",
+  "name": "worker",
   "version": "0.0.1",
-  "description": "",
+  "description": "Tourna background job worker",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
@@ -13,31 +13,16 @@
     "lint": "eslint \"src/**/*.ts\"",
     "format": "prettier --write \"src/**/*.ts\"",
     "check-types": "tsc --noEmit",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test": "jest"
   },
   "dependencies": {
-    "@fastify/swagger": "^9.7.0",
-    "@fastify/swagger-ui": "^5.2.6",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",
-    "@nestjs/jwt": "^11.0.2",
-    "@nestjs/platform-fastify": "^11.1.23",
-    "@nestjs/platform-socket.io": "^11.1.23",
-    "@nestjs/swagger": "^11.4.4",
-    "@repo/authorization": "workspace:*",
-    "@repo/contracts": "workspace:*",
-    "@repo/db": "workspace:*",
-    "@repo/domain": "workspace:*",
     "@repo/queue": "workspace:*",
-    "@repo/redis": "workspace:*",
-    "fastify": "^5.8.5",
-    "nestjs-zod": "^5.4.0",
+    "bullmq": "^5.64.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "socket.io": "^4.8.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -50,19 +35,15 @@
     "@swc/core": "^1.15.33",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.0",
-    "@types/supertest": "^7.0.0",
-    "@types/webpack-node-externals": "^3.0.4",
     "eslint": "^9.18.0",
     "jest": "^30.0.0",
     "prettier": "^3.4.2",
     "source-map-support": "^0.5.21",
-    "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.7.3",
-    "webpack-node-externals": "^3.0.0"
+    "typescript": "^5.7.3"
   },
   "jest": {
     "moduleFileExtensions": [

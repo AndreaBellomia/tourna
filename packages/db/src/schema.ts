@@ -1,7 +1,6 @@
 import {
   DisciplineTable,
   UserTable,
-  UserSessionTable,
   MembershipTable,
   EventTable,
   MatchTable,

@@ -37,4 +37,3 @@ export * from './tournamentRosterMember.table'
 export * from './tournamentTag.table'
 
 export * from './user.table'
-export * from './userSessions.table'
