@@ -1,6 +1,7 @@
 {
   "extends": "@repo/typescript-config/node.json",
   "compilerOptions": {
+    "customConditions": ["source"],
     "outDir": "dist",
     "rootDir": "src",
     "types": ["jest", "node"]

@@ -9,7 +9,7 @@ import {
 } from "../../../lib/auth/cookies"
 import { ApiError } from "../../../lib/api/http"
 import { defaultLocale, isLocale, type Locale } from "../../../lib/i18n/config"
-import { getMessages } from "../../../lib/i18n/messages"
+import { getMessages } from "../../../lib/i18n/web-i18n"
 
 export type ClientAuthResponse = {
   sessionId: string

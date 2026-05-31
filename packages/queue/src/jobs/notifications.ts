@@ -1,22 +1,11 @@
-import { z } from 'zod'
+import { sendEmailCommandSchema, type SendEmailCommand } from '@repo/email/contracts'
 import { TOURNA_QUEUE_NAMES } from '../queue-names'
 
 export const SEND_EMAIL_JOB_NAME = 'notifications.send-email.v1'
 
-export const sendEmailPayloadSchema = z
-  .object({
-    to: z.string().email(),
-    subject: z.string().min(1).max(180),
-    text: z.string().min(1).max(20_000).optional(),
-    html: z.string().min(1).max(50_000).optional(),
-    template: z.string().min(1).max(120).optional(),
-    metadata: z.record(z.string(), z.string()).default({}),
-  })
-  .refine((payload) => payload.text || payload.html || payload.template, {
-    message: 'Email jobs need text, html, or a template name',
-  })
+export const sendEmailPayloadSchema = sendEmailCommandSchema
 
-export type SendEmailPayload = z.infer<typeof sendEmailPayloadSchema>
+export type SendEmailPayload = SendEmailCommand
 
 export const sendEmailJob = {
   queueName: TOURNA_QUEUE_NAMES.notifications,

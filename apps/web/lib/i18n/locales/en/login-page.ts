@@ -1,0 +1,21 @@
+const loginPage = {
+  product: "Tournament OS",
+  liveReady: "Live-ready",
+  eyebrow: "Brackets, rankings, and match center in real time",
+  title: "Run esport and sport tournaments from one solid operations panel.",
+  description:
+    "A scalable base for organizers, teams, and referees: secure authentication, shared contracts, and live-data-ready pages without giving up SEO.",
+  matchMonitor: "Match monitor",
+  bracketFlow: "Bracket flow",
+  bracket: {
+    winner: "Winner",
+    final: "Final",
+  },
+  liveMatches: [
+    { game: "Valorant", stage: "Semi-final", teams: "NOVA vs Arcadia", score: "11 - 9" },
+    { game: "Rocket League", stage: "Upper bracket", teams: "Pulse vs Drift", score: "3 - 2" },
+    { game: "Basket 3x3", stage: "Group A", teams: "Milan vs Turin", score: "18 - 14" },
+  ],
+} as const
+
+export default loginPage

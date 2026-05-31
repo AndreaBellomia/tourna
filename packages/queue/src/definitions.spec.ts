@@ -5,15 +5,36 @@ describe('Tourna queue definitions', () => {
   it('validates registered job payloads', () => {
     const payload = parseTournaJobPayload(SEND_EMAIL_JOB_NAME, {
       to: 'player@example.com',
-      subject: 'Welcome',
-      text: 'Hello from Tourna',
+      content: {
+        template: 'welcome',
+        data: {
+          displayName: 'Player',
+          dashboardUrl: 'https://tourna.test/dashboard',
+        },
+      },
     })
 
     expect(payload).toMatchObject({
       to: 'player@example.com',
-      subject: 'Welcome',
-      text: 'Hello from Tourna',
+      content: {
+        template: 'welcome',
+      },
     })
+  })
+
+  it('applies the default email locale when it is omitted', () => {
+    const payload = parseTournaJobPayload(SEND_EMAIL_JOB_NAME, {
+      to: 'player@example.com',
+      content: {
+        template: 'welcome',
+        data: {
+          displayName: 'Player',
+          dashboardUrl: 'https://tourna.test/dashboard',
+        },
+      },
+    })
+
+    expect(payload.locale).toBe('it')
   })
 
   it('rejects unknown job names', () => {

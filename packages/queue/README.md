@@ -24,6 +24,8 @@ The root API is `TournaQueueClient`, which exposes domain-specific producers suc
 5. Add a processor in `apps/worker/src/processors`.
 6. Add tests for payload validation and processor orchestration when behavior is introduced.
 
+For email jobs, prefer commands from `@repo/email/contracts` instead of embedding rendered HTML in the queue payload.
+
 ## Adding A Queue
 
 Add the queue name to `TOURNA_QUEUE_NAMES`. Use stable names with the `tourna.<domain>` format.

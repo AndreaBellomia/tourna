@@ -37,7 +37,7 @@ export class WorkerManagerService implements OnApplicationBootstrap, OnModuleDes
       TOURNA_QUEUE_NAMES.notifications,
       concurrency.notifications,
       async (job) => {
-        await Promise.resolve(this.notificationsProcessor.process(job))
+        await this.notificationsProcessor.process(job)
       },
     )
     this.registerWorker(TOURNA_QUEUE_NAMES.reports, concurrency.reports, async (job) => {

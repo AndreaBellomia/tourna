@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["jest", "node", "react", "react-dom"]
+  },
+  "include": ["src/**/*.spec.ts", "src/**/*.ts", "src/**/*.tsx"]
+}

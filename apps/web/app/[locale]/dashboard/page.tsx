@@ -7,8 +7,8 @@ import { Button } from '@repo/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/card'
 import { authCookieNames } from '../../../lib/auth/cookies'
 import { logout as revokeSession } from '../../../lib/api/auth'
-import { isLocale, type Locale, withLocale } from '../../../lib/i18n/config'
-import { getMessages } from '../../../lib/i18n/messages'
+import { isLocale, resolveLocale, type Locale, withLocale } from '../../../lib/i18n/config'
+import { getMessages } from '../../../lib/i18n/web-i18n'
 
 type DashboardPageProps = {
   params: Promise<{ locale: string }>
@@ -16,7 +16,7 @@ type DashboardPageProps = {
 
 export async function generateMetadata({ params }: DashboardPageProps): Promise<Metadata> {
   const { locale } = await params
-  const messages = getMessages(isLocale(locale) ? locale : 'it')
+  const messages = getMessages(resolveLocale(locale))
 
   return {
     title: messages.metadata.dashboardTitle,

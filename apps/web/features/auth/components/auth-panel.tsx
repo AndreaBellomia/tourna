@@ -16,7 +16,7 @@ import { Input } from "@repo/ui/input"
 import { Label } from "@repo/ui/label"
 import { TabsList, TabsTrigger } from "@repo/ui/tabs"
 import { type Locale, withLocale } from "../../../lib/i18n/config"
-import { type Messages } from "../../../lib/i18n/messages"
+import { type Messages } from "../../../lib/i18n/web-i18n"
 import { submitAuth } from "../services/auth-client"
 
 type AuthMode = "login" | "signup"

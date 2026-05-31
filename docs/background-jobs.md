@@ -51,6 +51,11 @@ REDIS_DB=0
 Worker tuning:
 
 ```text
+EMAIL_SMTP_HOST=localhost
+EMAIL_SMTP_PORT=1025
+EMAIL_SMTP_SECURE=false
+EMAIL_DEFAULT_FROM=noreply@tourna.local
+EMAIL_DEFAULT_REPLY_TO=support@tourna.local
 WORKER_NOTIFICATIONS_CONCURRENCY=5
 WORKER_REPORTS_CONCURRENCY=2
 WORKER_RATINGS_CONCURRENCY=2
@@ -59,6 +64,8 @@ WORKER_REGISTER_CRON=true
 ```
 
 In production, enable `WORKER_REGISTER_CRON` for a single scheduler-capable deployment role, or keep all cron definitions idempotent through BullMQ scheduler ids.
+
+For local email testing, Mailpit receives SMTP on `localhost:1025` and exposes the inbox UI on `http://localhost:8025`.
 
 ## Adding A Producer
 
@@ -77,6 +84,8 @@ await queueClient.reports.generateTournamentReport({
   locale: 'en',
 })
 ```
+
+Email jobs are slightly different: the queue payload should reference a registered template from `@repo/email/contracts` and pass template data, not pre-rendered HTML.
 
 ## Adding A Processor
 

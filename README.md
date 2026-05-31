@@ -117,6 +117,9 @@ packages/redis
 packages/queue
   -> BullMQ queue names, job contracts, producer helpers, cron definitions
 
+packages/email
+  -> transactional email templates, rendering, provider abstractions
+
 packages/ui
   -> reusable presentational primitives
 ```
@@ -135,6 +138,7 @@ The design principle is simple: keep apps thin, keep package ownership explicit,
 | `packages/db`            | PostgreSQL integration, schema typing, migrations                    |
 | `packages/redis`         | Redis engines, models, pipeline/multi, Lua-backed session primitives |
 | `packages/queue`         | BullMQ contracts, producers, queue names, and cron registrations     |
+| `packages/email`         | Transactional email templates, renderer, and provider abstractions   |
 | `packages/authorization` | Shared authorization primitives and ability logic                    |
 | `packages/ui`            | Shared UI primitives                                                 |
 | `.codex`                 | Repository-local instructions for AI-assisted engineering workflows  |
@@ -179,6 +183,8 @@ If you are touching cache, sessions, or composed Redis logic, start with [packag
 
 If you are touching async work, cron jobs, or queue producers, start with [docs/background-jobs.md](docs/background-jobs.md).
 
+If you are touching transactional email templates or delivery providers, start with [packages/email/README.md](packages/email/README.md).
+
 If you are touching persistence or migrations, start with [packages/db/README.md](packages/db/README.md).
 
 ## Local Development
@@ -194,6 +200,8 @@ pnpm install
 ```sh
 docker compose -f docker/docker-compose.yml up -d
 ```
+
+This brings up PostgreSQL, Redis, and Mailpit. The Mailpit inbox is available at `http://localhost:8025`.
 
 ### Run the frontend
 

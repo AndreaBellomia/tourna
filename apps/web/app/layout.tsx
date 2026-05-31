@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { getMessages } from "../lib/i18n/messages";
+import { defaultLocale } from "../lib/i18n/config";
+import { getMessages } from "../lib/i18n/web-i18n";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -12,7 +13,7 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
 });
 
-const messages = getMessages("it");
+const messages = getMessages(defaultLocale);
 
 export const metadata: Metadata = {
   title: {
@@ -28,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="it">
+    <html lang={defaultLocale}>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {children}
       </body>

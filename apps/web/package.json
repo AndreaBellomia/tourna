@@ -13,6 +13,7 @@
   "dependencies": {
     "@repo/contracts": "workspace:*",
     "@repo/ui": "workspace:*",
+    "i18next": "^25.6.0",
     "lucide-react": "^1.16.0",
     "next": "16.2.0",
     "react": "^19.2.0",

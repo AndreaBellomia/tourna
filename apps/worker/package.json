@@ -19,6 +19,7 @@
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",
+    "@repo/email": "workspace:*",
     "@repo/queue": "workspace:*",
     "bullmq": "^5.64.1",
     "reflect-metadata": "^0.2.2",

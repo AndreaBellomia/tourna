@@ -4,6 +4,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "customConditions": ["source"],
+    "jsx": "react-jsx",
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",

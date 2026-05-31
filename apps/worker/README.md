@@ -34,6 +34,11 @@ REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_PASSWORD=
 REDIS_DB=0
+EMAIL_SMTP_HOST=localhost
+EMAIL_SMTP_PORT=1025
+EMAIL_SMTP_SECURE=false
+EMAIL_DEFAULT_FROM=noreply@tourna.local
+EMAIL_DEFAULT_REPLY_TO=support@tourna.local
 WORKER_NOTIFICATIONS_CONCURRENCY=5
 WORKER_REPORTS_CONCURRENCY=2
 WORKER_RATINGS_CONCURRENCY=2
@@ -46,8 +51,11 @@ WORKER_REGISTER_CRON=true
 - Add shared job contracts in `packages/queue`.
 - Add API enqueue methods in `apps/api/src/queue` only when the API needs to produce the job.
 - Add worker processors under `apps/worker/src/processors`.
+- For email jobs, render and deliver through `packages/email`; do not put template HTML in queue payloads.
 - Put reusable tournament, report, and rating rules in `packages/domain`.
 - Persist progress and artifacts in `packages/db` when users need visibility into long-running work.
+
+Mailpit listens on `http://localhost:8025` in local development and receives SMTP traffic on port `1025`.
 
 ## Cron Jobs
 

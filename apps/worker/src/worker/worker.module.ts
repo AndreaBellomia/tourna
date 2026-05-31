@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { WorkerConfigModule } from '../config/worker-config.module'
+import { WorkerEmailModule } from '../email/email.module'
 import {
   MaintenanceProcessor,
   NotificationsProcessor,
@@ -9,7 +10,7 @@ import {
 import { WorkerManagerService } from './worker-manager.service'
 
 @Module({
-  imports: [WorkerConfigModule],
+  imports: [WorkerConfigModule, WorkerEmailModule],
   providers: [
     WorkerManagerService,
     NotificationsProcessor,

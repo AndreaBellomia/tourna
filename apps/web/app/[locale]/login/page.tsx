@@ -4,8 +4,8 @@ import { notFound, redirect } from "next/navigation"
 import { Activity, GitBranch, RadioTower, Trophy } from "lucide-react"
 import { Badge } from "@repo/ui/badge"
 import { authCookieNames } from "../../../lib/auth/cookies"
-import { isLocale, withLocale } from "../../../lib/i18n/config"
-import { getMessages } from "../../../lib/i18n/messages"
+import { isLocale, resolveLocale, withLocale } from "../../../lib/i18n/config"
+import { getMessages } from "../../../lib/i18n/web-i18n"
 import { AuthPanel } from "../../../features/auth/components/auth-panel"
 
 type LoginPageProps = {
@@ -14,7 +14,7 @@ type LoginPageProps = {
 
 export async function generateMetadata({ params }: LoginPageProps): Promise<Metadata> {
   const { locale } = await params
-  const messages = getMessages(isLocale(locale) ? locale : "it")
+  const messages = getMessages(resolveLocale(locale))
 
   return {
     title: messages.metadata.loginTitle,
