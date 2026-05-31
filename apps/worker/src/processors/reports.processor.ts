@@ -4,24 +4,32 @@ import {
   generateTournamentReportPayloadSchema,
 } from '@repo/queue'
 import type { Job } from 'bullmq'
+import { BaseWorkerProcessor, type WorkerProcessDefinition } from './processor.definition'
 
 @Injectable()
-export class ReportsProcessor {
+export class ReportsProcessor extends BaseWorkerProcessor {
   private readonly logger = new Logger(ReportsProcessor.name)
 
-  process(job: Job): void {
-    if (job.name !== GENERATE_TOURNAMENT_REPORT_JOB_NAME) {
-      throw new Error(`Unsupported reports job "${job.name}"`)
-    }
+  protected getProcessDefinitions(): Array<WorkerProcessDefinition> {
+    return [
+      {
+        jobName: GENERATE_TOURNAMENT_REPORT_JOB_NAME,
+        run: (job) => {
+          const payload = generateTournamentReportPayloadSchema.parse(job.data)
 
-    const payload = generateTournamentReportPayloadSchema.parse(job.data)
+          this.logger.log({
+            message: 'Tournament report job accepted by worker',
+            jobId: job.id,
+            tournamentId: payload.tournamentId,
+            format: payload.format,
+            requestedByUserId: payload.requestedByUserId,
+          })
+        },
+      },
+    ]
+  }
 
-    this.logger.log({
-      message: 'Tournament report job accepted by worker',
-      jobId: job.id,
-      tournamentId: payload.tournamentId,
-      format: payload.format,
-      requestedByUserId: payload.requestedByUserId,
-    })
+  protected getUnsupportedJobErrorMessage(job: Job): string {
+    return `Unsupported reports job "${job.name}"`
   }
 }

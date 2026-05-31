@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module'
 import { CacheModule } from './cache/cache.module'
 import { AuthorizationModule } from './authorization/authorization.module'
 import { QueueModule } from './queue/queue.module'
+import { StorageModule } from './storage/storage.module'
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -38,6 +39,7 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     CacheModule,
     AuthorizationModule,
     QueueModule,
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [

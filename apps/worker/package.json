@@ -21,6 +21,8 @@
     "@nestjs/core": "^11.0.1",
     "@repo/email": "workspace:*",
     "@repo/queue": "workspace:*",
+    "@repo/redis": "workspace:*",
+    "@repo/storage": "workspace:*",
     "bullmq": "^5.64.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",

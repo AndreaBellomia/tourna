@@ -40,6 +40,7 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
+    "@repo/domain": "workspace:*",
     "nestjs-zod": "^5.4.0",
     "zod": "^4.4.3"
   }

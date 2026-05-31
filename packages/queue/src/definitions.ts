@@ -1,6 +1,6 @@
 import type { JobsOptions } from 'bullmq'
 import type { z } from 'zod'
-import { maintenanceHeartbeatJob } from './jobs/maintenance'
+import { maintenanceHeartbeatJob, maintenanceStorageCleanupJob } from './jobs/maintenance'
 import { sendEmailJob } from './jobs/notifications'
 import { recalculateTournamentRatingsJob } from './jobs/ratings'
 import { generateTournamentReportJob } from './jobs/reports'
@@ -18,6 +18,7 @@ export const TOURNA_JOB_DEFINITIONS = [
   generateTournamentReportJob,
   recalculateTournamentRatingsJob,
   maintenanceHeartbeatJob,
+  maintenanceStorageCleanupJob,
 ] satisfies TournaJobDefinition<unknown>[]
 
 export type TournaJobDefinitionItem = (typeof TOURNA_JOB_DEFINITIONS)[number]

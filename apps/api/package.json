@@ -33,6 +33,7 @@
     "@repo/domain": "workspace:*",
     "@repo/queue": "workspace:*",
     "@repo/redis": "workspace:*",
+    "@repo/storage": "workspace:*",
     "fastify": "^5.8.5",
     "nestjs-zod": "^5.4.0",
     "reflect-metadata": "^0.2.2",

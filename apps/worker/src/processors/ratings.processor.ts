@@ -4,23 +4,31 @@ import {
   recalculateTournamentRatingsPayloadSchema,
 } from '@repo/queue'
 import type { Job } from 'bullmq'
+import { BaseWorkerProcessor, type WorkerProcessDefinition } from './processor.definition'
 
 @Injectable()
-export class RatingsProcessor {
+export class RatingsProcessor extends BaseWorkerProcessor {
   private readonly logger = new Logger(RatingsProcessor.name)
 
-  process(job: Job): void {
-    if (job.name !== RECALCULATE_TOURNAMENT_RATINGS_JOB_NAME) {
-      throw new Error(`Unsupported ratings job "${job.name}"`)
-    }
+  protected getProcessDefinitions(): Array<WorkerProcessDefinition> {
+    return [
+      {
+        jobName: RECALCULATE_TOURNAMENT_RATINGS_JOB_NAME,
+        run: (job) => {
+          const payload = recalculateTournamentRatingsPayloadSchema.parse(job.data)
 
-    const payload = recalculateTournamentRatingsPayloadSchema.parse(job.data)
+          this.logger.log({
+            message: 'Ratings recalculation job accepted by worker',
+            jobId: job.id,
+            tournamentId: payload.tournamentId,
+            reason: payload.reason,
+          })
+        },
+      },
+    ]
+  }
 
-    this.logger.log({
-      message: 'Ratings recalculation job accepted by worker',
-      jobId: job.id,
-      tournamentId: payload.tournamentId,
-      reason: payload.reason,
-    })
+  protected getUnsupportedJobErrorMessage(job: Job): string {
+    return `Unsupported ratings job "${job.name}"`
   }
 }

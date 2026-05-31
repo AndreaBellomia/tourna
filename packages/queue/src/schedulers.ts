@@ -1,6 +1,6 @@
 import type { RepeatOptions } from 'bullmq'
 import type { TournaQueueClient } from './core/queue.client'
-import { maintenanceHeartbeatJob } from './jobs'
+import { maintenanceHeartbeatJob, maintenanceStorageCleanupJob } from './jobs'
 import type { TournaQueueName } from './queue-names'
 
 export interface TournaCronJobDefinition {
@@ -21,6 +21,18 @@ export const TOURNA_CRON_JOBS = [
       maintenanceHeartbeatJob.schema.parse({
         source: 'scheduler',
         scheduledAt: new Date().toISOString(),
+      }),
+  },
+  {
+    id: 'storage-cleanup-orphans-every-10-minutes',
+    queueName: maintenanceStorageCleanupJob.queueName,
+    jobName: maintenanceStorageCleanupJob.name,
+    pattern: '*/10 * * * *',
+    getPayload: () =>
+      maintenanceStorageCleanupJob.schema.parse({
+        source: 'scheduler',
+        scheduledAt: new Date().toISOString(),
+        limit: 100,
       }),
   },
 ] satisfies TournaCronJobDefinition[]
