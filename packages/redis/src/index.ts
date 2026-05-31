@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/triple-slash-reference */
+/// <reference path="./lua.d.ts" />
+
 export * from './client/redis.client'
 export * from './codecs/json.codec'
 export * from './codecs/msgpack.codec'

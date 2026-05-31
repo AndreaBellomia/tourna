@@ -22,7 +22,7 @@ export class AuthorizationService {
         this.databaseService.db
           .selectFrom('memberships')
           .selectAll()
-          .where('userId', '=', userId)
+          .where('user_id', '=', userId)
           .execute(),
       this.configService.get('CACHE_DURATION_AUTHORIZATION'),
     )

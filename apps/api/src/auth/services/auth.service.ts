@@ -29,10 +29,11 @@ export class AuthService {
     if (existing) throw new UnauthorizedException('Email already in use')
 
     const passwordHash = await this.hashPassword(dto.password)
+    const displayName = this.buildDefaultDisplayName(dto.email)
 
     const [user] = await this.db.db
       .insertInto('users')
-      .values({ email: dto.email, password_hash: passwordHash })
+      .values({ email: dto.email, display_name: displayName, password_hash: passwordHash })
       .returning(['id'])
       .execute()
 
@@ -102,6 +103,12 @@ export class AuthService {
     await this.sessions.createSession({ sessionId, userId, tokenHash, userAgent, ip })
 
     return { accessToken, refreshToken, sessionId }
+  }
+
+  private buildDefaultDisplayName(email: string): string {
+    const localPart = email.split('@')[0]?.replace(/[^a-zA-Z0-9_-]/g, '') ?? ''
+    const displayName = localPart.slice(0, 80)
+    return displayName.length >= 2 ? displayName : 'player'
   }
 
   private async verifyPassword(password: string, stored: string): Promise<boolean> {

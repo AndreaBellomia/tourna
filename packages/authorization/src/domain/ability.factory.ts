@@ -6,38 +6,65 @@ export function buildAbility(memberships: Selectable<DatabaseSchema['memberships
   const { can, build } = new AbilityBuilder(createMongoAbility)
 
   for (const m of memberships) {
-    switch (m.role as DatabaseSchema['memberships']['role']) {
-      case 'admin':
+    switch (m.role_code as DatabaseSchema['memberships']['role_code']) {
+      case 'global_admin':
         can('manage', 'all')
         break
 
-      case 'organizer':
+      case 'org_owner':
+      case 'org_admin':
         can('manage', 'Tournament', {
-          id: m.scopeId,
+          organizationId: m.scope_id,
         })
 
         can('manage', 'Team', {
-          tournamentId: m.scopeId,
+          organizationId: m.scope_id,
         })
 
         can('manage', 'Match', {
-          tournamentId: m.scopeId,
+          organizationId: m.scope_id,
         })
         break
 
-      case 'team_manager':
+      case 'org_moderator':
+        can('manage', 'Tournament', {
+          organizationId: m.scope_id,
+        })
+
+        can('manage', 'Team', {
+          organizationId: m.scope_id,
+        })
+
+        can('manage', 'Match', {
+          organizationId: m.scope_id,
+        })
+        break
+
+      case 'team_owner':
+      case 'team_captain':
+      case 'manager':
         can('update', 'Team', {
-          id: m.scopeId,
+          id: m.scope_id,
         })
 
         can('invite', 'User', {
-          teamId: m.scopeId,
+          teamId: m.scope_id,
         })
         break
 
       case 'player':
         can('read', 'Match', {
-          teamId: m.scopeId,
+          teamId: m.scope_id,
+        })
+        break
+
+      case 'coach':
+        can('read', 'Team', {
+          id: m.scope_id,
+        })
+
+        can('read', 'Match', {
+          teamId: m.scope_id,
         })
         break
     }

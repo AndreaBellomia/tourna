@@ -13,7 +13,12 @@ Package dedicated to persistence, Kysely schema typing, and migrations for Tourn
 - `src/` for database access primitives and the package public exports
 - `src/schema.ts` and `src/schemas/` for the Kysely database types
 - `migrations/` for the CLI-managed migrations
+- `docs/` for persistence-oriented design notes before they become migrations
 - `kysely.config.ts` for the `kysely` command configuration
+
+## Design notes
+
+- [Tournament Domain Schema V1](./docs/tournament-domain-schema-v1.md)
 
 ## Recommended structure
 

@@ -39,7 +39,7 @@ describe('AuthorizationService', () => {
     databaseServiceMock.db.selectFrom.mockReturnValue(queryMock)
     queryMock.selectAll.mockReturnValue(queryMock)
     queryMock.where.mockReturnValue(queryMock)
-    queryMock.execute.mockResolvedValue([{ id: 'm-1', userId: 'u-1', role: 'admin' }])
+    queryMock.execute.mockResolvedValue([{ id: 'm-1', user_id: 'u-1', role_code: 'global_admin' }])
 
     cacheServiceMock.getOrSet.mockImplementation(
       async (_key: readonly string[], factory: () => Promise<unknown>) => factory(),
@@ -57,17 +57,20 @@ describe('AuthorizationService', () => {
     const getByUserSpy = jest.spyOn(service, 'getByUser').mockResolvedValue([
       {
         id: 'm-1',
-        userId: 'u-1',
-        role: 'player',
-        scopeType: 'team',
-        scopeId: 'team-1',
+        user_id: 'u-1',
+        role_code: 'global_admin',
+        scope_type: 'global',
+        scope_id: null,
+        status: 'active',
+        created_at: new Date(),
+        updated_at: new Date(),
       },
     ] as never)
 
     const ability = await service.build('u-1')
 
     expect(getByUserSpy).toHaveBeenCalledWith('u-1')
-    expect(ability.can(Action.Read, Subject.Match)).toBe(true)
+    expect(ability.can(Action.Manage, Subject.Match)).toBe(true)
   })
 
   it('checks ability through CASL build output', async () => {

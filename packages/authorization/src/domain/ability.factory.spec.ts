@@ -7,10 +7,13 @@ describe('buildAbility', () => {
     const ability = buildAbility([
       {
         id: 'm-1',
-        userId: 'u-1',
-        role: 'admin',
-        scopeType: 'global',
-        scopeId: undefined,
+        user_id: 'u-1',
+        role_code: 'global_admin',
+        scope_type: 'global',
+        scope_id: null,
+        status: 'active',
+        created_at: new Date(),
+        updated_at: new Date(),
       },
     ])
 
@@ -22,28 +25,38 @@ describe('buildAbility', () => {
     const ability = buildAbility([
       {
         id: 'm-1',
-        userId: 'u-1',
-        role: 'organizer',
-        scopeType: 'tournament',
-        scopeId: 'tour-1',
+        user_id: 'u-1',
+        role_code: 'org_admin',
+        scope_type: 'organization',
+        scope_id: 'org-1',
+        status: 'active',
+        created_at: new Date(),
+        updated_at: new Date(),
       },
     ])
 
-    expect(ability.can(Action.Manage, subject(Subject.Tournament, { id: 'tour-1' }))).toBe(true)
-    expect(ability.can(Action.Manage, subject(Subject.Tournament, { id: 'tour-2' }))).toBe(false)
     expect(
-      ability.can(Action.Manage, subject(Subject.Team, { tournamentId: 'tour-1' })),
+      ability.can(Action.Manage, subject(Subject.Tournament, { organizationId: 'org-1' })),
     ).toBe(true)
+    expect(
+      ability.can(Action.Manage, subject(Subject.Tournament, { organizationId: 'org-2' })),
+    ).toBe(false)
+    expect(ability.can(Action.Manage, subject(Subject.Team, { organizationId: 'org-1' }))).toBe(
+      true,
+    )
   })
 
   it('grants scoped team manager permissions', () => {
     const ability = buildAbility([
       {
         id: 'm-1',
-        userId: 'u-1',
-        role: 'team_manager',
-        scopeType: 'team',
-        scopeId: 'team-1',
+        user_id: 'u-1',
+        role_code: 'team_captain',
+        scope_type: 'team',
+        scope_id: 'team-1',
+        status: 'active',
+        created_at: new Date(),
+        updated_at: new Date(),
       },
     ])
 
@@ -56,10 +69,13 @@ describe('buildAbility', () => {
     const ability = buildAbility([
       {
         id: 'm-1',
-        userId: 'u-1',
-        role: 'player',
-        scopeType: 'team',
-        scopeId: 'team-1',
+        user_id: 'u-1',
+        role_code: 'player',
+        scope_type: 'team',
+        scope_id: 'team-1',
+        status: 'active',
+        created_at: new Date(),
+        updated_at: new Date(),
       },
     ])
 
