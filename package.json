@@ -4,7 +4,11 @@
   "license": "PolyForm-Noncommercial-1.0.0",
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --filter=api --filter=web --filter=worker --concurrency=12",
+    "dev:api": "turbo run dev --filter=api",
+    "dev:web": "turbo run dev --filter=web",
+    "dev:worker": "turbo run dev --filter=worker",
+    "watch:packages": "turbo run watch --filter=@repo/authorization --filter=@repo/contracts --filter=@repo/db --filter=@repo/domain --filter=@repo/email --filter=@repo/queue --filter=@repo/redis --filter=@repo/storage",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\" --ignore-path .prettierignore",

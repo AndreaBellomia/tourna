@@ -44,6 +44,11 @@
       "cache": false,
       "persistent": true
     },
+    "watch": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["build"]
+    },
     "migrate:up": {
       "cache": false,
       "dependsOn": ["^build"]

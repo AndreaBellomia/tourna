@@ -12,7 +12,7 @@
     }
   },
   "scripts": {
-    "dev": "tsup src/index.ts --dts --watch",
+    "watch": "tsup src/index.ts --dts --watch",
     "build": "tsup src/index.ts --dts",
     "check-types": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",

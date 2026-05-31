@@ -12,7 +12,7 @@
     }
   },
   "scripts": {
-    "dev": "tsup src/index.ts --dts --watch",
+    "watch": "tsup src/index.ts --dts --watch",
     "build": "tsup src/index.ts --dts",
     "test": "pnpm --filter api exec jest --config ../../jest.packages.config.cjs --testPathPatterns packages/authorization/src/.*\\.spec\\.ts$ --passWithNoTests",
     "check-types": "tsc --noEmit",

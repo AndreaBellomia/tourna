@@ -1,0 +1,18 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "dev": {
+      "dependsOn": ["^build"],
+      "with": [
+        "@repo/authorization#watch",
+        "@repo/contracts#watch",
+        "@repo/db#watch",
+        "@repo/domain#watch",
+        "@repo/email#watch",
+        "@repo/queue#watch",
+        "@repo/redis#watch",
+        "@repo/storage#watch"
+      ]
+    }
+  }
+}
