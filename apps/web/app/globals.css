@@ -32,27 +32,27 @@
 }
 
 :root {
-  --background: #f7f5ee;
-  --foreground: #171712;
-  --card: #fffdf8;
-  --card-foreground: #171712;
-  --popover: #fffdf8;
-  --popover-foreground: #171712;
-  --primary: #131816;
-  --primary-foreground: #f8f5ec;
-  --secondary: #e9e2d3;
-  --secondary-foreground: #1f231f;
-  --muted: #eee8db;
-  --muted-foreground: #6e6a5e;
-  --accent: #b8ff3d;
-  --accent-foreground: #13200d;
-  --destructive: #d94a3d;
-  --destructive-foreground: #fff8f3;
-  --success: #087f5b;
-  --success-foreground: #f3fff9;
-  --border: #ded6c4;
-  --input: #d8cfbc;
-  --ring: #16a085;
+  --background: #0d1117;
+  --foreground: #edf3ff;
+  --card: #151b24;
+  --card-foreground: #edf3ff;
+  --popover: #151b24;
+  --popover-foreground: #edf3ff;
+  --primary: #f7ff3c;
+  --primary-foreground: #151707;
+  --secondary: #263244;
+  --secondary-foreground: #f4f7fb;
+  --muted: #1d2633;
+  --muted-foreground: #a8b3c7;
+  --accent: #00e0ff;
+  --accent-foreground: #061519;
+  --destructive: #ff5a76;
+  --destructive-foreground: #fff7f9;
+  --success: #38f29b;
+  --success-foreground: #05150d;
+  --border: #2b3748;
+  --input: #354256;
+  --ring: #00e0ff;
   --radius: 0.5rem;
 }
 
@@ -65,7 +65,7 @@ body {
 
 body {
   margin: 0;
-  background: var(--background);
+  background: linear-gradient(180deg, #101722 0%, var(--background) 22rem);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   letter-spacing: 0;

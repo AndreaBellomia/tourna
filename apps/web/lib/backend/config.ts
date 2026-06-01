@@ -22,7 +22,5 @@ export function getWebBackendConfig(): WebBackendEnv {
 }
 
 function createWebBackendConfig(): WebBackendEnv {
-  const env = backendEnvSchema.parse(process.env)
-
   return backendEnvSchema.parse(process.env)
 }

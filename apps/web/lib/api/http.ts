@@ -29,13 +29,8 @@ export async function apiRequest<TSchema extends z.ZodType>(
     throw new ApiError(
       response.status,
       readErrorMessage(payload, 'Request failed'),
-      payload &&
-        typeof payload === 'object' &&
-        'code' in payload &&
-        typeof payload.code === 'string'
-        ? payload.code
-        : 'API_ERROR',
-      payload && typeof payload === 'object' && 'details' in payload ? payload.details : undefined,
+      readErrorPayload(payload).code,
+      readErrorPayload(payload).details,
     )
   }
 
@@ -51,4 +46,20 @@ function readErrorMessage(payload: unknown, fallback: string) {
   }
 
   return fallback
+}
+
+function readErrorPayload(payload: unknown) {
+  if (payload && typeof payload === 'object') {
+    const { code, details } = payload as { code?: unknown; details?: unknown }
+
+    return {
+      code: typeof code === 'string' ? code : 'API_ERROR',
+      details,
+    }
+  }
+
+  return {
+    code: 'API_ERROR',
+    details: undefined,
+  }
 }

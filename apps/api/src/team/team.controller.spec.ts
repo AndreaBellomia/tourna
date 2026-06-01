@@ -46,13 +46,21 @@ describe('TeamController', () => {
     teamServiceMock.getTeams.mockResolvedValue(response)
 
     await expect(
-      controller.getTeams({ limit: 10, direction: 'next', search: 'atlas', visibility: 'public' }),
+      controller.getTeams(undefined, {
+        limit: 10,
+        direction: 'next',
+        search: 'atlas',
+        visibility: 'public',
+      }),
     ).resolves.toBe(response)
-    expect(teamServiceMock.getTeams).toHaveBeenCalledWith({
-      limit: 10,
-      direction: 'next',
-      search: 'atlas',
-      visibility: 'public',
-    })
+    expect(teamServiceMock.getTeams).toHaveBeenCalledWith(
+      {
+        limit: 10,
+        direction: 'next',
+        search: 'atlas',
+        visibility: 'public',
+      },
+      undefined,
+    )
   })
 })

@@ -40,6 +40,28 @@ describe('AccessTokenGuard', () => {
     expect(verifyMock).not.toHaveBeenCalled()
   })
 
+  it('attaches viewer context on public endpoints when a valid token is present', () => {
+    reflectorMock.getAllAndOverride = jest.fn().mockReturnValue(true)
+    verifyMock.mockReturnValue({
+      userId: 'u-1',
+      sessionId: 's-1',
+    })
+
+    const request = {
+      headers: {
+        authorization: 'Bearer token-value',
+      },
+    }
+
+    expect(guard.canActivate(createHttpContext(request))).toBe(true)
+    expect(request).toMatchObject({
+      user: {
+        userId: 'u-1',
+        sessionId: 's-1',
+      },
+    })
+  })
+
   it('rejects request when authorization header is missing', () => {
     reflectorMock.getAllAndOverride = jest.fn().mockReturnValue(false)
 

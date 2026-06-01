@@ -1,8 +1,23 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Action } from '@repo/authorization'
 import type { TeamListResponse } from '@repo/contracts'
-import { CreateTeamDto, TeamListQueryDto, TeamListResponseDto } from '@repo/contracts/nest'
+import {
+  CreateTeamDto,
+  TeamListQueryDto,
+  TeamListResponseDto,
+  UpdateTeamDto,
+} from '@repo/contracts/nest'
 import type { JwtPayload } from '@repo/domain'
 import {
   RequireTeamManagement,
@@ -21,21 +36,35 @@ export class TeamController {
   @Get()
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: TeamListResponseDto })
-  getTeams(@Query() query: TeamListQueryDto): Promise<TeamListResponse> {
-    return this.teamService.getTeams(query)
+  getTeams(
+    @CurrentUser() user: JwtPayload | undefined,
+    @Query() query: TeamListQueryDto,
+  ): Promise<TeamListResponse> {
+    return this.teamService.getTeams(query, user?.userId)
   }
 
   @Public()
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async getTeam(@Param('id') id: string) {
-    return await this.teamService.getTeam(id)
+  async getTeam(@CurrentUser() user: JwtPayload | undefined, @Param('id') id: string) {
+    return await this.teamService.getTeam(id, user?.userId)
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   createTeam(@CurrentUser() user: JwtPayload, @Body() body: CreateTeamDto) {
     return this.teamService.createTeam(user.userId, body.name, body.description, body.visibility)
+  }
+
+  @RequireTeamManagement()
+  @Patch(':id')
+  @HttpCode(HttpStatus.OK)
+  updateTeam(
+    @CurrentUser() user: JwtPayload,
+    @Param('id') id: string,
+    @Body() body: UpdateTeamDto,
+  ) {
+    return this.teamService.updateTeam(user.userId, id, body)
   }
 
   @Post(':id/join')

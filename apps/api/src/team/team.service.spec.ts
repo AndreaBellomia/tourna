@@ -15,10 +15,12 @@ describe('TeamService', () => {
   let service: TeamService
   const teamRepositoryMock = {
     listTeams: jest.fn(),
+    getTeamDetailById: jest.fn(),
   }
 
   beforeEach(async () => {
     teamRepositoryMock.listTeams.mockReset()
+    teamRepositoryMock.getTeamDetailById.mockReset()
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [TeamService, { provide: TeamRepository, useValue: teamRepositoryMock }],
@@ -51,5 +53,20 @@ describe('TeamService', () => {
       filters: { search: 'atlas', visibility: 'public' },
       pagination: { limit: 25, direction: 'next' },
     })
+  })
+
+  it('does not enumerate non-public teams from the public listing', async () => {
+    await expect(
+      service.getTeams({ limit: 25, direction: 'next', visibility: 'private' }),
+    ).resolves.toEqual({
+      data: [],
+      pageInfo: {
+        hasNextPage: false,
+        hasPreviousPage: false,
+        nextCursor: null,
+        previousCursor: null,
+      },
+    })
+    expect(teamRepositoryMock.listTeams).not.toHaveBeenCalled()
   })
 })

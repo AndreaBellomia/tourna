@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { cookies } from 'next/headers'
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { Trophy } from 'lucide-react'
-import { authCookieNames } from '../../../lib/auth/cookies'
+import { getOptionalPageData } from '../../../lib/api/page-data'
 import { listTeams } from '../../../lib/api/teams/team.request'
 import { isLocale, resolveLocale, withLocale } from '../../../lib/i18n/config'
 import { getMessages } from '../../../lib/i18n/web-i18n'
@@ -30,14 +29,12 @@ export default async function TeamsPage({ params }: TeamsPageProps) {
     notFound()
   }
 
-  const cookieStore = await cookies()
-
-  if (!cookieStore.has(authCookieNames.accessToken)) {
-    redirect(withLocale(locale, '/login'))
-  }
-
   const messages = getMessages(locale)
-  const initialPage = await listTeams({ limit: 12, direction: 'next' }).catch(() => null)
+  const initialPage = await getOptionalPageData(
+    () => listTeams({ limit: 12, direction: 'next' }),
+    null,
+    { context: 'teams.list.initialPage' },
+  )
 
   return (
     <main className="min-h-screen bg-background px-5 py-6 md:px-8">

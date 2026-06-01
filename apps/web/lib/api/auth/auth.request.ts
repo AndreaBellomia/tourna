@@ -19,6 +19,14 @@ export function signup(payload: SignupInput) {
   })
 }
 
+export function refresh(refreshToken: string) {
+  return apiRequest(authEndpoints.refresh, AuthResponseSchema, {
+    method: 'POST',
+    body: { refreshToken },
+    cache: 'no-store',
+  })
+}
+
 export async function logout(accessToken: string): Promise<void> {
   const response = await fetch(apiUrl(authEndpoints.logout), {
     method: 'POST',

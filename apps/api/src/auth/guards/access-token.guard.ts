@@ -1,4 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { JwtService } from '@nestjs/jwt'
 import { IS_PUBLIC_KEY } from '../../common/decorators/public.decorator'
@@ -12,6 +18,8 @@ type RequestWithUser = {
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
+  private readonly logger = new Logger(AccessTokenGuard.name)
+
   constructor(
     private jwt: JwtService,
     private reflector: Reflector,
@@ -23,19 +31,34 @@ export class AccessTokenGuard implements CanActivate {
       context.getClass(),
     ])
 
-    if (isPublic) return true
-
     const req = context.switchToHttp().getRequest<RequestWithUser>()
     const token = this.extractToken(req)
 
-    if (!token) throw new UnauthorizedException()
+    if (!token) {
+      if (isPublic) return true
+      this.logger.warn('Protected request rejected because the access token is missing')
+      throw new UnauthorizedException({
+        message: 'Access token is missing',
+        code: 'AUTH_ACCESS_TOKEN_MISSING',
+      })
+    }
 
     try {
       const raw = this.jwt.verify<JwtPayload>(token)
       req.user = jwtPayloadSchema.parse(raw)
       return true
     } catch {
-      throw new UnauthorizedException()
+      if (isPublic) {
+        this.logger.debug(
+          'Public request continued without viewer context after invalid access token',
+        )
+        return true
+      }
+      this.logger.warn('Protected request rejected because the access token is invalid or expired')
+      throw new UnauthorizedException({
+        message: 'Access token is invalid or expired',
+        code: 'AUTH_ACCESS_TOKEN_INVALID',
+      })
     }
   }
 

@@ -8,6 +8,7 @@ import { Button } from '@repo/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/card'
 import { authCookieNames } from '../../../lib/auth/cookies'
 import { logout as revokeSession } from '../../../lib/api/auth/auth.request'
+import { requireAuthenticatedPage } from '../../../lib/auth/session'
 import { isLocale, resolveLocale, type Locale, withLocale } from '../../../lib/i18n/config'
 import { getMessages } from '../../../lib/i18n/web-i18n'
 
@@ -33,6 +34,8 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   }
 
   const messages = getMessages(locale)
+  await requireAuthenticatedPage(locale)
+
   const cookieStore = await cookies()
   const sessionId = cookieStore.get(authCookieNames.sessionId)?.value
   const stats = [
@@ -40,10 +43,6 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     { label: messages.dashboard.stats.liveMatches, value: '0', icon: RadioTower },
     { label: messages.dashboard.stats.session, value: 'OK', icon: ShieldCheck },
   ]
-
-  if (!cookieStore.has(authCookieNames.accessToken)) {
-    redirect(withLocale(locale, '/login'))
-  }
 
   return (
     <main className="min-h-screen bg-background px-5 py-6 md:px-8">

@@ -1,8 +1,13 @@
-import { CreateTeamRequestSchema, TeamListQuerySchema } from '@repo/contracts'
-import { created, ok, unauthorized } from '../../../lib/api/responses'
-import { createTeam, listTeams } from '../../../lib/api/teams/team.request'
+import { authenticatedApiRequest, jsonWithAuth } from '../../../lib/api/auth/authenticated-request'
+import { teamEndpoints } from '../../../lib/api/teams/team.endpoint'
+import { ok } from '../../../lib/api/responses'
+import { listTeams } from '../../../lib/api/teams/team.request'
 import { withRouteHandler } from '../../../lib/api/with-route-handler'
-import { authCookieNames } from '../../../lib/auth/cookies'
+import {
+  CreateTeamRequestSchema,
+  TeamDetailResponseSchema,
+  TeamListQuerySchema,
+} from '@repo/contracts'
 
 export const GET = withRouteHandler(async (request) => {
   const query = TeamListQuerySchema.parse(
@@ -15,14 +20,17 @@ export const GET = withRouteHandler(async (request) => {
 })
 
 export const POST = withRouteHandler(async (request) => {
-  const accessToken = request.cookies.get(authCookieNames.accessToken)?.value
-
-  if (!accessToken) {
-    throw unauthorized('Authentication required')
-  }
-
   const payload = CreateTeamRequestSchema.parse(await request.json())
-  const team = await createTeam(payload, accessToken)
+  const result = await authenticatedApiRequest(
+    request,
+    teamEndpoints.create,
+    TeamDetailResponseSchema,
+    {
+      method: 'POST',
+      body: payload,
+      cache: 'no-store',
+    },
+  )
 
-  return created(team)
+  return jsonWithAuth(result, { status: 201 })
 })
