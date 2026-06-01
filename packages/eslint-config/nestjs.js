@@ -25,7 +25,15 @@ export const nestJsConfig = (dirname) =>
         },
         sourceType: 'commonjs',
         parserOptions: {
-          projectService: true,
+          projectService: {
+            allowDefaultProject: [
+              'eslint.config.js',
+              'eslint.config.mjs',
+              'eslint.config.cjs',
+              'postcss.config.js',
+              'postcss.config.mjs',
+            ],
+          },
           tsconfigRootDir: dirname,
         },
       },

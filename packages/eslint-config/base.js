@@ -1,32 +1,45 @@
-import js from "@eslint/js";
-import eslintConfigPrettier from "eslint-config-prettier";
-import turboPlugin from "eslint-plugin-turbo";
-import tseslint from "typescript-eslint";
-import onlyWarn from "eslint-plugin-only-warn";
+import js from '@eslint/js'
+import eslintConfigPrettier from 'eslint-config-prettier'
+import turboPlugin from 'eslint-plugin-turbo'
+import tseslint from 'typescript-eslint'
+import onlyWarn from 'eslint-plugin-only-warn'
 
 /**
- * A shared ESLint configuration for the repository.
+ * Shared ESLint config for TypeScript packages in the monorepo.
  *
- * @type {import("eslint").Linter.Config[]}
- * */
-export const config = [
-  js.configs.recommended,
-  eslintConfigPrettier,
-  ...tseslint.configs.recommended,
-  {
-    plugins: {
-      turbo: turboPlugin,
+ * @param {string} dirname - Pass `import.meta.dirname` from the consuming project.
+ * @returns {import('eslint').Linter.Config[]}
+ */
+export const config = (dirname) =>
+  tseslint.config(
+    {
+      ignores: ['dist/**'],
     },
-    rules: {
-      "turbo/no-undeclared-env-vars": "warn",
+    js.configs.recommended,
+    eslintConfigPrettier,
+    ...tseslint.configs.recommended,
+    ...tseslint.configs.recommendedTypeChecked,
+    {
+      plugins: {
+        turbo: turboPlugin,
+        onlyWarn,
+      },
+      rules: {
+        'turbo/no-undeclared-env-vars': 'warn',
+      },
+      languageOptions: {
+        parserOptions: {
+          projectService: {
+            allowDefaultProject: [
+              'eslint.config.js',
+              'eslint.config.mjs',
+              'eslint.config.cjs',
+              'postcss.config.js',
+              'postcss.config.mjs',
+            ],
+          },
+          tsconfigRootDir: dirname,
+        },
+      },
     },
-  },
-  {
-    plugins: {
-      onlyWarn,
-    },
-  },
-  {
-    ignores: ["dist/**"],
-  },
-];
+  )

@@ -42,6 +42,17 @@
     },
     "dev": {
       "cache": false,
+      "persistent": true,
+      "dependsOn": ["^build"],
+      "with": ["//#watch:packages"]
+    },
+    "dev:app": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["^build"]
+    },
+    "//#watch:packages": {
+      "cache": false,
       "persistent": true
     },
     "watch": {
