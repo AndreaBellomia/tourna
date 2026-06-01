@@ -4,7 +4,7 @@ import { APP_GUARD } from '@nestjs/core'
 import { AuthController } from './auth.controller'
 import { SessionService } from './services/session.service'
 import { TokenService } from '../tokens/token.service'
-import { AccessTokenGuard } from '../common/guards/access-token.guard'
+import { AccessTokenGuard } from './guards/access-token.guard'
 import { AppConfigService } from '../config/config.service'
 import { AuthService } from './services/auth.service'
 

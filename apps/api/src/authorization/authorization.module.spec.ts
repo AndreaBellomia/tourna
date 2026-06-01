@@ -3,6 +3,7 @@ import { MODULE_METADATA } from '@nestjs/common/constants'
 import { AuthorizationModule } from './authorization.module'
 import { AuthorizationService } from './authorization.service'
 import { PoliciesGuard } from './guards/policies.guard'
+import { TeamPoliciesGuard } from './guards/team-policies.guard'
 
 describe('AuthorizationModule', () => {
   it('registers authorization service and policies guard as app guard', () => {
@@ -19,6 +20,10 @@ describe('AuthorizationModule', () => {
     expect(providers).toContainEqual({
       provide: APP_GUARD,
       useClass: PoliciesGuard,
+    })
+    expect(providers).toContainEqual({
+      provide: APP_GUARD,
+      useClass: TeamPoliciesGuard,
     })
     expect(exportedProviders).toContain(AuthorizationService)
   })

@@ -1,5 +1,5 @@
 import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common'
-import { KyselyDatabase } from '@repo/db'
+import type { KyselyDatabase } from '@repo/db'
 import { DB_CONNECTION } from './database.token'
 
 type DbConnection = {

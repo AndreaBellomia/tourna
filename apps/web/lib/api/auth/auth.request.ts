@@ -1,9 +1,10 @@
 import { AuthResponseSchema, type LoginInput, type SignupInput } from '@repo/contracts/auth'
-import { apiEndpoints, apiUrl } from './endpoints'
-import { apiRequest } from './http'
+import { apiUrl } from '../endpoints'
+import { apiRequest } from '../http'
+import { authEndpoints } from './auth.endpoint'
 
 export function login(payload: LoginInput) {
-  return apiRequest(apiEndpoints.auth.login, AuthResponseSchema, {
+  return apiRequest(authEndpoints.login, AuthResponseSchema, {
     method: 'POST',
     body: payload,
     cache: 'no-store',
@@ -11,7 +12,7 @@ export function login(payload: LoginInput) {
 }
 
 export function signup(payload: SignupInput) {
-  return apiRequest(apiEndpoints.auth.signup, AuthResponseSchema, {
+  return apiRequest(authEndpoints.signup, AuthResponseSchema, {
     method: 'POST',
     body: payload,
     cache: 'no-store',
@@ -19,7 +20,7 @@ export function signup(payload: SignupInput) {
 }
 
 export async function logout(accessToken: string): Promise<void> {
-  const response = await fetch(apiUrl(apiEndpoints.auth.logout), {
+  const response = await fetch(apiUrl(authEndpoints.logout), {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${accessToken}`,

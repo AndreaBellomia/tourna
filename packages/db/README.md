@@ -25,11 +25,35 @@ Package dedicated to persistence, Kysely schema typing, and migrations for Tourn
 Keep the package split by responsibility:
 
 - `src/database.ts` for the database connection and `Kysely` instance creation
+- `src/pagination/*` for reusable persistence-oriented pagination helpers
 - `src/schema.ts` for the aggregated schema definition
 - `src/schemas/*` for tables and related types
 - `migrations/*` for database evolution scripts
 
 Avoid putting application logic or domain queries in this package. Only DB infrastructure should live here.
+
+## Cursor pagination
+
+`src/pagination` provides reusable seek-pagination orchestration through the public
+`paginateCursor` entrypoint:
+
+- opaque JSON plus base64url cursors
+- runtime cursor payload validation
+- an opinionated `field, id` order with `id` as the stable tie-breaker
+- `limit + 1` fetching
+- forward and backward page-info calculation
+- strict filter snapshot validation for cursors
+
+Repository adapters build the already-filtered Kysely query and pass it to `paginateCursor`.
+The paginator applies the cursor condition, order, limit, and cursor generation directly.
+
+Cursors include the filters used to generate them. Tourna uses strict validation: if a request
+passes filters that differ from the cursor snapshot, pagination fails with `InvalidCursorError`
+instead of silently changing result sets.
+
+For teams, cursor pagination uses `created_at DESC, id DESC`. The
+`teams_created_at_id_seek_idx` migration adds the supporting `(created_at, id)` index so
+PostgreSQL can scan it in the required order.
 
 ## Configuration
 

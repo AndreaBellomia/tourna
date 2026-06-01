@@ -82,4 +82,77 @@ describe('AuthorizationService', () => {
     expect(allowed).toBe(true)
     expect(can).toHaveBeenCalledWith(Action.Read, Subject.Match)
   })
+
+  it('allows team action through application membership ability', async () => {
+    const can = jest.fn().mockReturnValue(true)
+    jest
+      .spyOn(service, 'getTeamAuthorizationTarget')
+      .mockResolvedValue({ id: 'team-1', organization_id: 'org-1' } as never)
+    jest.spyOn(service, 'build').mockResolvedValue({ can } as never)
+    const teamMembershipSpy = jest.spyOn(service, 'getActiveTeamMembership')
+
+    const allowed = await service.canAccessTeamAction('u-1', 'team-1', Action.Update)
+
+    expect(allowed).toBe(true)
+    expect(can).toHaveBeenCalledWith(
+      Action.Update,
+      expect.objectContaining({
+        id: 'team-1',
+        organizationId: 'org-1',
+      }),
+    )
+    expect(teamMembershipSpy).not.toHaveBeenCalled()
+  })
+
+  it('allows team action through internal team management membership', async () => {
+    jest
+      .spyOn(service, 'getTeamAuthorizationTarget')
+      .mockResolvedValue({ id: 'team-1', organization_id: null } as never)
+    jest
+      .spyOn(service, 'build')
+      .mockResolvedValue({ can: jest.fn().mockReturnValue(false) } as never)
+    jest.spyOn(service, 'getActiveTeamMembership').mockResolvedValue({
+      id: 'tm-1',
+      team_id: 'team-1',
+      user_id: 'u-1',
+      role: 'manager',
+      status: 'active',
+    } as never)
+
+    const allowed = await service.canAccessTeamAction('u-1', 'team-1', Action.Update)
+
+    expect(allowed).toBe(true)
+  })
+
+  it('rejects team action when internal membership is not a management role', async () => {
+    jest
+      .spyOn(service, 'getTeamAuthorizationTarget')
+      .mockResolvedValue({ id: 'team-1', organization_id: null } as never)
+    jest
+      .spyOn(service, 'build')
+      .mockResolvedValue({ can: jest.fn().mockReturnValue(false) } as never)
+    jest.spyOn(service, 'getActiveTeamMembership').mockResolvedValue({
+      id: 'tm-1',
+      team_id: 'team-1',
+      user_id: 'u-1',
+      role: 'player',
+      status: 'active',
+    } as never)
+
+    const allowed = await service.canAccessTeamAction('u-1', 'team-1', Action.Update)
+
+    expect(allowed).toBe(false)
+  })
+
+  it('reports active team membership presence', async () => {
+    jest.spyOn(service, 'getActiveTeamMembership').mockResolvedValue({
+      id: 'tm-1',
+      team_id: 'team-1',
+      user_id: 'u-1',
+      role: 'player',
+      status: 'active',
+    } as never)
+
+    await expect(service.hasActiveTeamMembership('u-1', 'team-1')).resolves.toBe(true)
+  })
 })

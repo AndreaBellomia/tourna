@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { APP_GUARD } from '@nestjs/core'
 import { AuthorizationService } from './authorization.service'
 import { PoliciesGuard } from './guards/policies.guard'
+import { TeamPoliciesGuard } from './guards/team-policies.guard'
 import { CacheModule } from '../cache/cache.module'
 
 @Module({
@@ -11,6 +12,10 @@ import { CacheModule } from '../cache/cache.module'
     {
       provide: APP_GUARD,
       useClass: PoliciesGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: TeamPoliciesGuard,
     },
   ],
   exports: [AuthorizationService],

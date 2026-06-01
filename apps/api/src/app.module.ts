@@ -1,7 +1,6 @@
-import { ZodValidationPipe, ZodSerializerInterceptor, ZodSerializationException } from 'nestjs-zod'
-import { APP_PIPE, APP_INTERCEPTOR, APP_FILTER, BaseExceptionFilter } from '@nestjs/core'
-import { ZodError } from 'zod'
-import { Module, HttpException, ArgumentsHost, Logger, Catch } from '@nestjs/common'
+import { ZodValidationPipe, ZodSerializerInterceptor } from 'nestjs-zod'
+import { APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core'
+import { Module } from '@nestjs/common'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AppConfigModule } from './config/config.module'
@@ -13,23 +12,8 @@ import { AuthorizationModule } from './authorization/authorization.module'
 import { QueueModule } from './queue/queue.module'
 import { StorageModule } from './storage/storage.module'
 import { ApiCacheInterceptor } from './cache/api-cache.interceptor'
-
-@Catch(HttpException)
-class HttpExceptionFilter extends BaseExceptionFilter {
-  private logger = new Logger(HttpExceptionFilter.name)
-
-  catch(exception: HttpException, host: ArgumentsHost) {
-    if (exception instanceof ZodSerializationException) {
-      const zodError = exception.getZodError()
-
-      if (zodError instanceof ZodError) {
-        this.logger.error(`ZodSerializationException: ${zodError.message}`)
-      }
-    }
-
-    super.catch(exception, host)
-  }
-}
+import { TeamModule } from './team/team.module'
+import { ErrorModule } from './error/error.module'
 
 @Module({
   imports: [
@@ -41,6 +25,8 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     AuthorizationModule,
     QueueModule,
     StorageModule,
+    TeamModule,
+    ErrorModule,
   ],
   controllers: [AppController],
   providers: [
@@ -56,10 +42,6 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     {
       provide: APP_INTERCEPTOR,
       useClass: ZodSerializerInterceptor,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
     },
   ],
 })

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
 import { CalendarDays, RadioTower, ShieldCheck, Trophy } from 'lucide-react'
@@ -6,7 +7,7 @@ import { Badge } from '@repo/ui/badge'
 import { Button } from '@repo/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/card'
 import { authCookieNames } from '../../../lib/auth/cookies'
-import { logout as revokeSession } from '../../../lib/api/auth'
+import { logout as revokeSession } from '../../../lib/api/auth/auth.request'
 import { isLocale, resolveLocale, type Locale, withLocale } from '../../../lib/i18n/config'
 import { getMessages } from '../../../lib/i18n/web-i18n'
 
@@ -59,11 +60,19 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               </div>
             </div>
           </div>
-          <form action={logout.bind(null, locale)}>
-            <Button type="submit" variant="outline">
-              {messages.dashboard.logout}
-            </Button>
-          </form>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              className="inline-flex h-10 items-center justify-center rounded-md bg-secondary px-4 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
+              href={withLocale(locale, '/teams')}
+            >
+              {messages.teams.nav.teams}
+            </Link>
+            <form action={logout.bind(null, locale)}>
+              <Button type="submit" variant="outline">
+                {messages.dashboard.logout}
+              </Button>
+            </form>
+          </div>
         </header>
 
         <section className="grid gap-4 md:grid-cols-3">

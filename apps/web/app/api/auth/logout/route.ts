@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { logout as revokeSession } from '../../../../lib/api/auth/auth.request'
+import { noContent } from '../../../../lib/api/responses'
+import { withRouteHandler } from '../../../../lib/api/with-route-handler'
 import { authCookieNames, authCookieOptions } from '../../../../lib/auth/cookies'
-import { logout as revokeSession } from '../../../../lib/api/auth'
 
-export async function POST(request: NextRequest) {
+export const POST = withRouteHandler(async (request) => {
   const accessToken = request.cookies.get(authCookieNames.accessToken)?.value
 
   if (accessToken) {
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const response = new NextResponse(null, { status: 204 })
+  const response = noContent()
 
   response.cookies.set(authCookieNames.accessToken, '', {
     ...authCookieOptions,
@@ -29,4 +30,4 @@ export async function POST(request: NextRequest) {
   })
 
   return response
-}
+})

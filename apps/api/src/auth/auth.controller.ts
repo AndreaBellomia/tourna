@@ -15,11 +15,11 @@ export class AuthController {
   @Post('signup')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: AuthResponseDto })
-  signup(
+  async signup(
     @Body() dto: SignupDto,
     @Req() req: { headers: Record<string, string>; ip: string },
   ): Promise<AuthResponse> {
-    return this.auth.signup(dto, req.headers['user-agent'] ?? '', req.ip)
+    return await this.auth.signup(dto, req.headers['user-agent'] ?? '', req.ip)
   }
 
   @Public()
@@ -28,11 +28,11 @@ export class AuthController {
   @ApiOkResponse({
     type: AuthResponseDto,
   })
-  login(
+  async login(
     @Body() dto: LoginDto,
     @Req() req: { headers: Record<string, string>; ip: string },
   ): Promise<AuthResponse> {
-    return this.auth.login(dto, req.headers['user-agent'] ?? '', req.ip)
+    return await this.auth.login(dto, req.headers['user-agent'] ?? '', req.ip)
   }
 
   @Public()
@@ -41,13 +41,13 @@ export class AuthController {
   @ApiOkResponse({
     type: AuthResponseDto,
   })
-  refresh(@Body() dto: RefreshDto) {
-    return this.auth.refresh(dto.refreshToken)
+  async refresh(@Body() dto: RefreshDto) {
+    return await this.auth.refresh(dto.refreshToken)
   }
 
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
-  logout(@CurrentUser() user: JwtPayload) {
-    return this.auth.logout(user.sessionId)
+  async logout(@CurrentUser() user: JwtPayload) {
+    return await this.auth.logout(user.sessionId)
   }
 }

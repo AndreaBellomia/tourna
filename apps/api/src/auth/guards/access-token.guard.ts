@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { JwtService } from '@nestjs/jwt'
-import { IS_PUBLIC_KEY } from '../decorators/public.decorator'
+import { IS_PUBLIC_KEY } from '../../common/decorators/public.decorator'
 import { JwtPayload, jwtPayloadSchema } from '@repo/domain'
 
 type HeaderValue = string | string[] | undefined

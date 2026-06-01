@@ -1,16 +1,13 @@
-export const apiEndpoints = {
-  auth: {
-    login: '/auth/login',
-    signup: '/auth/signup',
-    refresh: '/auth/refresh',
-    logout: '/auth/logout',
-  },
-} as const
+import { getWebBackendConfig } from '../backend/config'
 
 export function getApiBaseUrl() {
-  return 'http://localhost:3001/api'
+  return getWebBackendConfig().API_BASE_URL
 }
 
 export function apiUrl(path: string) {
-  return new URL(`api${path}`, getApiBaseUrl()).toString()
+  const apiBaseUrl = getApiBaseUrl()
+  const baseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl : `${apiBaseUrl}/`
+  const relativePath = path.startsWith('/') ? path.slice(1) : path
+
+  return new URL(relativePath, baseUrl).toString()
 }

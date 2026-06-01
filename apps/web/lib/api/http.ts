@@ -1,16 +1,6 @@
 import { z } from 'zod'
 import { apiUrl } from './endpoints'
-
-export class ApiError extends Error {
-  constructor(
-    message: string,
-    readonly status: number,
-    readonly details?: unknown,
-  ) {
-    super(message)
-    this.name = 'ApiError'
-  }
-}
+import { ApiError } from './errors/api-error'
 
 type ApiRequestOptions = Omit<RequestInit, 'body'> & {
   body?: unknown
@@ -36,7 +26,17 @@ export async function apiRequest<TSchema extends z.ZodType>(
     .catch(() => (response.ok ? undefined : { message: response.statusText }))
 
   if (!response.ok) {
-    throw new ApiError(readErrorMessage(payload, response.statusText), response.status, payload)
+    throw new ApiError(
+      response.status,
+      readErrorMessage(payload, 'Request failed'),
+      payload &&
+        typeof payload === 'object' &&
+        'code' in payload &&
+        typeof payload.code === 'string'
+        ? payload.code
+        : 'API_ERROR',
+      payload && typeof payload === 'object' && 'details' in payload ? payload.details : undefined,
+    )
   }
 
   return schema.parse(payload)
