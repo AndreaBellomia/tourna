@@ -8,6 +8,7 @@ jest.mock('@repo/db', () => {
 })
 
 import { Test, TestingModule } from '@nestjs/testing'
+import { StorageService } from '../storage/storage.service'
 import { TeamService } from './team.service'
 import { TeamRepository } from './team.repository'
 
@@ -15,15 +16,23 @@ describe('TeamService', () => {
   let service: TeamService
   const teamRepositoryMock = {
     listTeams: jest.fn(),
-    getTeamDetailById: jest.fn(),
+    getTeamDetailByIdentifier: jest.fn(),
+  }
+  const storageMock = {
+    createPublicObjectReadUrl: jest.fn(),
   }
 
   beforeEach(async () => {
     teamRepositoryMock.listTeams.mockReset()
-    teamRepositoryMock.getTeamDetailById.mockReset()
+    teamRepositoryMock.getTeamDetailByIdentifier.mockReset()
+    storageMock.createPublicObjectReadUrl.mockReset()
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TeamService, { provide: TeamRepository, useValue: teamRepositoryMock }],
+      providers: [
+        TeamService,
+        { provide: TeamRepository, useValue: teamRepositoryMock },
+        { provide: StorageService, useValue: storageMock },
+      ],
     }).compile()
 
     service = module.get<TeamService>(TeamService)
@@ -48,7 +57,7 @@ describe('TeamService', () => {
 
     await expect(
       service.getTeams({ limit: 25, direction: 'next', search: 'atlas', visibility: 'public' }),
-    ).resolves.toBe(response)
+    ).resolves.toEqual(response)
     expect(teamRepositoryMock.listTeams).toHaveBeenCalledWith({
       filters: { search: 'atlas', visibility: 'public' },
       pagination: { limit: 25, direction: 'next' },

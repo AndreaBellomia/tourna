@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const MEDIA_ASSET_TYPES = [
   'avatar',
+  'team_logo',
   'organization_logo',
   'tournament_banner',
   'result_evidence',

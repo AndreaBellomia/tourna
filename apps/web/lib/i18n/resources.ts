@@ -132,6 +132,13 @@ interface TeamsResource {
     description: string
     name: string
     namePlaceholder: string
+    tag: string
+    tagPlaceholder: string
+    logo: string
+    logoHelp: string
+    uploadLogo: string
+    removeLogo: string
+    uploadFailed: string
     summary: string
     summaryPlaceholder: string
     visibility: string
@@ -152,6 +159,7 @@ interface TeamsResource {
     editDescription: string
     membersTitle: string
     membersDescription: string
+    emptyMembers: string
     permissionsTitle: string
     permissionsDescription: string
     disabledAction: string
@@ -174,6 +182,8 @@ interface ProfileResource {
     description: string
     displayName: string
     displayNamePlaceholder: string
+    nickname: string
+    nicknamePlaceholder: string
     bio: string
     bioPlaceholder: string
     email: string

@@ -7,7 +7,9 @@ export interface TeamTable extends BaseAttributeSchema {
   organization_id: NullableColumn<string>
   name: string
   slug: string
+  tag: string
   status: LifecycleStatus
   visibility: Visibility
   description: NullableColumn<string>
+  logo_object_key: NullableColumn<string>
 }

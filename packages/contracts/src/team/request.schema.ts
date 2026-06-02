@@ -4,16 +4,22 @@ import { CursorPaginationQuerySchema } from '../pagination/cursor.schema'
 
 export const CreateTeamRequestSchema = z.object({
   name: z.string().min(3).max(50),
+  tag: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(/^[A-Z0-9]{4}$/),
   description: z.string().max(3000).optional(),
   visibility: VisibilitySchema,
 })
 
 export type CreateTeamInput = z.infer<typeof CreateTeamRequestSchema>
 
-export const UpdateTeamRequestSchema = CreateTeamRequestSchema.partial().refine(
-  (value) => Object.keys(value).length > 0,
-  'At least one team field is required',
-)
+export const UpdateTeamRequestSchema = CreateTeamRequestSchema.extend({
+  logoObjectKey: z.string().trim().min(1).max(500).nullable().optional(),
+})
+  .partial()
+  .refine((value) => Object.keys(value).length > 0, 'At least one team field is required')
 
 export type UpdateTeamInput = z.infer<typeof UpdateTeamRequestSchema>
 

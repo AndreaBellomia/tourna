@@ -11,7 +11,8 @@ const teams = {
   list: {
     eyebrow: 'Squadre e clan',
     title: 'Team',
-    description: 'Esplora i team pubblici, apri le cover e gestisci solo le squadre in cui hai un ruolo admin.',
+    description:
+      'Esplora i team pubblici, apri le cover e gestisci solo le squadre in cui hai un ruolo admin.',
     search: 'Cerca team',
     searchPlaceholder: 'Nome, slug o descrizione',
     visibility: 'Visibilita',
@@ -31,8 +32,16 @@ const teams = {
     description: 'Crea una squadra base; logo e asset arriveranno con il modello media.',
     name: 'Nome',
     namePlaceholder: 'Aurora Rivals',
+    tag: 'Tag team',
+    tagPlaceholder: 'AURA',
+    logo: 'Logo team',
+    logoHelp: 'PNG, JPG o WebP fino a 4 MB. Disponibile dopo la creazione del team.',
+    uploadLogo: 'Carica logo team',
+    removeLogo: 'Rimuovi logo',
+    uploadFailed: 'Upload logo non riuscito.',
     summary: 'Descrizione Markdown',
-    summaryPlaceholder: '# Aurora Rivals\n\nRoster competitivo Valorant.\n\n- Scrim settimanali\n- Open a tryout',
+    summaryPlaceholder:
+      '# Aurora Rivals\n\nRoster competitivo Valorant.\n\n- Scrim settimanali\n- Open a tryout',
     visibility: 'Visibilita',
     submit: 'Crea',
     save: 'Salva',
@@ -51,6 +60,8 @@ const teams = {
     members: 'Utenti',
     permissions: 'Permessi',
     status: 'Stato',
+    visibility: 'Visibilita',
+    role: 'Ruolo',
     created: 'Creato',
     editTitle: 'Modifica team',
     editDescription: 'Aggiorna profilo pubblico, visibilita e contenuto Markdown.',
@@ -60,8 +71,8 @@ const teams = {
     publicDescription: 'Stai vedendo la cover pubblica del team.',
     publicViewer: 'Visitatore',
     membersTitle: 'Lista utenti',
-    membersDescription:
-      'La sezione e pronta per collegare ruoli, inviti e trasferimenti quando gli endpoint saranno esposti.',
+    membersDescription: 'Apri i profili pubblici dei membri e controlla i ruoli attivi nel team.',
+    emptyMembers: 'Nessun membro attivo visibile per questo team.',
     permissionsTitle: 'Trasferimento permessi',
     permissionsDescription:
       'Azioni owner/captain disabilitate fino alla disponibilita dei contract dedicati.',

@@ -32,6 +32,13 @@ const teams = {
     description: 'Create a base squad; logos and assets will arrive with the media model.',
     name: 'Name',
     namePlaceholder: 'Aurora Rivals',
+    tag: 'Team tag',
+    tagPlaceholder: 'AURA',
+    logo: 'Team logo',
+    logoHelp: 'PNG, JPG, or WebP up to 4 MB. Available after the team is created.',
+    uploadLogo: 'Upload team logo',
+    removeLogo: 'Remove logo',
+    uploadFailed: 'Logo upload failed.',
     summary: 'Markdown description',
     summaryPlaceholder:
       '# Aurora Rivals\n\nCompetitive Valorant roster.\n\n- Weekly scrims\n- Open to tryouts',
@@ -53,6 +60,8 @@ const teams = {
     members: 'Users',
     permissions: 'Permissions',
     status: 'Status',
+    visibility: 'Visibility',
+    role: 'Role',
     created: 'Created',
     editTitle: 'Edit team',
     editDescription: 'Update the public profile, visibility, and Markdown content.',
@@ -62,8 +71,8 @@ const teams = {
     publicDescription: 'You are viewing the public team cover.',
     publicViewer: 'Visitor',
     membersTitle: 'User list',
-    membersDescription:
-      'This section is ready to connect roles, invitations, and transfers when the endpoints are exposed.',
+    membersDescription: 'Open public member profiles and scan active roles in this team.',
+    emptyMembers: 'No active members are visible for this team yet.',
     permissionsTitle: 'Permission transfer',
     permissionsDescription:
       'Owner/captain actions are disabled until dedicated contracts are available.',

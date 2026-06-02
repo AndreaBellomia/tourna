@@ -5,6 +5,7 @@ import { DatabaseService } from '../database/database.service'
 type ProfileRow = {
   id: string
   display_name: string
+  nickname: string
   email: string
   bio: string | null
   avatarObjectKey: string | null
@@ -17,7 +18,14 @@ export class ProfileRepository {
   async getProfile(userId: string): Promise<ProfileRow | null> {
     const profile = await this.database.db
       .selectFrom('users')
-      .select(['id', 'display_name', 'email', 'bio', 'avatar_object_key as avatarObjectKey'])
+      .select([
+        'id',
+        'display_name',
+        'nickname',
+        'email',
+        'bio',
+        'avatar_object_key as avatarObjectKey',
+      ])
       .where('id', '=', userId)
       .where('deleted_at', 'is', null)
       .executeTakeFirst()
@@ -28,6 +36,7 @@ export class ProfileRepository {
   async updateProfile(userId: string, updates: UpdateProfileInput): Promise<ProfileRow | null> {
     const values = {
       ...(updates.display_name ? { display_name: updates.display_name } : {}),
+      ...(updates.nickname ? { nickname: updates.nickname } : {}),
       ...(updates.bio !== undefined ? { bio: updates.bio || null } : {}),
       ...(updates.avatarObjectKey !== undefined
         ? { avatar_object_key: updates.avatarObjectKey || null }

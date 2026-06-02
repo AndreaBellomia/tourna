@@ -220,7 +220,7 @@ function UserTile({
   return (
     <Link
       className="group rounded-lg border border-border bg-card p-4 transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-accent/60 hover:shadow-md"
-      href={withLocale(locale, `/users/${user.id}`)}
+      href={withLocale(locale, `/users/${user.nickname}`)}
     >
       <div className="flex items-start gap-3">
         <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-md bg-secondary text-sm font-semibold text-secondary-foreground">
@@ -239,7 +239,7 @@ function UserTile({
               className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
             />
           </div>
-          <p className="mt-1 truncate font-mono text-xs text-muted-foreground">#{user.id}</p>
+          <p className="mt-1 truncate font-mono text-xs text-muted-foreground">@{user.nickname}</p>
         </div>
       </div>
 

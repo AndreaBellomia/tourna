@@ -5,6 +5,7 @@ import { DatabaseService } from '../database/database.service'
 type UserRow = {
   id: string
   display_name: string
+  nickname: string
   bio: string | null
   avatarObjectKey: string | null
   createdAt: Date
@@ -33,6 +34,7 @@ export class UserRepository {
       .select([
         'id',
         'display_name',
+        'nickname',
         'bio',
         'avatar_object_key as avatarObjectKey',
         'created_at as createdAt',
@@ -43,7 +45,11 @@ export class UserRepository {
       const pattern = `%${input.filters.search}%`
 
       query = query.where((eb) =>
-        eb.or([eb('display_name', 'ilike', pattern), eb('bio', 'ilike', pattern)]),
+        eb.or([
+          eb('display_name', 'ilike', pattern),
+          eb('nickname', 'ilike', pattern),
+          eb('bio', 'ilike', pattern),
+        ]),
       )
     }
 
@@ -60,22 +66,31 @@ export class UserRepository {
     })
   }
 
-  async getUserById(userId: string): Promise<PublicUser | null> {
-    const user = await this.database.db
+  async getUserByIdentifier(identifier: string): Promise<PublicUser | null> {
+    let query = this.database.db
       .selectFrom('users')
       .select([
         'id',
         'display_name',
+        'nickname',
         'bio',
         'avatar_object_key as avatarObjectKey',
         'created_at as createdAt',
       ])
-      .where('id', '=', userId)
       .where('deleted_at', 'is', null)
-      .executeTakeFirst()
+
+    query = isNumericIdentifier(identifier)
+      ? query.where((eb) => eb.or([eb('id', '=', identifier), eb('nickname', '=', identifier)]))
+      : query.where('nickname', '=', identifier)
+
+    const user = await query.executeTakeFirst()
 
     return user ? toPublicUser(user) : null
   }
+}
+
+function isNumericIdentifier(identifier: string) {
+  return /^\d+$/.test(identifier)
 }
 
 function toPublicUser(user: UserRow): PublicUser {

@@ -53,7 +53,13 @@ export class TeamController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   createTeam(@CurrentUser() user: JwtPayload, @Body() body: CreateTeamDto) {
-    return this.teamService.createTeam(user.userId, body.name, body.description, body.visibility)
+    return this.teamService.createTeam(
+      user.userId,
+      body.name,
+      body.tag,
+      body.description,
+      body.visibility,
+    )
   }
 
   @RequireTeamManagement()

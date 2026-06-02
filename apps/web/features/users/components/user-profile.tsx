@@ -29,7 +29,7 @@ export function UserProfile({ locale, messages, initialUser }: UserProfileProps)
   useEffect(() => {
     let active = true
 
-    void fetchUser(initialUser.id)
+    void fetchUser(initialUser.nickname)
       .then((freshUser) => {
         if (active) setUser(freshUser)
       })
@@ -40,7 +40,7 @@ export function UserProfile({ locale, messages, initialUser }: UserProfileProps)
     return () => {
       active = false
     }
-  }, [initialUser.id])
+  }, [initialUser.nickname])
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6">
@@ -65,7 +65,7 @@ export function UserProfile({ locale, messages, initialUser }: UserProfileProps)
                 )}
               </div>
               <div>
-                <Badge variant="outline">#{user.id}</Badge>
+                <Badge variant="outline">@{user.nickname}</Badge>
                 <h1 className="mt-3 text-4xl font-semibold tracking-normal md:text-5xl">
                   {user.display_name}
                 </h1>

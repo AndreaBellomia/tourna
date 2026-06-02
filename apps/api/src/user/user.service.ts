@@ -24,7 +24,7 @@ export class UserService {
   }
 
   async getUser(userId: string): Promise<UserDetailResponse> {
-    const user = await this.users.getUserById(userId)
+    const user = await this.users.getUserByIdentifier(userId)
 
     if (!user) {
       throw new NotFoundException('User not found')

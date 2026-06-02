@@ -12,7 +12,7 @@ describe('UserService', () => {
   let service: UserService
   const userRepositoryMock = {
     listUsers: jest.fn(),
-    getUserById: jest.fn(),
+    getUserByIdentifier: jest.fn(),
   }
   const storageMock = {
     createPublicObjectReadUrl: jest.fn(),
@@ -20,7 +20,7 @@ describe('UserService', () => {
 
   beforeEach(async () => {
     userRepositoryMock.listUsers.mockReset()
-    userRepositoryMock.getUserById.mockReset()
+    userRepositoryMock.getUserByIdentifier.mockReset()
     storageMock.createPublicObjectReadUrl.mockReset()
 
     const module: TestingModule = await Test.createTestingModule({
@@ -75,7 +75,7 @@ describe('UserService', () => {
   })
 
   it('throws when a public user does not exist', async () => {
-    userRepositoryMock.getUserById.mockResolvedValue(null)
+    userRepositoryMock.getUserByIdentifier.mockResolvedValue(null)
 
     await expect(service.getUser('missing')).rejects.toBeInstanceOf(NotFoundException)
   })

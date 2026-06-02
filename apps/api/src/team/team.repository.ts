@@ -7,9 +7,11 @@ type TeamListRow = {
   id: string
   name: string
   slug: string
+  tag: string
   status: LifecycleStatus
   visibility: Visibility
   description: string | null
+  logoObjectKey: string | null
   createdAt: Date
 }
 
@@ -24,6 +26,18 @@ export type TeamViewerMembership = {
 
 export type TeamDetailItem = TeamListItem & {
   viewerMembership: TeamViewerMembership | null
+  members: TeamMemberItem[]
+}
+
+export type TeamMemberItem = {
+  role: TeamMembershipRole
+  joinedAt: string
+  user: {
+    id: string
+    display_name: string
+    nickname: string
+    avatarObjectKey: string | null
+  }
 }
 
 export type TeamListFilters = {
@@ -48,9 +62,11 @@ export class TeamRepository {
         'id',
         'name',
         'slug',
+        'tag',
         'status',
         'visibility',
         'description',
+        'logo_object_key as logoObjectKey',
         'created_at as createdAt',
       ])
 
@@ -69,6 +85,7 @@ export class TeamRepository {
         eb.or([
           eb('name', 'ilike', pattern),
           eb('slug', 'ilike', pattern),
+          eb('tag', 'ilike', pattern),
           eb('description', 'ilike', pattern),
         ]),
       )
@@ -87,20 +104,26 @@ export class TeamRepository {
     })
   }
 
-  async getTeamById(id: string): Promise<TeamListItem | null> {
-    const team = await this.database.db
+  async getTeamByIdentifier(identifier: string): Promise<TeamListItem | null> {
+    let query = this.database.db
       .selectFrom('teams')
       .select([
         'id',
         'name',
         'slug',
+        'tag',
         'status',
         'visibility',
         'description',
+        'logo_object_key as logoObjectKey',
         'created_at as createdAt',
       ])
-      .where('id', '=', id)
-      .executeTakeFirst()
+
+    query = isNumericIdentifier(identifier)
+      ? query.where((eb) => eb.or([eb('id', '=', identifier), eb('slug', '=', identifier)]))
+      : query.where('slug', '=', identifier)
+
+    const team = await query.executeTakeFirst()
 
     if (!team) {
       return null
@@ -109,8 +132,11 @@ export class TeamRepository {
     return toTeamListItem(team)
   }
 
-  async getTeamDetailById(id: string, viewerId?: string): Promise<TeamDetailItem | null> {
-    const team = await this.getTeamById(id)
+  async getTeamDetailByIdentifier(
+    identifier: string,
+    viewerId?: string,
+  ): Promise<TeamDetailItem | null> {
+    const team = await this.getTeamByIdentifier(identifier)
 
     if (!team) {
       return null
@@ -118,19 +144,27 @@ export class TeamRepository {
 
     return {
       ...team,
-      viewerMembership: viewerId ? await this.getViewerMembership(id, viewerId) : null,
+      viewerMembership: viewerId ? await this.getViewerMembership(team.id, viewerId) : null,
+      members: await this.getTeamMembers(team.id),
     }
   }
 
-  async createTeam(userId: string, name: string, description?: string, visibility?: Visibility) {
+  async createTeam(
+    userId: string,
+    name: string,
+    tag: string,
+    description?: string,
+    visibility?: Visibility,
+  ) {
     const teamId = await this.database.db.transaction().execute(async (trx) => {
       const [team] = await trx
         .insertInto('teams')
         .values({
           created_by_user_id: userId,
           name,
+          tag: normalizeTeamTag(tag),
           description: description ?? null,
-          slug: buildTeamSlug(name),
+          slug: await this.buildAvailableTeamSlug(name),
           status: 'published',
           visibility: visibility ?? 'private',
         })
@@ -155,17 +189,27 @@ export class TeamRepository {
       return team.id
     })
 
-    return teamId ? this.getTeamDetailById(teamId, userId) : null
+    return teamId ? this.getTeamDetailByIdentifier(teamId, userId) : null
   }
 
   async updateTeam(
     teamId: string,
-    updates: { name?: string; description?: string; visibility?: Visibility },
+    updates: {
+      name?: string
+      tag?: string
+      description?: string
+      logoObjectKey?: string | null
+      visibility?: Visibility
+    },
     viewerId?: string,
   ): Promise<TeamDetailItem | null> {
     const values = {
-      ...(updates.name ? { name: updates.name, slug: buildTeamSlug(updates.name) } : {}),
+      ...(updates.name
+        ? { name: updates.name, slug: await this.buildAvailableTeamSlug(updates.name, teamId) }
+        : {}),
+      ...(updates.tag ? { tag: normalizeTeamTag(updates.tag) } : {}),
       ...(updates.description !== undefined ? { description: updates.description || null } : {}),
+      ...('logoObjectKey' in updates ? { logo_object_key: updates.logoObjectKey || null } : {}),
       ...(updates.visibility ? { visibility: updates.visibility } : {}),
       updated_at: new Date(),
     }
@@ -177,7 +221,38 @@ export class TeamRepository {
       .returning(['id'])
       .execute()
 
-    return team ? this.getTeamDetailById(team.id, viewerId) : null
+    return team ? this.getTeamDetailByIdentifier(team.id, viewerId) : null
+  }
+
+  async getTeamMembers(teamId: string): Promise<TeamMemberItem[]> {
+    const members = await this.database.db
+      .selectFrom('team_memberships')
+      .innerJoin('users', 'users.id', 'team_memberships.user_id')
+      .select([
+        'team_memberships.role',
+        'team_memberships.joined_at as joinedAt',
+        'users.id as userId',
+        'users.display_name as displayName',
+        'users.nickname',
+        'users.avatar_object_key as avatarObjectKey',
+      ])
+      .where('team_memberships.team_id', '=', teamId)
+      .where('team_memberships.status', '=', 'active')
+      .where('team_memberships.left_at', 'is', null)
+      .where('users.deleted_at', 'is', null)
+      .orderBy('team_memberships.joined_at', 'asc')
+      .execute()
+
+    return members.map((member) => ({
+      role: member.role,
+      joinedAt: member.joinedAt.toISOString(),
+      user: {
+        id: member.userId,
+        display_name: member.displayName,
+        nickname: member.nickname,
+        avatarObjectKey: member.avatarObjectKey,
+      },
+    }))
   }
 
   async getViewerMembership(teamId: string, userId: string): Promise<TeamViewerMembership | null> {
@@ -199,6 +274,27 @@ export class TeamRepository {
       canManage: isTeamManagementRole(membership.role),
     }
   }
+
+  private async buildAvailableTeamSlug(name: string, excludeTeamId?: string): Promise<string> {
+    const base = buildTeamSlug(name)
+
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      const slug = attempt === 0 ? base : `${base}-${attempt + 1}`
+      let query = this.database.db.selectFrom('teams').select('id').where('slug', '=', slug)
+
+      if (excludeTeamId) {
+        query = query.where('id', '!=', excludeTeamId)
+      }
+
+      const existing = await query.executeTakeFirst()
+
+      if (!existing) {
+        return slug
+      }
+    }
+
+    return `${base}-${Date.now().toString(36)}`
+  }
 }
 
 function toTeamListItem(team: TeamListRow): TeamListItem {
@@ -216,6 +312,14 @@ function buildTeamSlug(name: string) {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '') || 'team'
   )
+}
+
+function normalizeTeamTag(tag: string) {
+  return tag.toUpperCase()
+}
+
+function isNumericIdentifier(identifier: string) {
+  return /^\d+$/.test(identifier)
 }
 
 function isTeamManagementRole(role: TeamMembershipRole) {

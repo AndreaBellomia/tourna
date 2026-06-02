@@ -269,11 +269,16 @@ function TeamTile({
   return (
     <Link
       className="group rounded-lg border border-border bg-card p-4 transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-accent/60 hover:shadow-md"
-      href={withLocale(locale, `/teams/${team.id}`)}
+      href={withLocale(locale, `/teams/${team.slug}`)}
     >
       <div className="flex items-start gap-3">
         <div className="flex size-12 shrink-0 items-center justify-center rounded-md bg-primary text-sm font-semibold text-primary-foreground">
-          {initials || 'TM'}
+          {team.logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img alt="" className="size-full rounded-md object-cover" src={team.logoUrl} />
+          ) : (
+            initials || 'TM'
+          )}
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
@@ -283,7 +288,9 @@ function TeamTile({
               className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
             />
           </div>
-          <p className="mt-1 truncate font-mono text-xs text-muted-foreground">@{team.slug}</p>
+          <p className="mt-1 truncate font-mono text-xs text-muted-foreground">
+            @{team.slug} · [{team.tag}]
+          </p>
         </div>
       </div>
 

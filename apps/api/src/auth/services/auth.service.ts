@@ -30,10 +30,16 @@ export class AuthService {
 
     const passwordHash = await this.hashPassword(dto.password)
     const displayName = this.buildDefaultDisplayName(dto.email)
+    const nickname = await this.buildAvailableNickname(displayName)
 
     const [user] = await this.db.db
       .insertInto('users')
-      .values({ email: dto.email, display_name: displayName, password_hash: passwordHash })
+      .values({
+        email: dto.email,
+        display_name: displayName,
+        nickname,
+        password_hash: passwordHash,
+      })
       .returning(['id'])
       .execute()
 
@@ -111,6 +117,26 @@ export class AuthService {
     return displayName.length >= 2 ? displayName : 'player'
   }
 
+  private async buildAvailableNickname(displayName: string): Promise<string> {
+    const base = normalizeNickname(displayName)
+
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      const nickname = attempt === 0 ? base : `${base}-${attempt + 1}`
+      const existing = await this.db.db
+        .selectFrom('users')
+        .select('id')
+        .where('nickname', '=', nickname)
+        .where('deleted_at', 'is', null)
+        .executeTakeFirst()
+
+      if (!existing) {
+        return nickname
+      }
+    }
+
+    return `${base}-${randomUUID().slice(0, 6)}`
+  }
+
   private async verifyPassword(password: string, stored: string): Promise<boolean> {
     const [salt, hash] = stored.split('$')
     if (!salt || !hash) return false
@@ -120,4 +146,15 @@ export class AuthService {
 
     return timingSafeEqual(hashBuffer, derived)
   }
+}
+
+function normalizeNickname(value: string): string {
+  const normalized = value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9_-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 32)
+
+  return normalized.length >= 2 ? normalized : 'player'
 }

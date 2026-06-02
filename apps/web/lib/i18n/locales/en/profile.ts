@@ -9,6 +9,8 @@ const profile = {
     description: 'These details power your public user page.',
     displayName: 'Display name',
     displayNamePlaceholder: 'Andrea Bellomia',
+    nickname: 'Nickname',
+    nicknamePlaceholder: 'andreab',
     bio: 'Markdown description',
     bioPlaceholder: '## Player profile\n\nRoles, favorite games, availability, and notes.',
     email: 'Account email',

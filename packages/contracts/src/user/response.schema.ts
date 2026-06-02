@@ -4,6 +4,7 @@ import { createCursorPaginatedResponseSchema } from '../pagination/cursor.schema
 export const UserSummarySchema = z.object({
   id: z.string(),
   display_name: z.string(),
+  nickname: z.string(),
   bio: z.string().nullable(),
   avatarObjectKey: z.string().nullable(),
   avatarUrl: z.string().url().nullable(),
