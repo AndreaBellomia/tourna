@@ -4,11 +4,13 @@ import { authCookieNames } from '../../auth/cookies'
 import { ApiError } from '../errors/api-error'
 import { unauthorized } from '../responses'
 import { apiRequest } from '../http'
+import type { Locale } from '../../i18n/config'
 import { refresh } from './auth.request'
 
 type ServerAuthenticatedRequestOptions = Omit<RequestInit, 'body' | 'headers'> & {
   body?: unknown
   headers?: HeadersInit
+  locale?: Locale
 }
 
 export async function authenticatedServerApiRequest<TSchema extends z.ZodType>(
@@ -55,6 +57,7 @@ function requestWithAccessToken<TSchema extends z.ZodType>(
       ...options.headers,
       Authorization: `Bearer ${accessToken}`,
     },
+    locale: options.locale,
   })
 }
 

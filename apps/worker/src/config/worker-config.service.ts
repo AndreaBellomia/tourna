@@ -26,6 +26,19 @@ export class WorkerConfigService {
     }
   }
 
+  getQueueConnectionSummary(): Omit<TournaQueueConnectionConfig, 'password'> & {
+    hasPassword: boolean
+  } {
+    const config = this.getQueueConnectionConfig()
+
+    return {
+      host: config.host,
+      port: config.port,
+      db: config.db,
+      hasPassword: Boolean(config.password),
+    }
+  }
+
   getBullMqConnection(): ConnectionOptions {
     return createBullMqConnection(this.getQueueConnectionConfig())
   }

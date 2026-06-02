@@ -1,4 +1,5 @@
 import { authenticatedApiRequest, jsonWithAuth } from '../../../lib/api/auth/authenticated-request'
+import { readLocaleFromHeaders } from '../../../lib/api/locale-header'
 import { teamEndpoints } from '../../../lib/api/teams/team.endpoint'
 import { ok } from '../../../lib/api/responses'
 import { listTeams } from '../../../lib/api/teams/team.request'
@@ -14,7 +15,7 @@ export const GET = withRouteHandler(async (request) => {
     Object.fromEntries(request.nextUrl.searchParams.entries()),
   )
 
-  const teams = await listTeams(query)
+  const teams = await listTeams(query, readLocaleFromHeaders(request.headers))
 
   return ok(teams)
 })

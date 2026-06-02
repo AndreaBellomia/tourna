@@ -4,6 +4,7 @@ import {
   createWorkerOptions,
   registerTournaCronJobs,
   TOURNA_QUEUE_NAMES,
+  TOURNA_CRON_JOBS,
   type TournaQueueName,
 } from '@repo/queue'
 import { QueueEvents, Worker, type Job } from 'bullmq'
@@ -32,6 +33,15 @@ export class WorkerManagerService implements OnApplicationBootstrap, OnModuleDes
   async onApplicationBootstrap(): Promise<void> {
     const connection = this.config.getBullMqConnection()
     const concurrency = this.config.getConcurrency()
+    const shouldRegisterCron = this.config.shouldRegisterCron()
+
+    this.logger.log({
+      message: 'BullMQ worker bootstrap starting',
+      redis: this.config.getQueueConnectionSummary(),
+      concurrency,
+      shouldRegisterCron,
+      cronJobCount: TOURNA_CRON_JOBS.length,
+    })
 
     this.registerWorker(
       TOURNA_QUEUE_NAMES.notifications,
@@ -50,15 +60,29 @@ export class WorkerManagerService implements OnApplicationBootstrap, OnModuleDes
       await Promise.resolve(this.maintenanceProcessor.process(job))
     })
 
-    if (this.config.shouldRegisterCron()) {
+    if (shouldRegisterCron) {
       const client = createTournaQueueClient(connection)
 
       try {
-        await registerTournaCronJobs(client)
-        this.logger.log('BullMQ cron jobs registered')
+        const registeredCronJobs = await registerTournaCronJobs(client)
+        this.logger.log({
+          message: 'BullMQ cron jobs registered',
+          cronJobs: registeredCronJobs,
+        })
       } finally {
         await client.close()
       }
+    } else {
+      this.logger.warn({
+        message: 'BullMQ cron registration skipped',
+        reason: 'WORKER_REGISTER_CRON is false',
+        expectedCronJobs: TOURNA_CRON_JOBS.map((cronJob) => ({
+          id: cronJob.id,
+          queueName: cronJob.queueName,
+          jobName: cronJob.jobName,
+          pattern: cronJob.pattern,
+        })),
+      })
     }
   }
 
@@ -78,12 +102,26 @@ export class WorkerManagerService implements OnApplicationBootstrap, OnModuleDes
     const worker = new Worker(queueName, processor, createWorkerOptions(connection, concurrency))
     const events = new QueueEvents(queueName, { connection })
 
+    worker.on('active', (job) => {
+      this.logger.log({
+        message: 'Job execution started',
+        queueName,
+        jobName: job.name,
+        jobId: job.id,
+        attemptsMade: job.attemptsMade,
+        timestamp: job.timestamp,
+      })
+    })
+
     worker.on('completed', (job) => {
       this.logger.log({
         message: 'Job completed',
         queueName,
         jobName: job.name,
         jobId: job.id,
+        attemptsMade: job.attemptsMade,
+        processedOn: job.processedOn,
+        finishedOn: job.finishedOn,
       })
     })
 
@@ -105,6 +143,23 @@ export class WorkerManagerService implements OnApplicationBootstrap, OnModuleDes
         message: 'Job stalled',
         queueName,
         jobId,
+      })
+    })
+
+    events.on('waiting', ({ jobId }) => {
+      this.logger.log({
+        message: 'Job waiting',
+        queueName,
+        jobId,
+      })
+    })
+
+    events.on('delayed', ({ jobId, delay }) => {
+      this.logger.log({
+        message: 'Job delayed',
+        queueName,
+        jobId,
+        delay,
       })
     })
 

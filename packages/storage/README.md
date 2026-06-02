@@ -20,6 +20,8 @@ Apps should compose this package through framework adapters instead of placing S
 4. Backend verifies the object exists, copies it to the final key, deletes the temporary object, and marks the upload finalized.
 5. A maintenance job calls orphan cleanup for expired pending uploads.
 
+Pending upload metadata expires automatically in Redis. Finalized upload metadata is also short-lived on purpose so successful uploads do not leave long-lived `storage:v1:upload:*` keys behind after the temporary object has already been removed.
+
 Temporary keys live under `tmp/{uploadId}/{filename}` in the target bucket.
 
 Final keys use:

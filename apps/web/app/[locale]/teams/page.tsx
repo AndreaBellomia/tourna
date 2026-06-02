@@ -30,7 +30,7 @@ export default async function TeamsPage({ params }: TeamsPageProps) {
 
   const messages = getMessages(locale)
   const initialPage = await getOptionalPageData(
-    () => listTeams({ limit: 12, direction: 'next' }),
+    () => listTeams({ limit: 12, direction: 'next' }, locale),
     null,
     { context: 'teams.list.initialPage' },
   )

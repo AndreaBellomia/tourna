@@ -30,7 +30,7 @@ export default async function UsersPage({ params }: UsersPageProps) {
 
   const messages = getMessages(locale)
   const initialPage = await getOptionalPageData(
-    () => listUsers({ limit: 12, direction: 'next' }),
+    () => listUsers({ limit: 12, direction: 'next' }, locale),
     null,
     { context: 'users.list.initialPage' },
   )

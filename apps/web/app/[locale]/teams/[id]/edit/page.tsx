@@ -33,7 +33,7 @@ export default async function EditTeamPage({ params }: EditTeamPageProps) {
   await requireAuthenticatedPage(locale)
 
   const messages = getMessages(locale)
-  const team = await getRequiredPageData(() => getTeam(id), {
+  const team = await getRequiredPageData(() => getTeam(id, locale), {
     context: `teams.edit.page:${id}`,
     notFoundStatuses: [403, 404],
     unauthorizedRedirectTo: withLocale(locale, '/login'),

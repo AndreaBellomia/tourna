@@ -8,6 +8,8 @@ async function bootstrap() {
     bufferLogs: true,
   })
 
+  app.useLogger(new Logger())
+  app.flushLogs()
   app.enableShutdownHooks()
 
   const logger = new Logger('WorkerBootstrap')

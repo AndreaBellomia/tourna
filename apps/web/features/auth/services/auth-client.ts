@@ -45,7 +45,7 @@ export async function submitAuth(
       schema: clientAuthResponseSchema,
       method: 'POST',
       headers: {
-        'x-tourna-locale': locale,
+        'x-locale': locale,
       },
       body: parsed.data,
       fallbackErrorMessage: messages.requestFailed,

@@ -1,15 +1,18 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import type { z } from 'zod'
 import type { AuthResponse } from '@repo/contracts/auth'
+import type { Locale } from '../../i18n/config'
 import { refresh } from './auth.request'
 import { ApiError } from '../errors/api-error'
 import { apiRequest } from '../http'
+import { readLocaleFromHeaders, setLocaleHeaders } from '../locale-header'
 import { unauthorized } from '../responses'
 import { readRequestAuthTokens, setAuthCookies } from '../../auth/session'
 
 type AuthenticatedRequestOptions = Omit<RequestInit, 'body' | 'headers'> & {
   body?: unknown
   headers?: HeadersInit
+  locale?: Locale
 }
 
 export type AuthenticatedApiResult<T> = {
@@ -41,7 +44,7 @@ export async function authenticatedApiRequest<TSchema extends z.ZodType>(
 
   try {
     return {
-      data: await requestWithAccessToken(path, schema, accessToken, options),
+      data: await requestWithAccessToken(request, path, schema, accessToken, options),
       auth,
     }
   } catch (error) {
@@ -57,7 +60,7 @@ export async function authenticatedApiRequest<TSchema extends z.ZodType>(
     auth = await refresh(tokens.refreshToken)
 
     return {
-      data: await requestWithAccessToken(path, schema, auth.accessToken, options),
+      data: await requestWithAccessToken(request, path, schema, auth.accessToken, options),
       auth,
     }
   }
@@ -73,7 +76,7 @@ export async function optionalAuthenticatedApiRequest<TSchema extends z.ZodType>
 
   if (!tokens.refreshToken) {
     return {
-      data: await apiRequest(path, schema, options),
+      data: await apiRequest(path, schema, withRequestLocale(request, options)),
     }
   }
 
@@ -84,7 +87,7 @@ export async function optionalAuthenticatedApiRequest<TSchema extends z.ZodType>
       console.warn('[auth] optional authenticated request fell back to public view', { path })
 
       return {
-        data: await apiRequest(path, schema, options),
+        data: await apiRequest(path, schema, withRequestLocale(request, options)),
       }
     }
 
@@ -103,18 +106,32 @@ export function jsonWithAuth<T>(result: AuthenticatedApiResult<T>, init?: Respon
 }
 
 function requestWithAccessToken<TSchema extends z.ZodType>(
+  request: NextRequest,
   path: string,
   schema: TSchema,
   accessToken: string,
   options: AuthenticatedRequestOptions,
 ) {
+  const headers = new Headers(options.headers)
+  setLocaleHeaders(headers, readLocaleFromHeaders(request.headers))
+
   return apiRequest(path, schema, {
     ...options,
     headers: {
-      ...options.headers,
+      ...Object.fromEntries(headers.entries()),
       Authorization: `Bearer ${accessToken}`,
     },
   })
+}
+
+function withRequestLocale(
+  request: NextRequest,
+  options: AuthenticatedRequestOptions,
+): AuthenticatedRequestOptions {
+  return {
+    ...options,
+    locale: readLocaleFromHeaders(request.headers),
+  }
 }
 
 function shouldRefreshAfterError(error: unknown): error is ApiError {

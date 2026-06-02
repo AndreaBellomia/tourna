@@ -57,7 +57,7 @@ export async function getEmailTranslator<TNamespace extends EmailI18nNamespace>(
   namespace: TNamespace,
 ): Promise<EmailNamespaceTranslator<TNamespace>> {
   const instance = await getEmailI18n()
-  const translator = instance.getFixedT(locale, namespace)
+  const translator = instance.getFixedT(locale, namespace as never)
 
   return (key, values) => translator(key as never, values as never) as unknown as string
 }

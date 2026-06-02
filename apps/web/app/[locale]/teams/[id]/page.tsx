@@ -13,7 +13,7 @@ type TeamPageProps = {
 export async function generateMetadata({ params }: TeamPageProps): Promise<Metadata> {
   const { locale, id } = await params
   const messages = getMessages(resolveLocale(locale))
-  const team = await getOptionalPageData(() => getTeam(id), null, {
+  const team = await getOptionalPageData(() => getTeam(id, resolveLocale(locale)), null, {
     context: `teams.detail.metadata:${id}`,
   })
 
@@ -31,7 +31,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
   }
 
   const messages = getMessages(locale)
-  const team = await getRequiredPageData(() => getTeam(id), {
+  const team = await getRequiredPageData(() => getTeam(id, locale), {
     context: `teams.detail.page:${id}`,
     notFoundStatuses: [403, 404],
   })

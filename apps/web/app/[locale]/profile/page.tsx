@@ -32,7 +32,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   await requireAuthenticatedPage(locale)
 
   const messages = getMessages(locale)
-  const profile = await getRequiredPageData(() => getProfile(), {
+  const profile = await getRequiredPageData(() => getProfile(locale), {
     context: `profile.page`,
     notFoundStatuses: [403, 404],
     unauthorizedRedirectTo: withLocale(locale, '/login'),

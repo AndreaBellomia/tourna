@@ -6,10 +6,12 @@ import {
 import { profileEndpoints } from './profile.endpoint'
 import { apiRequest } from '../http'
 import { authenticatedServerApiRequest } from '../auth/server-authenticated-request'
+import type { Locale } from '../../i18n/config'
 
-export function getProfile() {
+export function getProfile(locale?: Locale) {
   return authenticatedServerApiRequest(profileEndpoints.getProfile, ProfileSummaryResponseSchema, {
     cache: 'no-store',
+    locale,
   })
 }
 

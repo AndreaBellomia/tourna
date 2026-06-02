@@ -21,7 +21,7 @@ export class UploadTracker {
     return this.engine.kv.get(PendingUploadModel, uploadId)
   }
 
-  async finalize(upload: PendingUpload): Promise<void> {
+  async finalize(upload: PendingUpload, ttlSeconds: number): Promise<void> {
     const finalizedUpload: PendingUpload = {
       ...upload,
       status: 'finalized',
@@ -33,7 +33,7 @@ export class UploadTracker {
     tx.zset.zrem(PendingUploadExpiryIndexModel, upload.uploadId)
 
     await tx.exec()
-    await this.setUpload(finalizedUpload, 60 * 60 * 24)
+    await this.setUpload(finalizedUpload, ttlSeconds)
   }
 
   async remove(uploadId: string): Promise<void> {

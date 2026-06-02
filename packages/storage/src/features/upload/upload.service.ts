@@ -25,6 +25,7 @@ export interface StorageUploadServiceOptions {
   publicBaseUrl?: string
   uploadTtlSeconds: number
   readTtlSeconds: number
+  finalizedUploadTtlSeconds?: number
 }
 
 export interface CreatePresignedUploadInput {
@@ -42,6 +43,8 @@ export interface CleanupOrphanUploadsResult {
   deleted: number
   missing: number
 }
+
+const DEFAULT_FINALIZED_UPLOAD_TTL_SECONDS = 5 * 60
 
 export class StorageUploadService {
   constructor(
@@ -146,7 +149,7 @@ export class StorageUploadService {
       }),
     )
 
-    await this.tracker.finalize(upload)
+    await this.tracker.finalize(upload, this.options.finalizedUploadTtlSeconds ?? DEFAULT_FINALIZED_UPLOAD_TTL_SECONDS)
 
     return this.toObjectDescriptor(upload, head.ContentLength)
   }

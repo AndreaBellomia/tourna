@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { appendClientQuery, type ClientQueryParams } from './client-query'
 import { ClientApiError, isUnauthorizedClientApiError } from './client-api-error'
 import { redirectBrowserToLogin } from './client-navigation'
+import { resolveClientLocale, setLocaleHeaders } from '../../../lib/api/locale-header'
 
 type ClientApiRequestOptions<TSchema extends z.ZodType> = Omit<RequestInit, 'body' | 'headers'> & {
   path: string
@@ -54,6 +55,10 @@ function createJsonHeaders(headers: HeadersInit | undefined, body: unknown) {
 
   if (body !== undefined && !requestHeaders.has('Content-Type')) {
     requestHeaders.set('Content-Type', 'application/json')
+  }
+
+  if (!requestHeaders.has('x-locale') && !requestHeaders.has('x-tourna-locale')) {
+    setLocaleHeaders(requestHeaders, resolveClientLocale())
   }
 
   return requestHeaders

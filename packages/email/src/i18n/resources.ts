@@ -1,51 +1,37 @@
 import type { EmailLocale } from './config'
-import { emailShellMessages, type EmailShellResource } from './shell.messages'
-import {
-  welcomeEmailMessages,
-  type WelcomeEmailMessageResource,
-} from '../templates/account/welcome.messages'
+import type { TranslationResourceShape } from './resource-shape'
+import { emailShellMessages } from './shell.messages'
+import { welcomeEmailMessages } from '../templates/account/welcome.messages'
 import {
   tournamentReportReadyEmailMessages,
-  type TournamentReportReadyEmailMessageResource,
 } from '../templates/reports/tournament-report-ready.messages'
 
-interface EmailAccountResource {
-  welcome: WelcomeEmailMessageResource
-}
+const defaultEmailI18nResource = {
+  shell: emailShellMessages.en,
+  account: {
+    welcome: welcomeEmailMessages.en,
+  },
+  reports: {
+    tournamentReportReady: tournamentReportReadyEmailMessages.en,
+  },
+} as const
 
-interface EmailReportsResource {
-  tournamentReportReady: TournamentReportReadyEmailMessageResource
-}
+export type EmailI18nResourceShape = TranslationResourceShape<typeof defaultEmailI18nResource>
+export type EmailI18nNamespace = keyof EmailI18nResourceShape
+
+const italianEmailI18nResource = {
+  shell: emailShellMessages.it,
+  account: {
+    welcome: welcomeEmailMessages.it,
+  },
+  reports: {
+    tournamentReportReady: tournamentReportReadyEmailMessages.it,
+  },
+} as const satisfies EmailI18nResourceShape
 
 export const emailI18nResources = {
-  it: {
-    shell: emailShellMessages.it,
-    account: {
-      welcome: welcomeEmailMessages.it,
-    },
-    reports: {
-      tournamentReportReady: tournamentReportReadyEmailMessages.it,
-    },
-  },
-  en: {
-    shell: emailShellMessages.en,
-    account: {
-      welcome: welcomeEmailMessages.en,
-    },
-    reports: {
-      tournamentReportReady: tournamentReportReadyEmailMessages.en,
-    },
-  },
-} as const satisfies Record<
-  EmailLocale,
-  {
-    shell: EmailShellResource
-    account: EmailAccountResource
-    reports: EmailReportsResource
-  }
->
+  en: defaultEmailI18nResource,
+  it: italianEmailI18nResource,
+} as const satisfies Record<EmailLocale, EmailI18nResourceShape>
 
-export const emailI18nNamespaces = ['shell', 'account', 'reports'] as const
-
-export type EmailI18nNamespace = (typeof emailI18nNamespaces)[number]
-export type EmailI18nResourceShape = (typeof emailI18nResources)['it']
+export const emailI18nNamespaces = Object.keys(defaultEmailI18nResource) as EmailI18nNamespace[]

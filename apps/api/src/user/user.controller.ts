@@ -4,6 +4,7 @@ import type { UserDetailResponse, UserListResponse } from '@repo/contracts'
 import { UserDetailResponseDto, UserListQueryDto, UserListResponseDto } from '@repo/contracts/nest'
 import { Public } from '../common/decorators/public.decorator'
 import { UserService } from './user.service'
+import { ApiCache } from 'src/cache/decorators'
 
 @Public()
 @Controller('users')
@@ -18,6 +19,11 @@ export class UserController {
   }
 
   @Get(':id')
+  @ApiCache({
+    namespace: 'user',
+    ttl: 60,
+    key: (request) => [request.params?.id ?? ''],
+  })
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: UserDetailResponseDto })
   async getUser(@Param('id') id: string): Promise<UserDetailResponse> {

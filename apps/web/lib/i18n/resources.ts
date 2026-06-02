@@ -16,263 +16,42 @@ import itProfile from './locales/it/profile'
 import itTeams from './locales/it/teams'
 import itUsers from './locales/it/users'
 
-interface MetadataResource {
-  appName: string
-  template: string
-  description: string
-  loginTitle: string
-  loginDescription: string
-  dashboardTitle: string
-  dashboardDescription: string
-}
+type TranslationResourceShape<TValue> = TValue extends string
+  ? string
+  : TValue extends ReadonlyArray<infer TItem>
+    ? ReadonlyArray<TranslationResourceShape<TItem>>
+    : {
+        readonly [TKey in keyof TValue]: TranslationResourceShape<TValue[TKey]>
+      }
 
-interface AuthResource {
-  badge: string
-  version: string
-  login: {
-    tab: string
-    title: string
-    description: string
-    action: string
-  }
-  signup: {
-    tab: string
-    title: string
-    description: string
-    action: string
-  }
-  fields: {
-    email: string
-    emailPlaceholder: string
-    password: string
-    passwordPlaceholder: string
-  }
-  errors: {
-    invalidData: string
-    invalidCredentials: string
-    requestFailed: string
-    email: string
-    password: string
-  }
-}
+const defaultWebI18nResource = {
+  metadata: enMetadata,
+  common: enCommon,
+  auth: enAuth,
+  loginPage: enLoginPage,
+  dashboard: enDashboard,
+  teams: enTeams,
+  profile: enProfile,
+  users: enUsers,
+} as const
 
-interface CommonResource {
-  product: string
-  subtitle: string
-  nav: {
-    dashboard: string
-    teams: string
-    users: string
-    profile: string
-  }
-}
+export type WebI18nResourceShape = TranslationResourceShape<typeof defaultWebI18nResource>
+export type WebI18nNamespace = keyof WebI18nResourceShape
 
-interface LoginPageResource {
-  product: string
-  liveReady: string
-  eyebrow: string
-  title: string
-  description: string
-  matchMonitor: string
-  bracketFlow: string
-  bracket: {
-    winner: string
-    final: string
-  }
-  liveMatches: ReadonlyArray<{
-    game: string
-    stage: string
-    teams: string
-    score: string
-  }>
-}
-
-interface DashboardResource {
-  product: string
-  logout: string
-  stats: {
-    tournaments: string
-    liveMatches: string
-    session: string
-  }
-  setupBadge: string
-  title: string
-  description: string
-  sessionFallback: string
-}
-
-interface TeamsResource {
-  nav: {
-    dashboard: string
-    teams: string
-    logout: string
-  }
-  metadata: {
-    title: string
-    description: string
-  }
-  list: {
-    eyebrow: string
-    title: string
-    description: string
-    search: string
-    searchPlaceholder: string
-    visibility: string
-    allVisibilities: string
-    create: string
-    reset: string
-    loadMore: string
-    loading: string
-    emptyTitle: string
-    emptyDescription: string
-    unavailable: string
-  }
-  form: {
-    title: string
-    description: string
-    name: string
-    namePlaceholder: string
-    tag: string
-    tagPlaceholder: string
-    logo: string
-    logoHelp: string
-    uploadLogo: string
-    removeLogo: string
-    uploadFailed: string
-    summary: string
-    summaryPlaceholder: string
-    visibility: string
-    submit: string
-    success: string
-    invalid: string
-    failed: string
-  }
-  detail: {
-    back: string
-    overview: string
-    settings: string
-    members: string
-    permissions: string
-    status: string
-    created: string
-    editTitle: string
-    editDescription: string
-    membersTitle: string
-    membersDescription: string
-    emptyMembers: string
-    permissionsTitle: string
-    permissionsDescription: string
-    disabledAction: string
-  }
-  visibility: {
-    private: string
-    unlisted: string
-    public: string
-  }
-}
-
-interface ProfileResource {
-  metadata: {
-    title: string
-    description: string
-  }
-  form: {
-    eyebrow: string
-    title: string
-    description: string
-    displayName: string
-    displayNamePlaceholder: string
-    nickname: string
-    nicknamePlaceholder: string
-    bio: string
-    bioPlaceholder: string
-    email: string
-    avatar: string
-    avatarHelp: string
-    upload: string
-    removeAvatar: string
-    save: string
-    saved: string
-    failed: string
-    invalid: string
-    uploadFailed: string
-    editMode: string
-    previewMode: string
-    emptyPreview: string
-    publicProfile: string
-  }
-}
-
-interface UsersResource {
-  metadata: {
-    title: string
-    description: string
-  }
-  list: {
-    eyebrow: string
-    title: string
-    description: string
-    search: string
-    searchPlaceholder: string
-    reset: string
-    loadMore: string
-    emptyTitle: string
-    emptyDescription: string
-    unavailable: string
-  }
-  detail: {
-    back: string
-    overview: string
-    joined: string
-    emptyBio: string
-  }
-}
+const italianWebI18nResource = {
+  metadata: itMetadata,
+  common: itCommon,
+  auth: itAuth,
+  loginPage: itLoginPage,
+  dashboard: itDashboard,
+  teams: itTeams,
+  profile: itProfile,
+  users: itUsers,
+} as const satisfies WebI18nResourceShape
 
 export const webI18nResources = {
-  it: {
-    metadata: itMetadata,
-    common: itCommon,
-    auth: itAuth,
-    loginPage: itLoginPage,
-    dashboard: itDashboard,
-    teams: itTeams,
-    profile: itProfile,
-    users: itUsers,
-  },
-  en: {
-    metadata: enMetadata,
-    common: enCommon,
-    auth: enAuth,
-    loginPage: enLoginPage,
-    dashboard: enDashboard,
-    teams: enTeams,
-    profile: enProfile,
-    users: enUsers,
-  },
-} as const satisfies Record<
-  Locale,
-  {
-    metadata: MetadataResource
-    common: CommonResource
-    auth: AuthResource
-    loginPage: LoginPageResource
-    dashboard: DashboardResource
-    teams: TeamsResource
-    profile: ProfileResource
-    users: UsersResource
-  }
->
+  en: defaultWebI18nResource,
+  it: italianWebI18nResource,
+} as const satisfies Record<Locale, WebI18nResourceShape>
 
-export const webI18nNamespaces = [
-  'metadata',
-  'common',
-  'auth',
-  'loginPage',
-  'dashboard',
-  'teams',
-  'profile',
-  'users',
-] as const
-
-export type WebI18nNamespace = (typeof webI18nNamespaces)[number]
-export type WebI18nResourceShape = (typeof webI18nResources)['it']
+export const webI18nNamespaces = Object.keys(defaultWebI18nResource) as WebI18nNamespace[]

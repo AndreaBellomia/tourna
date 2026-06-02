@@ -1,7 +1,7 @@
 import { renderEmail } from './render-email'
 
 describe('renderEmail', () => {
-  it('renders italian html and text by default for a registered template', async () => {
+  it('renders english html and text by default for a registered template', async () => {
     const email = await renderEmail({
       template: 'welcome',
       data: {
@@ -10,12 +10,12 @@ describe('renderEmail', () => {
       },
     })
 
-    expect(email.subject).toBe('Benvenuto su Tourna, Andrea')
-    expect(email.html).toContain('Benvenuto, Andrea')
+    expect(email.subject).toBe('Welcome to Tourna, Andrea')
+    expect(email.html).toContain('Welcome, Andrea')
     expect(email.text).toContain('https://tourna.test/dashboard')
   })
 
-  it('renders english html and text when locale is en', async () => {
+  it('renders italian html and text when locale is it', async () => {
     const email = await renderEmail(
       {
         template: 'welcome',
@@ -24,12 +24,12 @@ describe('renderEmail', () => {
           dashboardUrl: 'https://tourna.test/dashboard',
         },
       },
-      'en',
+      'it',
     )
 
-    expect(email.subject).toBe('Welcome to Tourna, Andrea')
-    expect(email.html).toContain('Welcome, Andrea')
-    expect(email.text).toContain('Open Tourna: https://tourna.test/dashboard')
+    expect(email.subject).toBe('Benvenuto su Tourna, Andrea')
+    expect(email.html).toContain('Benvenuto, Andrea')
+    expect(email.text).toContain('Apri Tourna: https://tourna.test/dashboard')
   })
 
   it('renders localized report emails in english', async () => {

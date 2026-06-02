@@ -38,6 +38,8 @@ Add the schedule to `TOURNA_CRON_JOBS` in `src/schedulers.ts`. Cron jobs should 
 
 Cron processors live in the worker, not the API.
 
+Cron registration uses BullMQ job schedulers with `immediately: true`, so a worker that owns cron registration creates a first delayed/ready job during startup instead of waiting silently for the next cron boundary. Scheduler templates should reuse the target job definition defaults so retry and cleanup behavior stays consistent with manually enqueued jobs.
+
 ## Naming Rules
 
 - Queue names: `tourna.<domain>`

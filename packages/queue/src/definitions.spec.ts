@@ -34,7 +34,7 @@ describe('Tourna queue definitions', () => {
       },
     })
 
-    expect(payload.locale).toBe('it')
+    expect(payload.locale).toBe('en')
   })
 
   it('rejects unknown job names', () => {

@@ -13,7 +13,7 @@ type UserPageProps = {
 export async function generateMetadata({ params }: UserPageProps): Promise<Metadata> {
   const { locale, id } = await params
   const messages = getMessages(resolveLocale(locale))
-  const user = await getOptionalPageData(() => getUser(id), null, {
+  const user = await getOptionalPageData(() => getUser(id, resolveLocale(locale)), null, {
     context: `users.detail.metadata:${id}`,
   })
 
@@ -33,7 +33,7 @@ export default async function UserPage({ params }: UserPageProps) {
   }
 
   const messages = getMessages(locale)
-  const user = await getRequiredPageData(() => getUser(id), {
+  const user = await getRequiredPageData(() => getUser(id, locale), {
     context: `users.detail.page:${id}`,
     notFoundStatuses: [403, 404],
   })

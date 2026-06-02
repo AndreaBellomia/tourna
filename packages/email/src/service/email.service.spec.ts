@@ -66,8 +66,8 @@ describe('EmailService', () => {
     expect(provider.send).toHaveBeenCalledWith(
       expect.objectContaining({
         email: expect.objectContaining({
-          subject: 'Benvenuto su Tourna, Andrea',
-          text: expect.stringContaining('Apri Tourna: https://tourna.test/dashboard'),
+          subject: 'Welcome to Tourna, Andrea',
+          text: expect.stringContaining('Open Tourna: https://tourna.test/dashboard'),
         }),
       }),
     )

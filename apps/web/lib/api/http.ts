@@ -1,9 +1,12 @@
 import { z } from 'zod'
 import { apiUrl } from './endpoints'
 import { ApiError } from './errors/api-error'
+import { setLocaleHeaders } from './locale-header'
+import type { Locale } from '../i18n/config'
 
 type ApiRequestOptions = Omit<RequestInit, 'body'> & {
   body?: unknown
+  locale?: Locale
 }
 
 export async function apiRequest<TSchema extends z.ZodType>(
@@ -11,13 +14,16 @@ export async function apiRequest<TSchema extends z.ZodType>(
   schema: TSchema,
   options: ApiRequestOptions = {},
 ): Promise<z.infer<TSchema>> {
+  const headers = new Headers(options.headers)
+  setDefaultJsonHeaders(headers)
+
+  if (options.locale) {
+    setLocaleHeaders(headers, options.locale)
+  }
+
   const response = await fetch(apiUrl(path), {
     ...options,
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
+    headers,
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
   })
 
@@ -35,6 +41,16 @@ export async function apiRequest<TSchema extends z.ZodType>(
   }
 
   return schema.parse(payload)
+}
+
+function setDefaultJsonHeaders(headers: Headers) {
+  if (!headers.has('Accept')) {
+    headers.set('Accept', 'application/json')
+  }
+
+  if (!headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json')
+  }
 }
 
 function readErrorMessage(payload: unknown, fallback: string) {
