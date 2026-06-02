@@ -1,19 +1,16 @@
-import { NextResponse, type NextRequest } from "next/server"
-import { authCookieNames } from "./lib/auth/cookies"
-import { defaultLocale, isLocale, withLocale } from "./lib/i18n/config"
+import { NextResponse, type NextRequest } from 'next/server'
+import { createLocaleRedirectResponse } from './middlewares/locale.middleware'
 
 export function proxy(request: NextRequest) {
-  const hasAccessToken = request.cookies.has(authCookieNames.accessToken)
-  const [, maybeLocale, section] = request.nextUrl.pathname.split("/")
-  const locale = maybeLocale && isLocale(maybeLocale) ? maybeLocale : defaultLocale
+  const localeRedirectResponse = createLocaleRedirectResponse(request)
 
-  if (section === "dashboard" && !hasAccessToken) {
-    return NextResponse.redirect(new URL(withLocale(locale, "/login"), request.url))
+  if (localeRedirectResponse) {
+    return localeRedirectResponse
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ["/:locale/dashboard/:path*"],
+  matcher: ['/:path*'],
 }

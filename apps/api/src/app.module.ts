@@ -14,6 +14,8 @@ import { StorageModule } from './storage/storage.module'
 import { ApiCacheInterceptor } from './cache/api-cache.interceptor'
 import { TeamModule } from './team/team.module'
 import { ErrorModule } from './error/error.module'
+import { ProfileModule } from './profile/profile.module'
+import { UserModule } from './user/user.module'
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { ErrorModule } from './error/error.module'
     StorageModule,
     TeamModule,
     ErrorModule,
+    ProfileModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [

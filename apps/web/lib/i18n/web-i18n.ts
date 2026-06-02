@@ -46,7 +46,7 @@ function createWebI18n(): i18n {
       escapeValue: false,
     },
     initImmediate: false,
-  })
+  } as never)
 
   return instance
 }

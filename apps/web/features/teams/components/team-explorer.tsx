@@ -3,7 +3,17 @@
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
-import { ArrowRight, CheckCircle2, Filter, Plus, Search, Shield, Users } from 'lucide-react'
+import {
+  ArrowRight,
+  CheckCircle2,
+  Filter,
+  Plus,
+  Search,
+  Shield,
+  SlidersHorizontal,
+  Users,
+  X,
+} from 'lucide-react'
 import { Badge } from '@repo/ui/badge'
 import { Button } from '@repo/ui/button'
 import { Input } from '@repo/ui/input'
@@ -40,6 +50,7 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
   const searchForm = useForm<SearchValues>({
     defaultValues: { search: '', visibility: 'all' },
   })
+  const searchValue = searchForm.watch('search')
 
   const queryFromValues = useCallback((values: SearchValues, cursor?: string) => {
     return {
@@ -138,58 +149,72 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
       </div>
 
       <form
-        className="grid gap-3 rounded-lg border border-border bg-card p-4 md:grid-cols-[minmax(0,1fr)_190px_auto_auto]"
+        className="rounded-lg border border-border bg-card p-3 shadow-sm"
         onSubmit={(event) => void searchForm.handleSubmit(loadFirstPage)(event)}
       >
-        <div className="space-y-2">
-          <Label htmlFor="team-search">{messages.list.search}</Label>
-          <div className="relative">
-            <Search
-              aria-hidden="true"
-              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-            />
-            <Input
-              id="team-search"
-              placeholder={messages.list.searchPlaceholder}
-              className="pl-9"
-              {...searchForm.register('search')}
-            />
+        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_220px_auto] lg:items-end">
+          <div className="space-y-2">
+            <Label className="inline-flex items-center gap-2" htmlFor="team-search">
+              <SlidersHorizontal aria-hidden="true" className="size-4 text-accent" />
+              {messages.list.search}
+            </Label>
+            <div className="relative">
+              <Search
+                aria-hidden="true"
+                className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+              />
+              <Input
+                id="team-search"
+                placeholder={messages.list.searchPlaceholder}
+                className="h-11 pr-11 pl-9"
+                {...searchForm.register('search')}
+              />
+              {searchValue ? (
+                <Button
+                  aria-label="Clear search"
+                  className="absolute right-1 top-1/2 size-9 -translate-y-1/2"
+                  size="icon"
+                  type="button"
+                  variant="ghost"
+                  onClick={() => {
+                    const values = { ...activeQueryRef.current, search: '' }
+                    searchForm.reset(values)
+                    loadFirstPage(values)
+                  }}
+                >
+                  <X aria-hidden="true" className="size-4" />
+                </Button>
+              ) : null}
+            </div>
           </div>
-        </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="team-visibility">{messages.list.visibility}</Label>
-          <div className="relative">
-            <Filter
-              aria-hidden="true"
-              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-            />
-            <Select id="team-visibility" className="pl-9" {...searchForm.register('visibility')}>
-              <option value="all">{messages.list.allVisibilities}</option>
-              {visibilityOptions.map((visibility) => (
-                <option key={visibility} value={visibility}>
-                  {messages.visibility[visibility]}
-                </option>
-              ))}
-            </Select>
+          <div className="space-y-2">
+            <Label htmlFor="team-visibility">{messages.list.visibility}</Label>
+            <div className="relative">
+              <Filter
+                aria-hidden="true"
+                className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+              />
+              <Select
+                id="team-visibility"
+                className="h-11 pl-9"
+                {...searchForm.register('visibility')}
+              >
+                <option value="all">{messages.list.allVisibilities}</option>
+                {visibilityOptions.map((visibility) => (
+                  <option key={visibility} value={visibility}>
+                    {messages.visibility[visibility]}
+                  </option>
+                ))}
+              </Select>
+            </div>
           </div>
-        </div>
 
-        <Button className="self-end" loading={isPending} type="submit">
-          <Search aria-hidden="true" className="size-4" />
-          {messages.list.search}
-        </Button>
-        <Button
-          className="self-end"
-          type="button"
-          variant="outline"
-          onClick={() => {
-            searchForm.reset({ search: '', visibility: 'all' })
-            loadFirstPage({ search: '', visibility: 'all' })
-          }}
-        >
-          {messages.list.reset}
-        </Button>
+          <Button className="h-11 lg:w-44" loading={isPending} type="submit">
+            <Search aria-hidden="true" className="size-4" />
+            {messages.list.search}
+          </Button>
+        </div>
       </form>
 
       {error ? (

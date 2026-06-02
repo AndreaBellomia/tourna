@@ -25,6 +25,8 @@ import { STORAGE_CLIENT } from './storage.tokens'
 @Injectable()
 export class StorageService implements OnModuleDestroy {
   private readonly uploads: StorageUploadService
+  private readonly publicBaseUrl?: string
+  private readonly publicBucket: string
 
   constructor(
     @Inject(STORAGE_CLIENT)
@@ -32,12 +34,14 @@ export class StorageService implements OnModuleDestroy {
     redis: RedisService,
     config: AppConfigService,
   ) {
+    this.publicBaseUrl = config.get('STORAGE_PUBLIC_BASE_URL')
+    this.publicBucket = config.get('STORAGE_PUBLIC_BUCKET')
     this.uploads = new StorageUploadService(this.client, new UploadTracker(redis.getClient()), {
       buckets: {
-        publicAssets: config.get('STORAGE_PUBLIC_BUCKET'),
+        publicAssets: this.publicBucket,
         privateAssets: config.get('STORAGE_PRIVATE_BUCKET'),
       },
-      publicBaseUrl: config.get('STORAGE_PUBLIC_BASE_URL'),
+      publicBaseUrl: this.publicBaseUrl,
       uploadTtlSeconds: config.get('STORAGE_UPLOAD_TTL_SECONDS'),
       readTtlSeconds: config.get('STORAGE_READ_TTL_SECONDS'),
     })
@@ -65,6 +69,23 @@ export class StorageService implements OnModuleDestroy {
 
   createPresignedReadUrl(input: CreatePresignedReadInput): Promise<PresignedReadDescriptor> {
     return this.uploads.createPresignedReadUrl(input)
+  }
+
+  async createPublicObjectReadUrl(key: string | null | undefined): Promise<string | null> {
+    if (!key) {
+      return null
+    }
+
+    if (this.publicBaseUrl) {
+      return `${this.publicBaseUrl.replace(/\/$/, '')}/${key}`
+    }
+
+    const read = await this.createPresignedReadUrl({
+      bucket: this.publicBucket,
+      key,
+    })
+
+    return read.url
   }
 
   cleanupOrphanUploads(limit?: number): Promise<CleanupOrphanUploadsResult> {

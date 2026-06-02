@@ -17,7 +17,8 @@ import {
 } from '@repo/contracts'
 import { type Locale, withLocale } from '../../../lib/i18n/config'
 import type { Messages } from '../../../lib/i18n/web-i18n'
-import { readZodFieldErrors, submitTeam, updateTeam } from '../services/team-client'
+import { readZodFieldErrors } from '../../common/services/client-validation'
+import { submitTeam, updateTeam } from '../services/team-client'
 import { MarkdownContent } from './markdown-content'
 
 const visibilityOptions = ['private', 'unlisted', 'public'] as const

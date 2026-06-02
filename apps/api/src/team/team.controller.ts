@@ -36,11 +36,11 @@ export class TeamController {
   @Get()
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: TeamListResponseDto })
-  getTeams(
+  async getTeams(
     @CurrentUser() user: JwtPayload | undefined,
     @Query() query: TeamListQueryDto,
   ): Promise<TeamListResponse> {
-    return this.teamService.getTeams(query, user?.userId)
+    return await this.teamService.getTeams(query, user?.userId)
   }
 
   @Public()

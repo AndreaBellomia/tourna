@@ -1,8 +1,10 @@
-import { LoginSchema, SignupSchema, type LoginInput, type SignupInput } from "@repo/contracts/auth"
-import { z } from "zod"
-import { type Locale } from "../../../lib/i18n/config"
+import { LoginSchema, SignupSchema, type LoginInput, type SignupInput } from '@repo/contracts/auth'
+import { z } from 'zod'
+import { ClientApiError } from '../../common/services/client-api-error'
+import { clientApiRequest } from '../../common/services/client-api'
+import { type Locale } from '../../../lib/i18n/config'
 
-type AuthMode = "login" | "signup"
+type AuthMode = 'login' | 'signup'
 
 export type AuthClientResult =
   | { ok: true; sessionId: string }
@@ -26,7 +28,7 @@ export async function submitAuth(
   locale: Locale,
   messages: AuthErrorMessages,
 ): Promise<AuthClientResult> {
-  const schema = mode === "login" ? LoginSchema : SignupSchema
+  const schema = mode === 'login' ? LoginSchema : SignupSchema
   const parsed = schema.safeParse(values)
 
   if (!parsed.success) {
@@ -37,43 +39,46 @@ export async function submitAuth(
     }
   }
 
-  const response = await fetch(`/api/auth/${mode}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-tourna-locale": locale,
-    },
-    body: JSON.stringify(parsed.data),
-  })
+  try {
+    const auth = await clientApiRequest({
+      path: `/api/auth/${mode}`,
+      schema: clientAuthResponseSchema,
+      method: 'POST',
+      headers: {
+        'x-tourna-locale': locale,
+      },
+      body: parsed.data,
+      fallbackErrorMessage: messages.requestFailed,
+      redirectToLoginOnUnauthorized: false,
+    })
 
-  const payload: unknown = await response.json().catch(() => ({}))
+    return { ok: true, sessionId: auth.sessionId }
+  } catch (error) {
+    if (!(error instanceof ClientApiError)) {
+      throw error
+    }
 
-  if (!response.ok) {
     return {
       ok: false,
-      message: readErrorMessage(payload, messages),
-      issues: translateFieldErrors(readIssues(payload), messages),
+      message: readErrorMessage(error, messages),
+      issues: translateFieldErrors(readIssues(error), messages),
     }
   }
-
-  const auth = clientAuthResponseSchema.parse(payload)
-
-  return { ok: true, sessionId: auth.sessionId }
 }
 
-function readErrorMessage(payload: unknown, messages: AuthErrorMessages) {
-  if (payload && typeof payload === "object" && "message" in payload && typeof payload.message === "string") {
-    return payload.message.toLowerCase().includes("credential")
+function readErrorMessage(error: ClientApiError, messages: AuthErrorMessages) {
+  if (error.message) {
+    return error.message.toLowerCase().includes('credential')
       ? messages.invalidCredentials
-      : payload.message
+      : error.message
   }
 
   return messages.requestFailed
 }
 
-function readIssues(payload: unknown) {
-  if (payload && typeof payload === "object" && "issues" in payload) {
-    return payload.issues as Record<string, string[]>
+function readIssues(error: ClientApiError) {
+  if (error.details && typeof error.details === 'object' && 'issues' in error.details) {
+    return error.details.issues as Record<string, string[]>
   }
 
   return undefined
@@ -88,7 +93,7 @@ function translateFieldErrors(
   return Object.fromEntries(
     Object.entries(issues).map(([field, fieldIssues]) => [
       field,
-      fieldIssues.map(() => (field === "email" ? messages.email : messages.password)),
+      fieldIssues.map(() => (field === 'email' ? messages.email : messages.password)),
     ]),
   )
 }
