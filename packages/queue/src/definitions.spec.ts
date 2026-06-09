@@ -45,6 +45,7 @@ describe('Tourna queue definitions', () => {
         data: {
           displayName: 'Player',
           email: 'player@example.com',
+          verificationUrl: 'https://tourna.test/verify-email?token=token-1',
         },
       },
     })

@@ -446,6 +446,23 @@ The script runs server-side:
 
 This pattern is useful when the logic is complex enough to deserve ownership inside the Redis package.
 
+## Concrete example: email verification tokens
+
+Email verification uses the same package-owned model discipline as sessions, but it does not need Lua because the operations are small:
+
+- `EmailVerificationTokenModel`: lookup by hashed token
+- `UserEmailVerificationTokenModel`: lookup of the active token for a user
+- `EmailVerificationTokenStore`: typed facade used by apps
+
+Keys are versioned under the auth namespace:
+
+```text
+auth:v1:email_verification:token:<tokenHash>
+auth:v1:email_verification:user:<userId>
+```
+
+The raw token sent by email is never stored. API code hashes the token before calling the store, and the store persists only the hash plus metadata. Creating a new token for the same user deletes the previous token key and writes both keys with the same dynamic TTL.
+
 ## Integration from `apps/api`
 
 On the NestJS app side, the current pattern is:

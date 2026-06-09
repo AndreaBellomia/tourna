@@ -11,6 +11,7 @@ import {
 } from '@repo/contracts'
 import { PresignedUploadResponseSchema } from '@repo/contracts/storage'
 import { clientApiRequest } from '~/features/common/services/client-api'
+import { z } from 'zod'
 
 export function updateProfile(values: UpdateProfileInput) {
   const payload = UpdateProfileRequestSchema.parse(values)
@@ -21,6 +22,15 @@ export function updateProfile(values: UpdateProfileInput) {
     method: 'PATCH',
     body: payload,
     fallbackErrorMessage: 'Unable to update profile',
+  })
+}
+
+export function resendEmailVerification() {
+  return clientApiRequest({
+    path: '/api/auth/email-verification/resend',
+    schema: z.void(),
+    method: 'POST',
+    fallbackErrorMessage: 'Unable to send verification email',
   })
 }
 

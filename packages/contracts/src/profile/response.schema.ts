@@ -5,6 +5,7 @@ export const ProfileSummaryResponseSchema = z.object({
   display_name: z.string(),
   nickname: z.string(),
   email: z.email(),
+  emailVerified: z.boolean(),
   bio: z.string().nullable(),
   avatarObjectKey: z.string().nullable(),
   avatarUrl: z.string().url().nullable(),

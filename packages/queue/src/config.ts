@@ -35,5 +35,13 @@ export function createWorkerOptions(
     autorun: true,
     stalledInterval: 30_000,
     maxStalledCount: 1,
+    removeOnComplete: {
+      count: 1000,
+      age: 60 * 60 * 24, // 1 day
+    },
+    removeOnFail: {
+      count: 10_000,
+      age: 60 * 60 * 24 * 7, // 1 week
+    },
   }
 }

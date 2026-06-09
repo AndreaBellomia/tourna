@@ -1,4 +1,6 @@
 import { createZodDto } from 'nestjs-zod'
-import { AuthResponseSchema } from './response.schema'
+import { AuthResponseSchema, VerifyEmailResponseSchema } from './response.schema'
 
 export class AuthResponseDto extends createZodDto(AuthResponseSchema) {}
+
+export class VerifyEmailResponseDto extends createZodDto(VerifyEmailResponseSchema) {}

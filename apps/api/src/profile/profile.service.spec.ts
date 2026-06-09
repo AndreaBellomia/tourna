@@ -39,6 +39,7 @@ describe('ProfileService', () => {
       id: 'user-1',
       display_name: 'Andrea',
       email: 'andrea@example.com',
+      emailVerified: false,
       bio: 'Bio',
       avatarObjectKey: 'public/avatar/users/2026/06/user-1/avatar.png',
     })
@@ -48,6 +49,7 @@ describe('ProfileService', () => {
       id: 'user-1',
       display_name: 'Andrea',
       email: 'andrea@example.com',
+      emailVerified: false,
       bio: 'Bio',
       avatarObjectKey: 'public/avatar/users/2026/06/user-1/avatar.png',
       avatarUrl: 'https://cdn.test/avatar.png',

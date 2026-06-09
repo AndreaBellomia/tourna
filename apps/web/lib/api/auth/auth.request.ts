@@ -1,4 +1,11 @@
-import { AuthResponseSchema, type LoginInput, type SignupInput } from '@repo/contracts/auth'
+import {
+  AuthResponseSchema,
+  VerifyEmailResponseSchema,
+  VerifyEmailSchema,
+  type LoginInput,
+  type SignupInput,
+} from '@repo/contracts/auth'
+import { z } from 'zod'
 import { apiUrl } from '~/lib/api/endpoints'
 import { apiRequest } from '~/lib/api//http'
 import { authEndpoints } from './auth.endpoint'
@@ -23,6 +30,24 @@ export function refresh(refreshToken: string) {
   return apiRequest(authEndpoints.refresh, AuthResponseSchema, {
     method: 'POST',
     body: { refreshToken },
+    cache: 'no-store',
+  })
+}
+
+export function verifyEmail(token: string) {
+  return apiRequest(authEndpoints.verifyEmail, VerifyEmailResponseSchema, {
+    method: 'POST',
+    body: VerifyEmailSchema.parse({ token }),
+    cache: 'no-store',
+  })
+}
+
+export async function resendEmailVerification(accessToken: string): Promise<void> {
+  await apiRequest(authEndpoints.resendEmailVerification, z.void(), {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
     cache: 'no-store',
   })
 }

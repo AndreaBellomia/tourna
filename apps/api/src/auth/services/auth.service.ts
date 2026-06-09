@@ -7,7 +7,7 @@ import { DatabaseService } from '~/database/database.service'
 import { TokenService } from '~/tokens/token.service'
 import { SessionService } from './session.service'
 import { AppConfigService } from '~/config/config.service'
-import { QueueProducerService } from '~/queue/queue-producer.service'
+import { EmailVerificationService } from './email-verification.service'
 
 const scryptAsync = promisify(scrypt)
 
@@ -20,7 +20,7 @@ export class AuthService {
     private readonly tokens: TokenService,
     private readonly sessions: SessionService,
     private readonly config: AppConfigService,
-    private readonly queue: QueueProducerService,
+    private readonly emailVerification: EmailVerificationService,
   ) {}
 
   async signup(dto: SignupInput, userAgent: string, ip: string): Promise<AuthResponse> {
@@ -129,26 +129,7 @@ export class AuthService {
     displayName: string
   }): Promise<void> {
     try {
-      await this.queue.enqueueSendEmail(
-        {
-          to: input.email,
-          metadata: {
-            flow: 'post-registration',
-            userId: input.userId,
-          },
-          idempotencyKey: `post-registration:${input.userId}`,
-          content: {
-            template: 'post-registration-notification',
-            data: {
-              displayName: input.displayName,
-              email: input.email,
-            },
-          },
-        },
-        {
-          jobId: `email:post-registration:${input.userId}`,
-        },
-      )
+      await this.emailVerification.sendVerificationEmail(input)
     } catch (error) {
       this.logger.warn({
         message: 'Post-registration email enqueue failed',

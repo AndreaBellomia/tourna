@@ -58,6 +58,7 @@ describe('renderEmail', () => {
         data: {
           displayName: 'Andrea',
           email: 'andrea@example.com',
+          verificationUrl: 'https://tourna.test/verify-email?token=token-1',
         },
       },
       'en',

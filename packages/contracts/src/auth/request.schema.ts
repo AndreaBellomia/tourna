@@ -19,3 +19,9 @@ export const RefreshSchema = z.object({
 })
 
 export type RefreshInput = z.infer<typeof RefreshSchema>
+
+export const VerifyEmailSchema = z.object({
+  token: z.string().min(32).max(512),
+})
+
+export type VerifyEmailInput = z.infer<typeof VerifyEmailSchema>

@@ -25,8 +25,8 @@ describe('AuthService', () => {
     get: jest.fn(),
   }
 
-  const queue = {
-    enqueueSendEmail: jest.fn(),
+  const emailVerification = {
+    sendVerificationEmail: jest.fn(),
   }
 
   let service: AuthService
@@ -34,13 +34,13 @@ describe('AuthService', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     config.get.mockReturnValue(64)
-    queue.enqueueSendEmail.mockResolvedValue({ id: 'email-job-1' })
+    emailVerification.sendVerificationEmail.mockResolvedValue(undefined)
     service = new AuthService(
       db as never,
       tokens as never,
       sessions as never,
       config as never,
-      queue as never,
+      emailVerification as never,
     )
   })
 
@@ -120,26 +120,11 @@ describe('AuthService', () => {
     )
 
     expect(result.accessToken).toBe('access-token')
-    expect(queue.enqueueSendEmail).toHaveBeenCalledWith(
-      {
-        to: 'andrea@example.com',
-        metadata: {
-          flow: 'post-registration',
-          userId: 'user-1',
-        },
-        idempotencyKey: 'post-registration:user-1',
-        content: {
-          template: 'post-registration-notification',
-          data: {
-            displayName: 'andrea',
-            email: 'andrea@example.com',
-          },
-        },
-      },
-      {
-        jobId: 'email:post-registration:user-1',
-      },
-    )
+    expect(emailVerification.sendVerificationEmail).toHaveBeenCalledWith({
+      userId: 'user-1',
+      displayName: 'andrea',
+      email: 'andrea@example.com',
+    })
   })
 
   it('does not fail signup when the post-registration notification cannot be enqueued', async () => {
@@ -165,7 +150,7 @@ describe('AuthService', () => {
     tokens.generateRefreshToken.mockReturnValue('refresh-token')
     tokens.hashToken.mockReturnValue('hashed-refresh-token')
     tokens.generateAccessToken.mockReturnValue('access-token')
-    queue.enqueueSendEmail.mockRejectedValue(new Error('queue unavailable'))
+    emailVerification.sendVerificationEmail.mockRejectedValue(new Error('queue unavailable'))
 
     const result = await service.signup(
       { email: 'andrea@example.com', password: 'password123' },

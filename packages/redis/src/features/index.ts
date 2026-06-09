@@ -1,4 +1,6 @@
 export * from './session/session.model'
 export * from './session/refresh-token.model'
 export * from './session/session.scripts'
+export * from './email-verification/email-verification.model'
+export * from './email-verification/email-verification.store'
 export * from './cache/cache.keys'

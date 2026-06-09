@@ -26,6 +26,15 @@ const auth = {
     email: "Enter a valid email address.",
     password: "Password must be at least 8 characters.",
   },
+  emailVerification: {
+    metadataTitle: "Verify email",
+    metadataDescription: "Confirm the email address connected to your Tourna account.",
+    successTitle: "Email verified",
+    successDescription: "Your account email is now verified.",
+    failedTitle: "Verification link expired",
+    failedDescription: "Request a new verification email from your profile.",
+    profileAction: "Open profile",
+  },
 } as const
 
 export default auth

@@ -8,6 +8,7 @@ import { AccessTokenGuard } from './guards/access-token.guard'
 import { AppConfigService } from '~/config/config.service'
 import { AuthService } from './services/auth.service'
 import { QueueModule } from '~/queue/queue.module'
+import { EmailVerificationService } from './services/email-verification.service'
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { QueueModule } from '~/queue/queue.module'
   ],
   providers: [
     AuthService,
+    EmailVerificationService,
     SessionService,
     TokenService,
     { provide: APP_GUARD, useClass: AccessTokenGuard },

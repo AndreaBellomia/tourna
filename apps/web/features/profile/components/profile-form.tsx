@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { useMemo, useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
-import { Save } from 'lucide-react'
+import { CheckCircle2, MailCheck, Save, Send } from 'lucide-react'
+import { Badge } from '@repo/ui/badge'
 import { Button } from '@repo/ui/button'
 import { Input } from '@repo/ui/input'
 import { Label } from '@repo/ui/label'
@@ -25,7 +26,11 @@ import {
   type EditorViewMode,
 } from '~/features/common/components/editor-form'
 import { useZodSubmit } from '~/features/common/services/form-submit'
-import { updateProfile, uploadProfileAvatar } from '~/features/profile/services/profile-client'
+import {
+  resendEmailVerification,
+  updateProfile,
+  uploadProfileAvatar,
+} from '~/features/profile/services/profile-client'
 
 type ProfileFormProps = {
   locale: Locale
@@ -40,6 +45,7 @@ export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
   const [pendingAvatarUrl, setPendingAvatarUrl] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<EditorViewMode>('edit')
   const [isUploading, startUploadTransition] = useTransition()
+  const [isResendingVerification, startResendVerificationTransition] = useTransition()
   const form = useForm<UpdateProfileInput>({
     defaultValues: {
       display_name: profile.display_name,
@@ -116,6 +122,22 @@ export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
     })
   }
 
+  function onResendVerificationEmail() {
+    submitState.setNotice(null)
+
+    startResendVerificationTransition(() => {
+      void resendEmailVerification()
+        .then(() => {
+          submitState.setNotice(messages.form.verificationSent)
+        })
+        .catch((error: unknown) => {
+          submitState.setNotice(
+            error instanceof Error ? error.message : messages.form.verificationFailed,
+          )
+        })
+    })
+  }
+
   return (
     <EditorFormLayout
       sidebar={
@@ -142,14 +164,43 @@ export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
 
           <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
             <div className="space-y-2">
-              <Label htmlFor="profile-email">{messages.form.email}</Label>
+              <div className="flex items-center justify-between gap-2">
+                <Label htmlFor="profile-email">{messages.form.email}</Label>
+                <Badge variant={currentProfile.emailVerified ? 'success' : 'outline'}>
+                  {currentProfile.emailVerified
+                    ? messages.form.emailVerified
+                    : messages.form.emailUnverified}
+                </Badge>
+              </div>
               <Input id="profile-email" disabled value={currentProfile.email} />
             </div>
 
             <FormNotice message={submitState.notice} />
 
+            {!currentProfile.emailVerified ? (
+              <Button
+                className="mt-5 w-full"
+                loading={isResendingVerification}
+                type="button"
+                variant="outline"
+                onClick={onResendVerificationEmail}
+              >
+                <Send aria-hidden="true" className="size-4" />
+                {messages.form.resendVerification}
+              </Button>
+            ) : (
+              <div className="mt-5 flex items-center gap-2 rounded-md border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
+                <CheckCircle2 aria-hidden="true" className="size-4 text-success" />
+                {messages.form.emailVerifiedDescription}
+              </div>
+            )}
+
             <Button className="mt-5 w-full" loading={submitState.isPending} size="lg">
-              <Save aria-hidden="true" className="size-4" />
+              {currentProfile.emailVerified ? (
+                <Save aria-hidden="true" className="size-4" />
+              ) : (
+                <MailCheck aria-hidden="true" className="size-4" />
+              )}
               {messages.form.save}
             </Button>
 

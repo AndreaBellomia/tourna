@@ -1,4 +1,5 @@
 import { AuthController } from './auth.controller'
+import type { EmailVerificationService } from './services/email-verification.service'
 import { AuthService } from './services/auth.service'
 
 describe('AuthController', () => {
@@ -8,12 +9,16 @@ describe('AuthController', () => {
     refresh: jest.fn(),
     logout: jest.fn(),
   } as unknown as AuthService
+  const emailVerificationMock = {
+    verifyEmail: jest.fn(),
+    sendVerificationEmailForUser: jest.fn(),
+  } as unknown as EmailVerificationService
 
   let controller: AuthController
 
   beforeEach(() => {
     jest.clearAllMocks()
-    controller = new AuthController(authMock)
+    controller = new AuthController(authMock, emailVerificationMock)
   })
 
   const authResponse = {
@@ -78,5 +83,24 @@ describe('AuthController', () => {
     await controller.logout(user)
 
     expect(logoutMock).toHaveBeenCalledWith('s-1')
+  })
+
+  it('delegates email verification by token', async () => {
+    const verifyMock = emailVerificationMock.verifyEmail as jest.Mock
+    verifyMock.mockResolvedValue({ verified: true })
+
+    const result = await controller.verifyEmail({ token: 'verification-token' })
+
+    expect(result).toEqual({ verified: true })
+    expect(verifyMock).toHaveBeenCalledWith('verification-token')
+  })
+
+  it('resends email verification for the current user', async () => {
+    const resendMock = emailVerificationMock.sendVerificationEmailForUser as jest.Mock
+    resendMock.mockResolvedValue(undefined)
+
+    await controller.resendEmailVerification({ userId: 'u-1', sessionId: 's-1' })
+
+    expect(resendMock).toHaveBeenCalledWith('u-1')
   })
 })

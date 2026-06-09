@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { RedisModel, RedisZSetModel } from '../../core/redis.model'
-import { JsonCodec } from '../../codecs/json.codec'
+import { MsgpackCodec } from '../../codecs/msgpack.codec'
 
 const sessionDataSchema = z.object({
   userId: z.string(),
@@ -21,7 +21,7 @@ export const SessionModel: RedisModel<SessionData, Buffer, [sessionId: string]> 
   key: (sessionId) => ['session', sessionId],
   schema: sessionDataSchema,
   type: 'string',
-  codec: new JsonCodec<SessionData>(),
+  codec: new MsgpackCodec<SessionData>(),
   ttl: 0,
 }
 

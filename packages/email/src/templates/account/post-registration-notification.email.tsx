@@ -1,4 +1,5 @@
 import { Text } from 'react-email'
+import { EmailButton } from '../../core/components/email-button'
 import { EmailShell } from '../../core/components/email-shell'
 import type { EmailRenderContext } from '../../core/email-render-context'
 import { emailTheme } from '../../core/theme/tokens'
@@ -31,6 +32,9 @@ export function PostRegistrationNotificationEmailTemplate({
       <Text style={{ color: emailTheme.colors.text, fontSize: '16px', lineHeight: '24px' }}>
         {context.account('postRegistrationNotification.body')}
       </Text>
+      <EmailButton href={data.verificationUrl}>
+        {context.account('postRegistrationNotification.cta')}
+      </EmailButton>
       <Text style={{ color: emailTheme.colors.muted, fontSize: '14px', lineHeight: '22px' }}>
         {context.account('postRegistrationNotification.accountLabel')}: {data.email}
       </Text>
@@ -46,6 +50,7 @@ export const postRegistrationNotificationEmailDefinition = {
     context.account('postRegistrationNotification.text', {
       displayName: props.displayName,
       email: props.email,
+      verificationUrl: props.verificationUrl,
     }),
   render: (props, context) => (
     <PostRegistrationNotificationEmailTemplate data={props} context={context} />

@@ -7,6 +7,7 @@ type ProfileRow = {
   display_name: string
   nickname: string
   email: string
+  emailVerified: boolean
   bio: string | null
   avatarObjectKey: string | null
 }
@@ -23,6 +24,7 @@ export class ProfileRepository {
         'display_name',
         'nickname',
         'email',
+        'email_verified as emailVerified',
         'bio',
         'avatar_object_key as avatarObjectKey',
       ])
