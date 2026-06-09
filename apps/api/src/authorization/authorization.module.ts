@@ -3,7 +3,7 @@ import { APP_GUARD } from '@nestjs/core'
 import { AuthorizationService } from './authorization.service'
 import { PoliciesGuard } from './guards/policies.guard'
 import { TeamPoliciesGuard } from './guards/team-policies.guard'
-import { CacheModule } from '../cache/cache.module'
+import { CacheModule } from '~/cache/cache.module'
 
 @Module({
   imports: [CacheModule],

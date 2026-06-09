@@ -4,7 +4,7 @@ jest.mock('@repo/db', () => ({
 
 import { NotFoundException } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
-import { StorageService } from '../storage/storage.service'
+import { StorageService } from '~/storage/storage.service'
 import { UserRepository } from './user.repository'
 import { UserService } from './user.service'
 

@@ -2,12 +2,12 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
-import { getRequiredPageData } from '../../../../../lib/api/page-data'
-import { getTeam } from '../../../../../lib/api/teams/team.request'
-import { requireAuthenticatedPage } from '../../../../../lib/auth/session'
-import { isLocale, resolveLocale, withLocale } from '../../../../../lib/i18n/config'
-import { getMessages } from '../../../../../lib/i18n/web-i18n'
-import { TeamEditPanel } from '../../../../../features/teams/components/team-edit-panel'
+import { getRequiredPageData } from '~/lib/api/page-data'
+import { getTeam } from '~/lib/api/teams/team.request'
+import { requireAuthenticatedPage } from '~/lib/auth/session'
+import { isLocale, resolveLocale, withLocale } from '~/lib/i18n/config'
+import { getMessages } from '~/lib/i18n/web-i18n'
+import { TeamEditPanel } from '~/features/teams/components/team-edit-panel'
 
 type EditTeamPageProps = {
   params: Promise<{ locale: string; id: string }>

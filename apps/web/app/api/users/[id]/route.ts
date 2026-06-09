@@ -1,11 +1,8 @@
 import { UserDetailResponseSchema } from '@repo/contracts'
-import {
-  optionalAuthenticatedApiRequest,
-  jsonWithAuth,
-} from '../../../../lib/api/auth/authenticated-request'
-import { badRequest } from '../../../../lib/api/responses'
-import { userEndpoints } from '../../../../lib/api/users/user.endpoint'
-import { withRouteHandler } from '../../../../lib/api/with-route-handler'
+import { optionalAuthenticatedApiRequest, jsonWithAuth } from '~/lib/api/auth/authenticated-request'
+import { badRequest } from '~/lib/api/responses'
+import { userEndpoints } from '~/lib/api/users/user.endpoint'
+import { withRouteHandler } from '~/lib/api/with-route-handler'
 
 type UserRouteContext = {
   params: Promise<Record<string, string>>

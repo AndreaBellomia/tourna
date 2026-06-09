@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { createEmailEngine, EmailService, SmtpEmailProvider } from '@repo/email'
-import { WorkerConfigModule } from '../config/worker-config.module'
-import { WorkerConfigService } from '../config/worker-config.service'
+import { WorkerConfigModule } from '~/config/worker-config.module'
+import { WorkerConfigService } from '~/config/worker-config.service'
 import { WORKER_EMAIL_SERVICE } from './email.tokens'
 
 @Module({

@@ -3,9 +3,9 @@ import { JwtModule } from '@nestjs/jwt'
 import { APP_GUARD } from '@nestjs/core'
 import { AuthController } from './auth.controller'
 import { SessionService } from './services/session.service'
-import { TokenService } from '../tokens/token.service'
+import { TokenService } from '~/tokens/token.service'
 import { AccessTokenGuard } from './guards/access-token.guard'
-import { AppConfigService } from '../config/config.service'
+import { AppConfigService } from '~/config/config.service'
 import { AuthService } from './services/auth.service'
 
 @Module({

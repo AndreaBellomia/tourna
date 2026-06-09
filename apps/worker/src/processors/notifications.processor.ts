@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { EmailService } from '@repo/email'
 import { SEND_EMAIL_JOB_NAME, sendEmailPayloadSchema, type SendEmailPayload } from '@repo/queue'
-import { WORKER_EMAIL_SERVICE } from '../email/email.tokens'
+import { WORKER_EMAIL_SERVICE } from '~/email/email.tokens'
 import { BaseWorkerProcessor, type WorkerProcessDefinition } from './processor.definition'
 import { Job } from 'bullmq'
 

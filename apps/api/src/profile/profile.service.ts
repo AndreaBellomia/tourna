@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import type { UpdateProfileInput } from '@repo/contracts'
-import { StorageService } from '../storage/storage.service'
+import { StorageService } from '~/storage/storage.service'
 import { ProfileRepository } from './profile.repository'
 
 @Injectable()

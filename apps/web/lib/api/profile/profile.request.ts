@@ -4,9 +4,9 @@ import {
   type UpdateProfileInput,
 } from '@repo/contracts/profile'
 import { profileEndpoints } from './profile.endpoint'
-import { apiRequest } from '../http'
-import { authenticatedServerApiRequest } from '../auth/server-authenticated-request'
-import type { Locale } from '../../i18n/config'
+import { apiRequest } from '~/lib/api/http'
+import { authenticatedServerApiRequest } from '~/lib/api/auth/server-authenticated-request'
+import type { Locale } from '~/lib/i18n/config'
 
 export function getProfile(locale?: Locale) {
   return authenticatedServerApiRequest(profileEndpoints.getProfile, ProfileSummaryResponseSchema, {

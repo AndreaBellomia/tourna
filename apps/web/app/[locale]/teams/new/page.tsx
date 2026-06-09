@@ -2,10 +2,10 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
-import { isLocale, resolveLocale, withLocale } from '../../../../lib/i18n/config'
-import { getMessages } from '../../../../lib/i18n/web-i18n'
-import { requireAuthenticatedPage } from '../../../../lib/auth/session'
-import { TeamForm } from '../../../../features/teams/components/team-form'
+import { isLocale, resolveLocale, withLocale } from '~/lib/i18n/config'
+import { getMessages } from '~/lib/i18n/web-i18n'
+import { requireAuthenticatedPage } from '~/lib/auth/session'
+import { TeamForm } from '~/features/teams/components/team-form'
 
 type NewTeamPageProps = {
   params: Promise<{ locale: string }>

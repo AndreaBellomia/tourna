@@ -6,11 +6,11 @@ import { CalendarDays, RadioTower, ShieldCheck, Trophy } from 'lucide-react'
 import { Badge } from '@repo/ui/badge'
 import { Button } from '@repo/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/card'
-import { authCookieNames } from '../../../lib/auth/cookies'
-import { logout as revokeSession } from '../../../lib/api/auth/auth.request'
-import { requireAuthenticatedPage } from '../../../lib/auth/session'
-import { isLocale, resolveLocale, type Locale, withLocale } from '../../../lib/i18n/config'
-import { getMessages } from '../../../lib/i18n/web-i18n'
+import { authCookieNames } from '~/lib/auth/cookies'
+import { logout as revokeSession } from '~/lib/api/auth/auth.request'
+import { requireAuthenticatedPage } from '~/lib/auth/session'
+import { isLocale, resolveLocale, type Locale, withLocale } from '~/lib/i18n/config'
+import { getMessages } from '~/lib/i18n/web-i18n'
 
 type DashboardPageProps = {
   params: Promise<{ locale: string }>

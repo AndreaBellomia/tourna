@@ -1,8 +1,8 @@
 'use client'
 
 import type { ProfileSummaryResponse } from '@repo/contracts/profile'
-import { Locale } from '../../../lib/i18n/config'
-import type { Messages } from '../../../lib/i18n/web-i18n'
+import { Locale } from '~/lib/i18n/config'
+import type { Messages } from '~/lib/i18n/web-i18n'
 import { ProfileForm } from './profile-form'
 
 type ProfileEditPanelProps = {

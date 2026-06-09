@@ -27,6 +27,7 @@ import {
   TournamentRosterMemberTable,
   TournamentTagTable,
 } from './schemas'
+import { TeamInvitationTable } from './schemas/teamInvitation.table'
 
 export interface DatabaseSchema {
   disciplines: DisciplineTable
@@ -58,7 +59,10 @@ export interface DatabaseSchema {
   stat_events: StatEventTable
 
   tags: TagTable
+
   teams: TeamTable
+  team_invitations: TeamInvitationTable
+
   team_memberships: TeamMembershipTable
   tournaments: TournamentTable
   tournament_entrants: TournamentEntrantTable

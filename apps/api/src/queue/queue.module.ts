@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { AppConfigModule } from '../config/config.module'
+import { AppConfigModule } from '~/config/config.module'
 import { QueueProducerService } from './queue-producer.service'
 
 @Module({

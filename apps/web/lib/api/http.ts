@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { apiUrl } from './endpoints'
 import { ApiError } from './errors/api-error'
 import { setLocaleHeaders } from './locale-header'
-import type { Locale } from '../i18n/config'
+import type { Locale } from '~/lib/i18n/config'
 
 type ApiRequestOptions = Omit<RequestInit, 'body'> & {
   body?: unknown

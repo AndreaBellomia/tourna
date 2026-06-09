@@ -8,13 +8,13 @@ import {
   type TournaQueueName,
 } from '@repo/queue'
 import { QueueEvents, Worker, type Job } from 'bullmq'
-import { WorkerConfigService } from '../config/worker-config.service'
+import { WorkerConfigService } from '~/config/worker-config.service'
 import {
   MaintenanceProcessor,
   NotificationsProcessor,
   RatingsProcessor,
   ReportsProcessor,
-} from '../processors'
+} from '~/processors'
 
 @Injectable()
 export class WorkerManagerService implements OnApplicationBootstrap, OnModuleDestroy {

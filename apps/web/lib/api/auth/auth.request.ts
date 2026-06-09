@@ -1,6 +1,6 @@
 import { AuthResponseSchema, type LoginInput, type SignupInput } from '@repo/contracts/auth'
-import { apiUrl } from '../endpoints'
-import { apiRequest } from '../http'
+import { apiUrl } from '~/lib/api/endpoints'
+import { apiRequest } from '~/lib/api//http'
 import { authEndpoints } from './auth.endpoint'
 
 export function login(payload: LoginInput) {

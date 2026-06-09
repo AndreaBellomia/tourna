@@ -3,8 +3,8 @@ import {
   UserListResponseSchema,
   type UserListQuery,
 } from '@repo/contracts'
-import { apiRequest } from '../http'
-import type { Locale } from '../../i18n/config'
+import { apiRequest } from '~/lib/api/http'
+import type { Locale } from '~/lib/i18n/config'
 import { userEndpoints, userListEndpoint } from './user.endpoint'
 
 export function listUsers(query: Partial<UserListQuery> = {}, locale?: Locale) {

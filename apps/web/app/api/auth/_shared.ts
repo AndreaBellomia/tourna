@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import { ApiError } from '../../../lib/api/errors/api-error'
-export { createAuthResponse } from '../../../lib/auth/session'
-import { type Locale } from '../../../lib/i18n/config'
-import { readLocaleFromHeaders } from '../../../lib/api/locale-header'
-import { getMessages } from '../../../lib/i18n/web-i18n'
+import { ApiError } from '~/lib/api/errors/api-error'
+export { createAuthResponse } from '~/lib/auth/session'
+import { type Locale } from '~/lib/i18n/config'
+import { readLocaleFromHeaders } from '~/lib/api/locale-header'
+import { getMessages } from '~/lib/i18n/web-i18n'
 
 export type ClientAuthResponse = {
   sessionId: string

@@ -1,10 +1,7 @@
 import { FinalizeUploadSchema, StorageObjectResponseSchema } from '@repo/contracts'
-import {
-  authenticatedApiRequest,
-  jsonWithAuth,
-} from '../../../../../lib/api/auth/authenticated-request'
-import { storageEndpoints } from '../../../../../lib/api/storage/storage.endpoint'
-import { withRouteHandler } from '../../../../../lib/api/with-route-handler'
+import { authenticatedApiRequest, jsonWithAuth } from '~/lib/api/auth/authenticated-request'
+import { storageEndpoints } from '~/lib/api/storage/storage.endpoint'
+import { withRouteHandler } from '~/lib/api/with-route-handler'
 
 export const POST = withRouteHandler(async (request) => {
   const payload = FinalizeUploadSchema.parse(await request.json())

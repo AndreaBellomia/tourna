@@ -13,8 +13,8 @@ import {
   type ProfileSummaryResponse,
   type UpdateProfileInput,
 } from '@repo/contracts'
-import { type Locale, withLocale } from '../../../lib/i18n/config'
-import type { Messages } from '../../../lib/i18n/web-i18n'
+import { type Locale, withLocale } from '~/lib/i18n/config'
+import type { Messages } from '~/lib/i18n/web-i18n'
 import {
   EditorFormHeader,
   EditorFormLayout,
@@ -23,9 +23,9 @@ import {
   ImageUploadControl,
   MarkdownEditorField,
   type EditorViewMode,
-} from '../../common/components/editor-form'
-import { useZodSubmit } from '../../common/services/form-submit'
-import { updateProfile, uploadProfileAvatar } from '../services/profile-client'
+} from '~/features/common/components/editor-form'
+import { useZodSubmit } from '~/features/common/services/form-submit'
+import { updateProfile, uploadProfileAvatar } from '~/features/profile/services/profile-client'
 
 type ProfileFormProps = {
   locale: Locale

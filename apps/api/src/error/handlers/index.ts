@@ -1,4 +1,4 @@
-import { ExceptionHandlerDefinition } from '../error.type'
+import { ExceptionHandlerDefinition } from '~/error/error.type'
 import { invalidCursorHandler } from './invalid-cursor.handler'
 import { zodSerializationHandler } from './zod-serialization.handler'
 

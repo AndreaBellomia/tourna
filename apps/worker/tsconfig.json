@@ -9,6 +9,11 @@
     "sourceMap": true,
     "outDir": "./dist",
     "incremental": true,
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+    "baseUrl": "./",
+    "paths": {
+      "~": ["src"],
+      "~/*": ["src/*"]
+    }
   }
 }

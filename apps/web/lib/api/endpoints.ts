@@ -1,4 +1,4 @@
-import { getWebBackendConfig } from '../backend/config'
+import { getWebBackendConfig } from '~/lib/backend/config'
 
 export function getApiBaseUrl() {
   return getWebBackendConfig().API_BASE_URL

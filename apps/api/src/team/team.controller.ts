@@ -23,9 +23,9 @@ import {
   RequireTeamManagement,
   RequireTeamMembership,
   RequireTeamPolicy,
-} from '../authorization/decorators/team-policy.decorator'
-import { CurrentUser } from '../common/decorators/current-user.decorator'
-import { Public } from '../common/decorators/public.decorator'
+} from '~/authorization/decorators/team-policy.decorator'
+import { CurrentUser } from '~/common/decorators/current-user.decorator'
+import { Public } from '~/common/decorators/public.decorator'
 import { TeamService } from './team.service'
 
 @Controller('teams')

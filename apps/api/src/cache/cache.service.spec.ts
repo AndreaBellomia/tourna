@@ -1,5 +1,5 @@
 import { CacheService } from './cache.service'
-import { RedisService } from '../redis/redis.service'
+import { RedisService } from '~/redis/redis.service'
 
 describe('CacheService', () => {
   let service: CacheService

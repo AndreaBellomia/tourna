@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { RedisService } from '../../redis/redis.service'
+import { RedisService } from '~/redis/redis.service'
 
-import { AppConfigService } from '../../config/config.service'
+import { AppConfigService } from '~/config/config.service'
 import {
   SessionData,
   SessionModel,

@@ -1,11 +1,11 @@
 import { WorkerManagerService } from './worker-manager.service'
-import type { WorkerConfigService } from '../config/worker-config.service'
+import type { WorkerConfigService } from '~/config/worker-config.service'
 import type {
   MaintenanceProcessor,
   NotificationsProcessor,
   RatingsProcessor,
   ReportsProcessor,
-} from '../processors'
+} from '~/processors'
 
 jest.mock('bullmq', () => ({
   Worker: jest.fn().mockImplementation(() => ({

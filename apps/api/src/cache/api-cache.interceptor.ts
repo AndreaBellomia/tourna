@@ -10,7 +10,7 @@ import { rawBuildKey } from '@repo/redis'
 import { createHash } from 'node:crypto'
 import { from, map, mergeMap, Observable, of, switchMap } from 'rxjs'
 import { API_CACHE_KEY_PREFIX, API_CACHE_METADATA } from './cache.constants'
-import { AppConfigService } from '../config/config.service'
+import { AppConfigService } from '~/config/config.service'
 import { CacheService } from './cache.service'
 import {
   ApiCacheOptions,

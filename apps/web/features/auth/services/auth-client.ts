@@ -1,8 +1,8 @@
 import { LoginSchema, SignupSchema, type LoginInput, type SignupInput } from '@repo/contracts/auth'
 import { z } from 'zod'
-import { ClientApiError } from '../../common/services/client-api-error'
-import { clientApiRequest } from '../../common/services/client-api'
-import { type Locale } from '../../../lib/i18n/config'
+import { ClientApiError } from '~/features/common/services/client-api-error'
+import { clientApiRequest } from '~/features/common/services/client-api'
+import { type Locale } from '~/lib/i18n/config'
 
 type AuthMode = 'login' | 'signup'
 

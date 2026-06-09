@@ -1,33 +1,27 @@
-"use client"
+'use client'
 
-import { useRouter } from "next/navigation"
-import { useState, useTransition, type FormEvent } from "react"
-import { ArrowRight, LockKeyhole, Mail, ShieldCheck } from "lucide-react"
-import { Badge } from "@repo/ui/badge"
-import { Button } from "@repo/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/card"
-import { Input } from "@repo/ui/input"
-import { Label } from "@repo/ui/label"
-import { TabsList, TabsTrigger } from "@repo/ui/tabs"
-import { type Locale, withLocale } from "../../../lib/i18n/config"
-import { type Messages } from "../../../lib/i18n/web-i18n"
-import { submitAuth } from "../services/auth-client"
+import { useRouter } from 'next/navigation'
+import { useState, useTransition, type FormEvent } from 'react'
+import { ArrowRight, LockKeyhole, Mail, ShieldCheck } from 'lucide-react'
+import { Badge } from '@repo/ui/badge'
+import { Button } from '@repo/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui/card'
+import { Input } from '@repo/ui/input'
+import { Label } from '@repo/ui/label'
+import { TabsList, TabsTrigger } from '@repo/ui/tabs'
+import { type Locale, withLocale } from '~/lib/i18n/config'
+import { type Messages } from '~/lib/i18n/web-i18n'
+import { submitAuth } from '~/features/auth/services/auth-client'
 
-type AuthMode = "login" | "signup"
+type AuthMode = 'login' | 'signup'
 
-type AuthMessages = Messages["auth"]
+type AuthMessages = Messages['auth']
 
 export function AuthPanel({ locale, messages }: { locale: Locale; messages: AuthMessages }) {
   const router = useRouter()
-  const [mode, setMode] = useState<AuthMode>("login")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [mode, setMode] = useState<AuthMode>('login')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [message, setMessage] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({})
   const [isPending, startTransition] = useTransition()
@@ -45,7 +39,7 @@ export function AuthPanel({ locale, messages }: { locale: Locale; messages: Auth
           return
         }
 
-        router.replace(withLocale(locale, "/dashboard"))
+        router.replace(withLocale(locale, '/dashboard'))
       })
     })
   }
@@ -69,10 +63,10 @@ export function AuthPanel({ locale, messages }: { locale: Locale; messages: Auth
         </div>
 
         <TabsList aria-label="Seleziona flusso di autenticazione">
-          <TabsTrigger type="button" active={mode === "login"} onClick={() => setMode("login")}>
+          <TabsTrigger type="button" active={mode === 'login'} onClick={() => setMode('login')}>
             {messages.login.tab}
           </TabsTrigger>
-          <TabsTrigger type="button" active={mode === "signup"} onClick={() => setMode("signup")}>
+          <TabsTrigger type="button" active={mode === 'signup'} onClick={() => setMode('signup')}>
             {messages.signup.tab}
           </TabsTrigger>
         </TabsList>
@@ -112,7 +106,7 @@ export function AuthPanel({ locale, messages }: { locale: Locale; messages: Auth
               />
               <Input
                 id="password"
-                autoComplete={mode === "login" ? "current-password" : "new-password"}
+                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                 minLength={8}
                 name="password"
                 onChange={(event) => setPassword(event.target.value)}

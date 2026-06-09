@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, HttpStatus, Post, Req } from '@nestjs/common'
-import { Public } from '../common/decorators/public.decorator'
-import { CurrentUser } from '../common/decorators/current-user.decorator'
+import { Public } from '~/common/decorators/public.decorator'
+import { CurrentUser } from '~/common/decorators/current-user.decorator'
 import { AuthResponse } from '@repo/contracts'
 import { AuthResponseDto, LoginDto, RefreshDto, SignupDto } from '@repo/contracts/nest'
 import { type JwtPayload } from '@repo/domain'

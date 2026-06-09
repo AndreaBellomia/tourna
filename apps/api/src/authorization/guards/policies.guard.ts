@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { AuthorizationService } from '../authorization.service'
-import { CHECK_POLICY } from '../decorators/check-policy.decorator'
+import { AuthorizationService } from '~/authorization/authorization.service'
+import { CHECK_POLICY } from '~/authorization/decorators/check-policy.decorator'
 import { JwtPayload } from '@repo/domain'
 import { Action, Subject } from '@repo/authorization'
 

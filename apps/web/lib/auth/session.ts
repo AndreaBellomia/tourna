@@ -8,7 +8,7 @@ import {
   authCookieOptions,
   refreshTokenMaxAge,
 } from './cookies'
-import { type Locale, withLocale } from '../i18n/config'
+import { type Locale, withLocale } from '~/lib/i18n/config'
 
 export type RequestAuthTokens = {
   accessToken?: string

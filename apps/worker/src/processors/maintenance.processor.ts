@@ -13,7 +13,7 @@ import {
   type StorageClient,
 } from '@repo/storage'
 import type { Job } from 'bullmq'
-import { WorkerConfigService } from '../config/worker-config.service'
+import { WorkerConfigService } from '~/config/worker-config.service'
 import { BaseWorkerProcessor, type WorkerProcessDefinition } from './processor.definition'
 
 @Injectable()

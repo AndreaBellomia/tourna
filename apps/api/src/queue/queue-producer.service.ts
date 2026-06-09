@@ -8,7 +8,7 @@ import {
   type SendEmailPayload,
   type TournaQueueClient,
 } from '@repo/queue'
-import { AppConfigService } from '../config/config.service'
+import { AppConfigService } from '~/config/config.service'
 
 @Injectable()
 export class QueueProducerService implements OnModuleDestroy {

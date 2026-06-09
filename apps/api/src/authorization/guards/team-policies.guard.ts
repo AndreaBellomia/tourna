@@ -1,13 +1,13 @@
 import { BadRequestException, CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import type { JwtPayload } from '@repo/domain'
-import { AuthorizationService } from '../authorization.service'
+import { AuthorizationService } from '~/authorization/authorization.service'
 import {
   TEAM_MEMBERSHIP_POLICY_KEY,
   TEAM_POLICY_KEY,
   type TeamMembershipPolicyMetadata,
   type TeamPolicyMetadata,
-} from '../decorators/team-policy.decorator'
+} from '~/authorization/decorators/team-policy.decorator'
 
 type RequestWithTeamPolicyContext = {
   params?: Record<string, string | undefined>

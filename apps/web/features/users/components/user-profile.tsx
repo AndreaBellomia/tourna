@@ -6,10 +6,10 @@ import { ArrowLeft, CalendarDays, Eye } from 'lucide-react'
 import { Badge } from '@repo/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/card'
 import type { UserDetailResponse } from '@repo/contracts'
-import { type Locale, withLocale } from '../../../lib/i18n/config'
-import type { Messages } from '../../../lib/i18n/web-i18n'
-import { MarkdownContent } from '../../teams/components/markdown-content'
-import { fetchUser } from '../services/user-client'
+import { type Locale, withLocale } from '~/lib/i18n/config'
+import type { Messages } from '~/lib/i18n/web-i18n'
+import { MarkdownContent } from '~/features/teams/components/markdown-content'
+import { fetchUser } from '~/features/users/services/user-client'
 
 type UserProfileProps = {
   locale: Locale

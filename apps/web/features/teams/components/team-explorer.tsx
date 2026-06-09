@@ -20,9 +20,9 @@ import { Input } from '@repo/ui/input'
 import { Label } from '@repo/ui/label'
 import { Select } from '@repo/ui/select'
 import { type TeamListResponse, type TeamSummaryResponse } from '@repo/contracts'
-import { type Locale, withLocale } from '../../../lib/i18n/config'
-import type { Messages } from '../../../lib/i18n/web-i18n'
-import { fetchTeams } from '../services/team-client'
+import { type Locale, withLocale } from '~/lib/i18n/config'
+import type { Messages } from '~/lib/i18n/web-i18n'
+import { fetchTeams } from '~/features/teams/services/team-client'
 import { MarkdownContent } from './markdown-content'
 
 const PAGE_SIZE = 12

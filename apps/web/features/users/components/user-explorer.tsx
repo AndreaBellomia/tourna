@@ -9,10 +9,10 @@ import { Button } from '@repo/ui/button'
 import { Input } from '@repo/ui/input'
 import { Label } from '@repo/ui/label'
 import type { UserListResponse, UserSummaryResponse } from '@repo/contracts'
-import { type Locale, withLocale } from '../../../lib/i18n/config'
-import type { Messages } from '../../../lib/i18n/web-i18n'
-import { MarkdownContent } from '../../teams/components/markdown-content'
-import { fetchUsers } from '../services/user-client'
+import { type Locale, withLocale } from '~/lib/i18n/config'
+import type { Messages } from '~/lib/i18n/web-i18n'
+import { MarkdownContent } from '~/features/teams/components/markdown-content'
+import { fetchUsers } from '~/features/users/services/user-client'
 
 const PAGE_SIZE = 12
 

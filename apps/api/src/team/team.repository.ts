@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { type CursorPaginatedResult, type CursorPaginationInput, paginateCursor } from '@repo/db'
 import type { LifecycleStatus, TeamMembershipRole, Visibility } from '@repo/domain'
-import { DatabaseService } from '../database/database.service'
+import { DatabaseService } from '~/database/database.service'
 
 type TeamListRow = {
   id: string

@@ -14,7 +14,7 @@ import {
   type UpdateTeamInput,
 } from '@repo/contracts'
 import { PresignedUploadResponseSchema } from '@repo/contracts/storage'
-import { clientApiRequest } from '../../common/services/client-api'
+import { clientApiRequest } from '~/features/common/services/client-api'
 
 export type ClientTeamListQuery = Partial<TeamListQuery>
 

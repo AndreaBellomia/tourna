@@ -1,9 +1,9 @@
-import { authenticatedApiRequest, jsonWithAuth } from '../../../lib/api/auth/authenticated-request'
-import { readLocaleFromHeaders } from '../../../lib/api/locale-header'
-import { teamEndpoints } from '../../../lib/api/teams/team.endpoint'
-import { ok } from '../../../lib/api/responses'
-import { listTeams } from '../../../lib/api/teams/team.request'
-import { withRouteHandler } from '../../../lib/api/with-route-handler'
+import { authenticatedApiRequest, jsonWithAuth } from '~/lib/api/auth/authenticated-request'
+import { readLocaleFromHeaders } from '~/lib/api/locale-header'
+import { teamEndpoints } from '~/lib/api/teams/team.endpoint'
+import { ok } from '~/lib/api/responses'
+import { listTeams } from '~/lib/api/teams/team.request'
+import { withRouteHandler } from '~/lib/api/with-route-handler'
 import {
   CreateTeamRequestSchema,
   TeamDetailResponseSchema,

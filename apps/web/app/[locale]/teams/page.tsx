@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getOptionalPageData } from '../../../lib/api/page-data'
-import { listTeams } from '../../../lib/api/teams/team.request'
-import { isLocale, resolveLocale } from '../../../lib/i18n/config'
-import { getMessages } from '../../../lib/i18n/web-i18n'
-import { AppHeader } from '../../../features/common/components/app-header'
-import { TeamExplorer } from '../../../features/teams/components/team-explorer'
+import { getOptionalPageData } from '~/lib/api/page-data'
+import { listTeams } from '~/lib/api/teams/team.request'
+import { isLocale, resolveLocale } from '~/lib/i18n/config'
+import { getMessages } from '~/lib/i18n/web-i18n'
+import { AppHeader } from '~/features/common/components/app-header'
+import { TeamExplorer } from '~/features/teams/components/team-explorer'
 
 type TeamsPageProps = {
   params: Promise<{ locale: string }>

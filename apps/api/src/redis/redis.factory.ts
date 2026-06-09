@@ -1,6 +1,6 @@
 import { createRedisClient, type RedisClient } from '@repo/redis'
 import { REDIS_CLIENT } from './redis.tokens'
-import { AppConfigService } from '../config/config.service'
+import { AppConfigService } from '~/config/config.service'
 
 export const redisProvider = {
   provide: REDIS_CLIENT,

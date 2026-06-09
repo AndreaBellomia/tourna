@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import type { TeamDetailResponse } from '@repo/contracts'
-import { type Locale } from '../../../lib/i18n/config'
-import type { Messages } from '../../../lib/i18n/web-i18n'
-import { fetchTeam } from '../services/team-client'
+import { type Locale } from '~/lib/i18n/config'
+import type { Messages } from '~/lib/i18n/web-i18n'
+import { fetchTeam } from '~/features/teams/services/team-client'
 import { TeamForm } from './team-form'
 
 type TeamEditPanelProps = {

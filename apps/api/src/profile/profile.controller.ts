@@ -3,7 +3,7 @@ import { ApiOkResponse } from '@nestjs/swagger'
 import type { UpdateProfileInput } from '@repo/contracts'
 import { ProfileSummaryResponseDto, UpdateProfileDto } from '@repo/contracts/nest'
 import type { JwtPayload } from '@repo/domain'
-import { CurrentUser } from '../common/decorators/current-user.decorator'
+import { CurrentUser } from '~/common/decorators/current-user.decorator'
 import { ProfileService } from './profile.service'
 
 @Controller('profile')

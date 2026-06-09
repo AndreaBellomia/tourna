@@ -1,5 +1,5 @@
-import type { Locale } from '../i18n/config'
-import { defaultLocale, isLocale } from '../i18n/config'
+import type { Locale } from '~/lib/i18n/config'
+import { defaultLocale, isLocale } from '~/lib/i18n/config'
 
 export const API_LOCALE_HEADER = 'x-locale'
 export const LEGACY_API_LOCALE_HEADER = 'x-tourna-locale'
@@ -14,8 +14,7 @@ export function readLocaleFromHeaders(
   headers: Pick<Headers, 'get'>,
   fallback: Locale = defaultLocale,
 ): Locale {
-  const locale =
-    headers.get(API_LOCALE_HEADER) ?? headers.get(LEGACY_API_LOCALE_HEADER)
+  const locale = headers.get(API_LOCALE_HEADER) ?? headers.get(LEGACY_API_LOCALE_HEADER)
 
   return locale && isLocale(locale) ? locale : fallback
 }

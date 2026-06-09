@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import type { UserDetailResponse, UserListQuery, UserListResponse } from '@repo/contracts'
-import { StorageService } from '../storage/storage.service'
+import { StorageService } from '~/storage/storage.service'
 import { UserRepository, type PublicUser } from './user.repository'
 
 @Injectable()

@@ -1,13 +1,13 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import type { z } from 'zod'
 import type { AuthResponse } from '@repo/contracts/auth'
-import type { Locale } from '../../i18n/config'
+import type { Locale } from '~/lib/i18n/config'
 import { refresh } from './auth.request'
-import { ApiError } from '../errors/api-error'
-import { apiRequest } from '../http'
-import { readLocaleFromHeaders, setLocaleHeaders } from '../locale-header'
-import { unauthorized } from '../responses'
-import { readRequestAuthTokens, setAuthCookies } from '../../auth/session'
+import { ApiError } from '~/lib/api/errors/api-error'
+import { apiRequest } from '~/lib/api/http'
+import { readLocaleFromHeaders, setLocaleHeaders } from '~/lib/api/locale-header'
+import { unauthorized } from '~/lib/api/responses'
+import { readRequestAuthTokens, setAuthCookies } from '~/lib/auth/session'
 
 type AuthenticatedRequestOptions = Omit<RequestInit, 'body' | 'headers'> & {
   body?: unknown

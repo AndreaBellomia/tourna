@@ -1,4 +1,4 @@
-import { getWebBackendConfig } from '../backend/config'
+import { getWebBackendConfig } from '~/lib/backend/config'
 
 export const authCookieNames = {
   accessToken: 'tourna_access_token',

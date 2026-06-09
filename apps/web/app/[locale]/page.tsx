@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
-import { authCookieNames } from '../../lib/auth/cookies'
-import { isLocale, withLocale } from '../../lib/i18n/config'
+import { authCookieNames } from '~/lib/auth/cookies'
+import { isLocale, withLocale } from '~/lib/i18n/config'
 
 type LocaleIndexPageProps = {
   params: Promise<{ locale: string }>

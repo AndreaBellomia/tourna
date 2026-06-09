@@ -1,5 +1,5 @@
-import { API_CACHE_KEY_PREFIX } from '../cache.constants'
-import { CacheService } from '../cache.service'
+import { API_CACHE_KEY_PREFIX } from '~/cache/cache.constants'
+import { CacheService } from '~/cache/cache.service'
 
 type CacheKeyFactory = (...args: unknown[]) => readonly string[] | Promise<readonly string[]>
 type CacheKeyResolvable = readonly string[] | CacheKeyFactory

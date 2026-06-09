@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { LayoutDashboard, Trophy, UserCircle, Users } from 'lucide-react'
-import { type Locale, withLocale } from '../../../lib/i18n/config'
-import type { Messages } from '../../../lib/i18n/web-i18n'
+import { type Locale, withLocale } from '~/lib/i18n/config'
+import type { Messages } from '~/lib/i18n/web-i18n'
 
 type NavKey = keyof Messages['common']['nav']
 

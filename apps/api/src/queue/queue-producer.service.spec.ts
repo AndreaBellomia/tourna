@@ -1,5 +1,5 @@
 import { QueueProducerService } from './queue-producer.service'
-import type { AppConfigService } from '../config/config.service'
+import type { AppConfigService } from '~/config/config.service'
 
 jest.mock(
   '@repo/queue',

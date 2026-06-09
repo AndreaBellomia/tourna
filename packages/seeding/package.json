@@ -1,0 +1,48 @@
+{
+  "name": "@repo/seeding",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./cli": {
+      "source": "./src/cli.ts",
+      "types": "./dist/cli.d.ts",
+      "default": "./dist/cli.js"
+    }
+  },
+  "scripts": {
+    "watch": "tsup src/index.ts src/cli.ts --dts --watch",
+    "build": "tsup src/index.ts src/cli.ts --dts",
+    "check-types": "tsc --noEmit",
+    "test": "pnpm --filter api exec jest --config ../../jest.packages.config.cjs --testPathPatterns packages/seeding/src/.*\\.spec\\.ts$ --passWithNoTests",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "seed:dev": "dotenv -e ../../.env -- tsx src/cli.ts dev",
+    "seed:e2e": "dotenv -e ../../.env -- tsx src/cli.ts e2e"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.15.3",
+    "dotenv-cli": "^7.1.0",
+    "eslint": "^9.39.1",
+    "prettier": "^3.4.2",
+    "tsup": "^8.5.1",
+    "tsx": "^4.22.3",
+    "typescript": "5.9.2"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^10.4.0",
+    "@repo/db": "workspace:*",
+    "@repo/redis": "workspace:*",
+    "kysely": "^0.29.2",
+    "zod": "^4.4.3"
+  }
+}

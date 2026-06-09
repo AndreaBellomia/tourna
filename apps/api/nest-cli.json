@@ -5,6 +5,7 @@
   "compilerOptions": {
     "builder": "swc",
     "deleteOutDir": true,
-    "webpack": true
+    "webpack": true,
+    "webpackConfigPath": "webpack.config.js"
   }
 }

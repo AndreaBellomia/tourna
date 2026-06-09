@@ -1,10 +1,10 @@
 import { cookies } from 'next/headers'
 import type { z } from 'zod'
-import { authCookieNames } from '../../auth/cookies'
-import { ApiError } from '../errors/api-error'
-import { unauthorized } from '../responses'
-import { apiRequest } from '../http'
-import type { Locale } from '../../i18n/config'
+import { authCookieNames } from '~/lib/auth/cookies'
+import { ApiError } from '~/lib/api/errors/api-error'
+import { unauthorized } from '~/lib/api/responses'
+import { apiRequest } from '~/lib/api/http'
+import type { Locale } from '~/lib/i18n/config'
 import { refresh } from './auth.request'
 
 type ServerAuthenticatedRequestOptions = Omit<RequestInit, 'body' | 'headers'> & {

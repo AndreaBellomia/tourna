@@ -6,7 +6,7 @@ import type {
   UpdateTeamInput,
 } from '@repo/contracts'
 import type { Visibility } from '@repo/domain'
-import { StorageService } from '../storage/storage.service'
+import { StorageService } from '~/storage/storage.service'
 import { TeamRepository, type TeamDetailItem } from './team.repository'
 
 @Injectable()

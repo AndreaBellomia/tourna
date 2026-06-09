@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getOptionalPageData, getRequiredPageData } from '../../../../lib/api/page-data'
-import { getTeam } from '../../../../lib/api/teams/team.request'
-import { isLocale, resolveLocale } from '../../../../lib/i18n/config'
-import { getMessages } from '../../../../lib/i18n/web-i18n'
-import { TeamProfile } from '../../../../features/teams/components/team-profile'
+import { getOptionalPageData, getRequiredPageData } from '~/lib/api/page-data'
+import { getTeam } from '~/lib/api/teams/team.request'
+import { isLocale, resolveLocale } from '~/lib/i18n/config'
+import { getMessages } from '~/lib/i18n/web-i18n'
+import { TeamProfile } from '~/features/teams/components/team-profile'
 
 type TeamPageProps = {
   params: Promise<{ locale: string; id: string }>

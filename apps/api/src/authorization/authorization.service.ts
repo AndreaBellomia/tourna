@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { Action, buildAbility, Subject, teamSubject, userSubject } from '@repo/authorization'
-import { CacheService } from '../cache/cache.service'
+import { CacheService } from '~/cache/cache.service'
 import { CacheKeys } from '@repo/redis'
-import { DatabaseService } from '../database/database.service'
+import { DatabaseService } from '~/database/database.service'
 import type { DatabaseSchema } from '@repo/db'
 import type { Selectable } from 'kysely'
-import { AppConfigService } from '../config/config.service'
+import { AppConfigService } from '~/config/config.service'
 import type { TeamMembershipRole } from '@repo/domain'
 
 type TeamAuthorizationTarget = Pick<Selectable<DatabaseSchema['teams']>, 'id' | 'organization_id'>

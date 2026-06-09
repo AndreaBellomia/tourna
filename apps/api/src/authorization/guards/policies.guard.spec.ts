@@ -1,7 +1,7 @@
 import { ExecutionContext } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { PoliciesGuard } from './policies.guard'
-import { AuthorizationService } from '../authorization.service'
+import { AuthorizationService } from '~/authorization/authorization.service'
 import { Action, Subject } from '@repo/authorization'
 
 function createHttpContext(request: unknown): ExecutionContext {

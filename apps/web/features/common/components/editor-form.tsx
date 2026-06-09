@@ -6,7 +6,7 @@ import { Button } from '@repo/ui/button'
 import { Label } from '@repo/ui/label'
 import { Textarea } from '@repo/ui/textarea'
 import { cn } from '@repo/ui/utils'
-import { MarkdownContent } from '../../teams/components/markdown-content'
+import { MarkdownContent } from '~/features/teams/components/markdown-content'
 
 export type EditorViewMode = 'edit' | 'preview'
 

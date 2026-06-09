@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { defaultLocale, locales } from '../lib/i18n/config'
+import { defaultLocale, locales } from '~/lib/i18n/config'
 
 const LOCALE_EXCLUDED_PREFIXES = ['/_next', '/api', '/_vercel']
 const PUBLIC_FILE_PATHNAME = /\.[^/]+$/

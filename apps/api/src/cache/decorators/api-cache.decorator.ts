@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common'
-import { API_CACHE_METADATA } from '../cache.constants'
+import { API_CACHE_METADATA } from '~/cache/cache.constants'
 
 export type HeaderValue = string | string[] | undefined
 

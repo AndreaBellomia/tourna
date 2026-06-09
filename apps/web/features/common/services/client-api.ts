@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { appendClientQuery, type ClientQueryParams } from './client-query'
 import { ClientApiError, isUnauthorizedClientApiError } from './client-api-error'
 import { redirectBrowserToLogin } from './client-navigation'
-import { resolveClientLocale, setLocaleHeaders } from '../../../lib/api/locale-header'
+import { resolveClientLocale, setLocaleHeaders } from '~/lib/api/locale-header'
 
 type ClientApiRequestOptions<TSchema extends z.ZodType> = Omit<RequestInit, 'body' | 'headers'> & {
   path: string

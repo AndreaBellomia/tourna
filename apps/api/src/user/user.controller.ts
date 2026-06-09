@@ -2,7 +2,7 @@ import { Controller, Get, HttpCode, HttpStatus, Param, Query } from '@nestjs/com
 import { ApiOkResponse } from '@nestjs/swagger'
 import type { UserDetailResponse, UserListResponse } from '@repo/contracts'
 import { UserDetailResponseDto, UserListQueryDto, UserListResponseDto } from '@repo/contracts/nest'
-import { Public } from '../common/decorators/public.decorator'
+import { Public } from '~/common/decorators/public.decorator'
 import { UserService } from './user.service'
 import { ApiCache } from 'src/cache/decorators'
 

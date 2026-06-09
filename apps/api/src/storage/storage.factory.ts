@@ -1,5 +1,5 @@
 import { createStorageClient, type StorageClient } from '@repo/storage'
-import { AppConfigService } from '../config/config.service'
+import { AppConfigService } from '~/config/config.service'
 import { STORAGE_CLIENT } from './storage.tokens'
 
 export const storageProvider = {

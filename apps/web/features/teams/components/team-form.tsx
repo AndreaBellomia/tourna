@@ -15,8 +15,8 @@ import {
   type TeamDetailResponse,
   type UpdateTeamInput,
 } from '@repo/contracts'
-import { type Locale, withLocale } from '../../../lib/i18n/config'
-import type { Messages } from '../../../lib/i18n/web-i18n'
+import { type Locale, withLocale } from '~/lib/i18n/config'
+import type { Messages } from '~/lib/i18n/web-i18n'
 import {
   EditorFormHeader,
   EditorFormLayout,
@@ -25,9 +25,9 @@ import {
   ImageUploadControl,
   MarkdownEditorField,
   type EditorViewMode,
-} from '../../common/components/editor-form'
-import { useZodSubmit } from '../../common/services/form-submit'
-import { submitTeam, updateTeam, uploadTeamLogo } from '../services/team-client'
+} from '~/features/common/components/editor-form'
+import { useZodSubmit } from '~/features/common/services/form-submit'
+import { submitTeam, updateTeam, uploadTeamLogo } from '~/features/teams/services/team-client'
 
 const visibilityOptions = ['private', 'unlisted', 'public'] as const
 

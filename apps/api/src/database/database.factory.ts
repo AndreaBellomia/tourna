@@ -1,6 +1,6 @@
 import { createConnections } from '@repo/db'
 import { DB_CONNECTION } from './database.token'
-import { AppConfigService } from '../config/config.service'
+import { AppConfigService } from '~/config/config.service'
 
 export const databaseProvider = {
   provide: DB_CONNECTION,

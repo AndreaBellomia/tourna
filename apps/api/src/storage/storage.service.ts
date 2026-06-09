@@ -18,8 +18,8 @@ import {
   type StorageObjectDescriptor,
 } from '@repo/storage'
 import type { CreatePresignedReadInput, CreatePresignedUploadInput } from '@repo/contracts'
-import { RedisService } from '../redis/redis.service'
-import { AppConfigService } from '../config/config.service'
+import { RedisService } from '~/redis/redis.service'
+import { AppConfigService } from '~/config/config.service'
 import { STORAGE_CLIENT } from './storage.tokens'
 
 @Injectable()

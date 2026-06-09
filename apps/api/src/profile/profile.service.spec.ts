@@ -1,6 +1,6 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
-import { StorageService } from '../storage/storage.service'
+import { StorageService } from '~/storage/storage.service'
 import { ProfileRepository } from './profile.repository'
 import { ProfileService } from './profile.service'
 

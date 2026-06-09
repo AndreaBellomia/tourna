@@ -1,8 +1,8 @@
-import { logout as revokeSession } from '../../../../lib/api/auth/auth.request'
-import { noContent } from '../../../../lib/api/responses'
-import { withRouteHandler } from '../../../../lib/api/with-route-handler'
-import { authCookieNames } from '../../../../lib/auth/cookies'
-import { clearAuthCookies } from '../../../../lib/auth/session'
+import { logout as revokeSession } from '~/lib/api/auth/auth.request'
+import { noContent } from '~/lib/api/responses'
+import { withRouteHandler } from '~/lib/api/with-route-handler'
+import { authCookieNames } from '~/lib/auth/cookies'
+import { clearAuthCookies } from '~/lib/auth/session'
 
 export const POST = withRouteHandler(async (request) => {
   const accessToken = request.cookies.get(authCookieNames.accessToken)?.value

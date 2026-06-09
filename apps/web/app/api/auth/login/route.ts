@@ -1,7 +1,11 @@
 import { LoginSchema } from '@repo/contracts/auth'
-import { login } from '../../../../lib/api/auth/auth.request'
-import { withRouteHandler } from '../../../../lib/api/with-route-handler'
-import { createAuthErrorResponse, createAuthResponse, readRequestLocale } from '../_shared'
+import { login } from '~/lib/api/auth/auth.request'
+import { withRouteHandler } from '~/lib/api/with-route-handler'
+import {
+  createAuthErrorResponse,
+  createAuthResponse,
+  readRequestLocale,
+} from '~/app/api/auth/_shared'
 
 export const POST = withRouteHandler(
   async (request) => {

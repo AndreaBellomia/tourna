@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common'
-import { WorkerConfigModule } from '../config/worker-config.module'
-import { WorkerEmailModule } from '../email/email.module'
+import { WorkerConfigModule } from '~/config/worker-config.module'
+import { WorkerEmailModule } from '~/email/email.module'
 import {
   MaintenanceProcessor,
   NotificationsProcessor,
   RatingsProcessor,
   ReportsProcessor,
-} from '../processors'
+} from '~/processors'
 import { WorkerManagerService } from './worker-manager.service'
 
 @Module({

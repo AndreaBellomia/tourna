@@ -3,10 +3,10 @@ import { scrypt, randomBytes, timingSafeEqual, randomUUID } from 'crypto'
 import { promisify } from 'util'
 import { AuthResponse, LoginInput, SignupInput } from '@repo/contracts'
 import { JwtPayload } from '@repo/domain'
-import { DatabaseService } from '../../database/database.service'
-import { TokenService } from '../../tokens/token.service'
+import { DatabaseService } from '~/database/database.service'
+import { TokenService } from '~/tokens/token.service'
 import { SessionService } from './session.service'
-import { AppConfigService } from '../../config/config.service'
+import { AppConfigService } from '~/config/config.service'
 
 const scryptAsync = promisify(scrypt)
 

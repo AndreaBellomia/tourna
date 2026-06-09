@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core'
 import { firstValueFrom, of } from 'rxjs'
 import { ApiCacheInterceptor } from './api-cache.interceptor'
 import { CacheService } from './cache.service'
-import { AppConfigService } from '../config/config.service'
+import { AppConfigService } from '~/config/config.service'
 
 describe('ApiCacheInterceptor', () => {
   const cacheService = {

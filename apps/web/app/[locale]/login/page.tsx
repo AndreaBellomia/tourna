@@ -1,12 +1,12 @@
-import type { Metadata } from "next"
-import { cookies } from "next/headers"
-import { notFound, redirect } from "next/navigation"
-import { Activity, GitBranch, RadioTower, Trophy } from "lucide-react"
-import { Badge } from "@repo/ui/badge"
-import { authCookieNames } from "../../../lib/auth/cookies"
-import { isLocale, resolveLocale, withLocale } from "../../../lib/i18n/config"
-import { getMessages } from "../../../lib/i18n/web-i18n"
-import { AuthPanel } from "../../../features/auth/components/auth-panel"
+import type { Metadata } from 'next'
+import { cookies } from 'next/headers'
+import { notFound, redirect } from 'next/navigation'
+import { Activity, GitBranch, RadioTower, Trophy } from 'lucide-react'
+import { Badge } from '@repo/ui/badge'
+import { authCookieNames } from '~/lib/auth/cookies'
+import { isLocale, resolveLocale, withLocale } from '~/lib/i18n/config'
+import { getMessages } from '~/lib/i18n/web-i18n'
+import { AuthPanel } from '~/features/auth/components/auth-panel'
 
 type LoginPageProps = {
   params: Promise<{ locale: string }>
@@ -33,7 +33,7 @@ export default async function LoginPage({ params }: LoginPageProps) {
   const cookieStore = await cookies()
 
   if (cookieStore.has(authCookieNames.accessToken)) {
-    redirect(withLocale(locale, "/dashboard"))
+    redirect(withLocale(locale, '/dashboard'))
   }
 
   return (
@@ -124,13 +124,17 @@ function Connector() {
   return <span className="h-px w-full bg-[#465044]" />
 }
 
-function BracketNode({ label, tone }: { label: string; tone: "accent" | "default" | "muted" }) {
+function BracketNode({ label, tone }: { label: string; tone: 'accent' | 'default' | 'muted' }) {
   const toneClass =
-    tone === "accent"
-      ? "border-accent bg-accent text-accent-foreground"
-      : tone === "muted"
-        ? "border-[#465044] bg-[#252b26] text-[#cdd7ca]"
-        : "border-[#465044] bg-[#121613] text-[#f8f5ec]"
+    tone === 'accent'
+      ? 'border-accent bg-accent text-accent-foreground'
+      : tone === 'muted'
+        ? 'border-[#465044] bg-[#252b26] text-[#cdd7ca]'
+        : 'border-[#465044] bg-[#121613] text-[#f8f5ec]'
 
-  return <span className={`rounded-md border px-3 py-2 text-center font-medium ${toneClass}`}>{label}</span>
+  return (
+    <span className={`rounded-md border px-3 py-2 text-center font-medium ${toneClass}`}>
+      {label}
+    </span>
+  )
 }

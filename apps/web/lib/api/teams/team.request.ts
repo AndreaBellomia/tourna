@@ -5,8 +5,8 @@ import {
   type CreateTeamInput,
   type TeamListQuery,
 } from '@repo/contracts'
-import { apiRequest } from '../http'
-import type { Locale } from '../../i18n/config'
+import { apiRequest } from '~/lib/api/http'
+import type { Locale } from '~/lib/i18n/config'
 import { teamEndpoints, teamListEndpoint } from './team.endpoint'
 
 export function listTeams(query: Partial<TeamListQuery> = {}, locale?: Locale) {

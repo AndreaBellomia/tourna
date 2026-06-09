@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getOptionalPageData } from '../../../lib/api/page-data'
-import { listUsers } from '../../../lib/api/users/user.request'
-import { isLocale, resolveLocale } from '../../../lib/i18n/config'
-import { getMessages } from '../../../lib/i18n/web-i18n'
-import { AppHeader } from '../../../features/common/components/app-header'
-import { UserExplorer } from '../../../features/users/components/user-explorer'
+import { getOptionalPageData } from '~/lib/api/page-data'
+import { listUsers } from '~/lib/api/users/user.request'
+import { isLocale, resolveLocale } from '~/lib/i18n/config'
+import { getMessages } from '~/lib/i18n/web-i18n'
+import { AppHeader } from '~/features/common/components/app-header'
+import { UserExplorer } from '~/features/users/components/user-explorer'
 
 type UsersPageProps = {
   params: Promise<{ locale: string }>

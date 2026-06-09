@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { type CursorPaginatedResult, type CursorPaginationInput, paginateCursor } from '@repo/db'
-import { DatabaseService } from '../database/database.service'
+import { DatabaseService } from '~/database/database.service'
 
 type UserRow = {
   id: string

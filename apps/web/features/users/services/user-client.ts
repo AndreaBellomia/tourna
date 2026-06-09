@@ -5,7 +5,7 @@ import {
   UserListResponseSchema,
   type UserListQuery,
 } from '@repo/contracts'
-import { clientApiRequest } from '../../common/services/client-api'
+import { clientApiRequest } from '~/features/common/services/client-api'
 
 export type ClientUserListQuery = Partial<UserListQuery>
 

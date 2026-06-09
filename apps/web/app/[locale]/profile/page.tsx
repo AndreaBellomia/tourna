@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
-import { getMessages } from '../../../lib/i18n/web-i18n'
-import { isLocale, resolveLocale, withLocale } from '../../../lib/i18n/config'
-import { ProfileEditPanel } from '../../../features/profile/components/profile-edit'
+import { getMessages } from '~/lib/i18n/web-i18n'
+import { isLocale, resolveLocale, withLocale } from '~/lib/i18n/config'
+import { ProfileEditPanel } from '~/features/profile/components/profile-edit'
 import { notFound } from 'next/navigation'
-import { requireAuthenticatedPage } from '../../../lib/auth/session'
-import { getRequiredPageData } from '../../../lib/api/page-data'
-import { getProfile } from '../../../lib/api/profile/profile.request'
-import { AppHeader } from '../../../features/common/components/app-header'
+import { requireAuthenticatedPage } from '~/lib/auth/session'
+import { getRequiredPageData } from '~/lib/api/page-data'
+import { getProfile } from '~/lib/api/profile/profile.request'
+import { AppHeader } from '~/features/common/components/app-header'
 
 type ProfilePageProps = {
   params: Promise<{ locale: string }>

@@ -1,6 +1,6 @@
 'use client'
 
-import { defaultLocale, isLocale, withLocale } from '../../../lib/i18n/config'
+import { defaultLocale, isLocale, withLocale } from '~/lib/i18n/config'
 
 export function redirectBrowserToLogin() {
   if (typeof window === 'undefined') {

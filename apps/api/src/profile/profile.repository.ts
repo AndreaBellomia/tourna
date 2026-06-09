@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import type { UpdateProfileInput } from '@repo/contracts'
-import { DatabaseService } from '../database/database.service'
+import { DatabaseService } from '~/database/database.service'
 
 type ProfileRow = {
   id: string

@@ -8,7 +8,7 @@ jest.mock('@repo/db', () => {
 })
 
 import { Test, TestingModule } from '@nestjs/testing'
-import { StorageService } from '../storage/storage.service'
+import { StorageService } from '~/storage/storage.service'
 import { TeamService } from './team.service'
 import { TeamRepository } from './team.repository'
 

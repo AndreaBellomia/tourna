@@ -1,8 +1,11 @@
 import { BadRequestException, ExecutionContext } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { Action } from '@repo/authorization'
-import { AuthorizationService } from '../authorization.service'
-import { TEAM_MEMBERSHIP_POLICY_KEY, TEAM_POLICY_KEY } from '../decorators/team-policy.decorator'
+import { AuthorizationService } from '~/authorization/authorization.service'
+import {
+  TEAM_MEMBERSHIP_POLICY_KEY,
+  TEAM_POLICY_KEY,
+} from '~/authorization/decorators/team-policy.decorator'
 import { TeamPoliciesGuard } from './team-policies.guard'
 
 function createHttpContext(request: unknown): ExecutionContext {
