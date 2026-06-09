@@ -1,8 +1,5 @@
 import { defaultEmailLocale, type EmailLocale } from '../i18n/config'
-import {
-  getEmailTranslator,
-  type EmailNamespaceTranslator,
-} from '../i18n/email-i18n'
+import { getEmailTranslator, type EmailNamespaceTranslator } from '../i18n/email-i18n'
 
 export interface EmailRenderContext {
   locale: EmailLocale

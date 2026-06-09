@@ -62,11 +62,13 @@ export class MaintenanceProcessor extends BaseWorkerProcessor implements OnModul
         jobName: MAINTENANCE_HEARTBEAT_JOB_NAME,
         run: (job) => {
           const payload = maintenanceHeartbeatPayloadSchema.parse(job.data)
+          const scheduledFor = getScheduledFor(job)
 
           this.logger.log({
             message: 'Maintenance heartbeat processed',
             jobId: job.id,
-            scheduledAt: payload.scheduledAt,
+            scheduledFor,
+            payloadScheduledAt: payload.scheduledAt,
           })
         },
       },
@@ -74,12 +76,14 @@ export class MaintenanceProcessor extends BaseWorkerProcessor implements OnModul
         jobName: MAINTENANCE_STORAGE_CLEANUP_JOB_NAME,
         run: async (job) => {
           const payload = maintenanceStorageCleanupPayloadSchema.parse(job.data)
+          const scheduledFor = getScheduledFor(job)
           const result = await this.storageUploads.cleanupOrphanUploads(Date.now(), payload.limit)
 
           this.logger.log({
             message: 'Storage orphan cleanup processed',
             jobId: job.id,
-            scheduledAt: payload.scheduledAt,
+            scheduledFor,
+            payloadScheduledAt: payload.scheduledAt,
             ...result,
           })
         },
@@ -95,4 +99,24 @@ export class MaintenanceProcessor extends BaseWorkerProcessor implements OnModul
     this.storageClient.destroy()
     await this.redisClient.quit()
   }
+}
+
+function getScheduledFor(job: Job): string | undefined {
+  const repeatTimestamp = getRepeatJobTimestamp(job.id)
+
+  if (repeatTimestamp) {
+    return new Date(repeatTimestamp).toISOString()
+  }
+
+  return typeof job.timestamp === 'number' ? new Date(job.timestamp).toISOString() : undefined
+}
+
+function getRepeatJobTimestamp(jobId: string | undefined): number | undefined {
+  if (!jobId?.startsWith('repeat:')) {
+    return undefined
+  }
+
+  const timestamp = Number(jobId.split(':').at(-1))
+
+  return Number.isSafeInteger(timestamp) && timestamp > 0 ? timestamp : undefined
 }

@@ -50,4 +50,21 @@ describe('renderEmail', () => {
     expect(email.text).toContain('Format: PDF')
     expect(email.text).toContain('Open report: https://tourna.test/reports/spring-clash')
   })
+
+  it('renders post-registration notification emails in english', async () => {
+    const email = await renderEmail(
+      {
+        template: 'post-registration-notification',
+        data: {
+          displayName: 'Andrea',
+          email: 'andrea@example.com',
+        },
+      },
+      'en',
+    )
+
+    expect(email.subject).toBe('Your Tourna registration is complete')
+    expect(email.html).toContain('Registration completed')
+    expect(email.text).toContain('Registered email: andrea@example.com')
+  })
 })

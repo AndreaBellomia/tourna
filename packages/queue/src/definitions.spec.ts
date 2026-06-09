@@ -37,6 +37,25 @@ describe('Tourna queue definitions', () => {
     expect(payload.locale).toBe('en')
   })
 
+  it('validates post-registration email payloads', () => {
+    const payload = parseTournaJobPayload(SEND_EMAIL_JOB_NAME, {
+      to: 'player@example.com',
+      content: {
+        template: 'post-registration-notification',
+        data: {
+          displayName: 'Player',
+          email: 'player@example.com',
+        },
+      },
+    })
+
+    expect(payload).toMatchObject({
+      content: {
+        template: 'post-registration-notification',
+      },
+    })
+  })
+
   it('rejects unknown job names', () => {
     expect(() => parseTournaJobPayload('missing.job', {})).toThrow('Unknown Tourna job')
   })

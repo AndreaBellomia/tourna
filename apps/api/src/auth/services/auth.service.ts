@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common'
 import { scrypt, randomBytes, timingSafeEqual, randomUUID } from 'crypto'
 import { promisify } from 'util'
 import { AuthResponse, LoginInput, SignupInput } from '@repo/contracts'
@@ -7,16 +7,20 @@ import { DatabaseService } from '~/database/database.service'
 import { TokenService } from '~/tokens/token.service'
 import { SessionService } from './session.service'
 import { AppConfigService } from '~/config/config.service'
+import { QueueProducerService } from '~/queue/queue-producer.service'
 
 const scryptAsync = promisify(scrypt)
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name)
+
   constructor(
     private readonly db: DatabaseService,
     private readonly tokens: TokenService,
     private readonly sessions: SessionService,
     private readonly config: AppConfigService,
+    private readonly queue: QueueProducerService,
   ) {}
 
   async signup(dto: SignupInput, userAgent: string, ip: string): Promise<AuthResponse> {
@@ -45,7 +49,15 @@ export class AuthService {
 
     if (!user) throw new Error('User creation failed')
 
-    return this.buildSession(user.id, userAgent, ip)
+    const session = await this.buildSession(user.id, userAgent, ip)
+
+    await this.enqueuePostRegistrationNotification({
+      userId: user.id,
+      email: dto.email,
+      displayName,
+    })
+
+    return session
   }
 
   async login(dto: LoginInput, userAgent: string, ip: string): Promise<AuthResponse> {
@@ -109,6 +121,41 @@ export class AuthService {
     await this.sessions.createSession({ sessionId, userId, tokenHash, userAgent, ip })
 
     return { accessToken, refreshToken, sessionId }
+  }
+
+  private async enqueuePostRegistrationNotification(input: {
+    userId: string
+    email: string
+    displayName: string
+  }): Promise<void> {
+    try {
+      await this.queue.enqueueSendEmail(
+        {
+          to: input.email,
+          metadata: {
+            flow: 'post-registration',
+            userId: input.userId,
+          },
+          idempotencyKey: `post-registration:${input.userId}`,
+          content: {
+            template: 'post-registration-notification',
+            data: {
+              displayName: input.displayName,
+              email: input.email,
+            },
+          },
+        },
+        {
+          jobId: `email:post-registration:${input.userId}`,
+        },
+      )
+    } catch (error) {
+      this.logger.warn({
+        message: 'Post-registration email enqueue failed',
+        userId: input.userId,
+        error: error instanceof Error ? error.message : String(error),
+      })
+    }
   }
 
   private buildDefaultDisplayName(email: string): string {

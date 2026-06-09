@@ -6,6 +6,4 @@ export const tournamentReportReadyEmailSchema = z.object({
   reportUrl: z.string().url(),
 })
 
-export type TournamentReportReadyEmailProps = z.infer<
-  typeof tournamentReportReadyEmailSchema
->
+export type TournamentReportReadyEmailProps = z.infer<typeof tournamentReportReadyEmailSchema>

@@ -7,11 +7,12 @@ const englishWelcomeEmailMessages = {
   body: 'Your Tourna account is ready. You can now create tournaments, manage registrations, and run event operations from one place.',
   cta: 'Open Tourna',
   subject: 'Welcome to Tourna, {{displayName}}',
-  text:
-    'Welcome, {{displayName}}.\n\nYour Tourna account is ready.\n\nOpen Tourna: {{dashboardUrl}}',
+  text: 'Welcome, {{displayName}}.\n\nYour Tourna account is ready.\n\nOpen Tourna: {{dashboardUrl}}',
 } as const
 
-export type WelcomeEmailMessageResource = TranslationResourceShape<typeof englishWelcomeEmailMessages>
+export type WelcomeEmailMessageResource = TranslationResourceShape<
+  typeof englishWelcomeEmailMessages
+>
 
 export const welcomeEmailMessages = {
   en: englishWelcomeEmailMessages,
@@ -21,7 +22,6 @@ export const welcomeEmailMessages = {
     body: 'Il tuo account Tourna e pronto. Ora puoi creare tornei, gestire iscrizioni e organizzare le operazioni del tuo evento da un unico spazio.',
     cta: 'Apri Tourna',
     subject: 'Benvenuto su Tourna, {{displayName}}',
-    text:
-      'Benvenuto, {{displayName}}.\n\nIl tuo account Tourna e pronto.\n\nApri Tourna: {{dashboardUrl}}',
+    text: 'Benvenuto, {{displayName}}.\n\nIl tuo account Tourna e pronto.\n\nApri Tourna: {{dashboardUrl}}',
   } satisfies WelcomeEmailMessageResource,
 } as const satisfies Record<EmailLocale, WelcomeEmailMessageResource>

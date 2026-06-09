@@ -48,7 +48,7 @@ Email localization uses `i18next` with namespace resources composed from templat
 Current namespace layout:
 
 - `shell`: shared wrapper copy such as footer text
-- `account`: account-related email templates
+- `account`: account-related email templates such as welcome and post-registration notifications
 - `reports`: report-related email templates
 
 To add a new language:

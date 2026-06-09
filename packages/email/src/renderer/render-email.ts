@@ -1,8 +1,4 @@
-import {
-  createEmailEngine,
-  renderWithEmailEngine,
-  type EmailEngine,
-} from '../core/email.engine'
+import { createEmailEngine, renderWithEmailEngine, type EmailEngine } from '../core/email.engine'
 import { createEmailRenderContext } from '../core/email-render-context'
 import { defaultEmailLocale, type EmailLocale } from '../i18n/config'
 import { emailTemplatePayloadSchema, type EmailTemplatePayload } from '../templates/registry'

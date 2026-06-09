@@ -54,7 +54,5 @@ export const tournamentReportReadyEmailDefinition = {
       format: props.format.toUpperCase(),
       reportUrl: props.reportUrl,
     }),
-  render: (props, context) => (
-    <TournamentReportReadyEmailTemplate data={props} context={context} />
-  ),
+  render: (props, context) => <TournamentReportReadyEmailTemplate data={props} context={context} />,
 } satisfies EmailTemplateDefinition<TournamentReportReadyEmailProps>

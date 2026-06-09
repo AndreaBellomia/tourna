@@ -25,12 +25,23 @@ describe('AuthService', () => {
     get: jest.fn(),
   }
 
+  const queue = {
+    enqueueSendEmail: jest.fn(),
+  }
+
   let service: AuthService
 
   beforeEach(() => {
     jest.clearAllMocks()
     config.get.mockReturnValue(64)
-    service = new AuthService(db as never, tokens as never, sessions as never, config as never)
+    queue.enqueueSendEmail.mockResolvedValue({ id: 'email-job-1' })
+    service = new AuthService(
+      db as never,
+      tokens as never,
+      sessions as never,
+      config as never,
+      queue as never,
+    )
   })
 
   it('rejects signup when email is already in use', async () => {
@@ -74,6 +85,98 @@ describe('AuthService', () => {
         tokenHash: 'hashed-refresh-token',
         userAgent: 'ua',
         ip: '127.0.0.1',
+      }),
+    )
+  })
+
+  it('enqueues a post-registration notification after successful signup', async () => {
+    const emailLookupQuery = {
+      select: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      executeTakeFirst: jest.fn().mockResolvedValue(undefined),
+    }
+    const nicknameLookupQuery = {
+      select: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      executeTakeFirst: jest.fn().mockResolvedValue(undefined),
+    }
+    const insertQuery = {
+      values: jest.fn().mockReturnThis(),
+      returning: jest.fn().mockReturnThis(),
+      execute: jest.fn().mockResolvedValue([{ id: 'user-1' }]),
+    }
+
+    db.db.selectFrom.mockReturnValueOnce(emailLookupQuery).mockReturnValueOnce(nicknameLookupQuery)
+    db.db.insertInto.mockReturnValue(insertQuery)
+
+    tokens.generateRefreshToken.mockReturnValue('refresh-token')
+    tokens.hashToken.mockReturnValue('hashed-refresh-token')
+    tokens.generateAccessToken.mockReturnValue('access-token')
+
+    const result = await service.signup(
+      { email: 'andrea@example.com', password: 'password123' },
+      'ua',
+      '127.0.0.1',
+    )
+
+    expect(result.accessToken).toBe('access-token')
+    expect(queue.enqueueSendEmail).toHaveBeenCalledWith(
+      {
+        to: 'andrea@example.com',
+        metadata: {
+          flow: 'post-registration',
+          userId: 'user-1',
+        },
+        idempotencyKey: 'post-registration:user-1',
+        content: {
+          template: 'post-registration-notification',
+          data: {
+            displayName: 'andrea',
+            email: 'andrea@example.com',
+          },
+        },
+      },
+      {
+        jobId: 'email:post-registration:user-1',
+      },
+    )
+  })
+
+  it('does not fail signup when the post-registration notification cannot be enqueued', async () => {
+    const emailLookupQuery = {
+      select: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      executeTakeFirst: jest.fn().mockResolvedValue(undefined),
+    }
+    const nicknameLookupQuery = {
+      select: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      executeTakeFirst: jest.fn().mockResolvedValue(undefined),
+    }
+    const insertQuery = {
+      values: jest.fn().mockReturnThis(),
+      returning: jest.fn().mockReturnThis(),
+      execute: jest.fn().mockResolvedValue([{ id: 'user-1' }]),
+    }
+
+    db.db.selectFrom.mockReturnValueOnce(emailLookupQuery).mockReturnValueOnce(nicknameLookupQuery)
+    db.db.insertInto.mockReturnValue(insertQuery)
+
+    tokens.generateRefreshToken.mockReturnValue('refresh-token')
+    tokens.hashToken.mockReturnValue('hashed-refresh-token')
+    tokens.generateAccessToken.mockReturnValue('access-token')
+    queue.enqueueSendEmail.mockRejectedValue(new Error('queue unavailable'))
+
+    const result = await service.signup(
+      { email: 'andrea@example.com', password: 'password123' },
+      'ua',
+      '127.0.0.1',
+    )
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        accessToken: 'access-token',
+        refreshToken: 'refresh-token',
       }),
     )
   })

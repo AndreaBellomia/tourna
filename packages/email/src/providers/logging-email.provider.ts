@@ -7,7 +7,7 @@ export interface EmailProviderLogger {
 export class LoggingEmailProvider implements EmailProvider {
   constructor(private readonly logger: EmailProviderLogger = console) {}
 
-  async send(input: SendRenderedEmailInput): Promise<EmailDeliveryReceipt> {
+  send(input: SendRenderedEmailInput): Promise<EmailDeliveryReceipt> {
     this.logger.log({
       message: 'Email rendered and accepted by logging provider',
       provider: 'logging',
@@ -16,8 +16,8 @@ export class LoggingEmailProvider implements EmailProvider {
       metadata: input.envelope.metadata,
     })
 
-    return {
+    return Promise.resolve({
       provider: 'logging',
-    }
+    })
   }
 }

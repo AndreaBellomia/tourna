@@ -10,8 +10,9 @@ const englishTournamentReportReadyEmailMessages = {
   text: '{{tournamentName}} report is ready.\n\nFormat: {{format}}\n\nOpen report: {{reportUrl}}',
 } as const
 
-export type TournamentReportReadyEmailMessageResource =
-  TranslationResourceShape<typeof englishTournamentReportReadyEmailMessages>
+export type TournamentReportReadyEmailMessageResource = TranslationResourceShape<
+  typeof englishTournamentReportReadyEmailMessages
+>
 
 export const tournamentReportReadyEmailMessages = {
   en: englishTournamentReportReadyEmailMessages,
@@ -21,7 +22,6 @@ export const tournamentReportReadyEmailMessages = {
     body: 'Il report {{format}} per {{tournamentName}} e stato generato ed e pronto da consultare.',
     cta: 'Apri report',
     subject: 'Il report di {{tournamentName}} e pronto',
-    text:
-      'Il report di {{tournamentName}} e pronto.\n\nFormato: {{format}}\n\nApri report: {{reportUrl}}',
+    text: 'Il report di {{tournamentName}} e pronto.\n\nFormato: {{format}}\n\nApri report: {{reportUrl}}',
   } satisfies TournamentReportReadyEmailMessageResource,
 } as const satisfies Record<EmailLocale, TournamentReportReadyEmailMessageResource>

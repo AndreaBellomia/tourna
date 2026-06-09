@@ -7,9 +7,11 @@ import { TokenService } from '~/tokens/token.service'
 import { AccessTokenGuard } from './guards/access-token.guard'
 import { AppConfigService } from '~/config/config.service'
 import { AuthService } from './services/auth.service'
+import { QueueModule } from '~/queue/queue.module'
 
 @Module({
   imports: [
+    QueueModule,
     JwtModule.registerAsync({
       inject: [AppConfigService],
       useFactory: (config: AppConfigService) => ({
