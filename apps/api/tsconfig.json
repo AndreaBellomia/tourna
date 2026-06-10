@@ -4,7 +4,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "customConditions": [
-      "source"
+      "repo-source"
     ],
     "target": "ES2023",
     "sourceMap": true,

@@ -4,7 +4,7 @@ Use this reference when adding behavior, changing package APIs, modifying persis
 
 ## Testing Principles
 
-- Add or update tests when behavior, contracts, orchestration, validation, migrations, queue jobs, Redis scripts, email rendering, or storage flows change.
+- Add or update tests when behavior, contracts, orchestration, validation, migrations, background tasks, Redis scripts, email rendering, or storage flows change.
 - Prefer focused tests near the owner package or app integration over broad end-to-end tests for every small change.
 - Test observable behavior and boundary guarantees rather than private implementation shape.
 - Keep fixtures small and explicit.
@@ -15,8 +15,8 @@ Use this reference when adding behavior, changing package APIs, modifying persis
 - Domain or authorization rules: pure unit tests in the owning package.
 - Contracts: schema acceptance/rejection and exported type-safe helpers.
 - Redis: model validation, key construction, codec behavior, pipeline/multi behavior, Lua script wrappers, and feature-level invariants.
-- Queue: payload validation, job definition registration, producer defaults, deterministic job ids, and scheduler definitions.
-- Worker: processor routing, unsupported job behavior, payload parsing, side-effect orchestration, and lifecycle registration where practical.
+- Tasks: payload validation, task definition registration, producer defaults, deterministic idempotency keys, queue/concurrency metadata, and schedule definitions.
+- Task runtime: Trigger.dev declarations, payload parsing, and side-effect orchestration where practical.
 - Database: schema type updates with typecheck; migration `up` and `down` behavior when a database is available; query/repository primitives with focused tests when introduced.
 - Email: contract validation, render output, localization resource wiring, and provider behavior.
 - Storage: object key construction, presigned flow orchestration, upload tracker behavior, finalization, and cleanup.
@@ -37,9 +37,9 @@ Common workspace names:
 
 ```bash
 pnpm --filter api test
-pnpm --filter worker test
+pnpm --filter tasks test
 pnpm --filter @repo/redis test
-pnpm --filter @repo/queue test
+pnpm --filter @repo/tasks test
 pnpm --filter @repo/email test
 pnpm --filter @repo/storage test
 pnpm --filter @repo/authorization test

@@ -36,6 +36,7 @@
     - [Start infrastructure](#start-infrastructure)
     - [Run the frontend](#run-the-frontend)
     - [Run the API](#run-the-api)
+    - [Run the task runtime](#run-the-task-runtime)
   - [Quality Gates](#quality-gates)
   - [Roadmap Direction](#roadmap-direction)
   - [Licensing](#licensing)
@@ -96,11 +97,11 @@ apps/web
 
 apps/api
   -> transport, modules, guards, orchestration
-  -> depends on contracts + domain + db + redis + queue + authorization
+  -> depends on contracts + domain + db + redis + tasks + authorization
 
-apps/worker
-  -> BullMQ processors, cron registration, background orchestration
-  -> depends on queue + domain/db packages as features mature
+apps/tasks
+  -> Trigger.dev task declarations, scheduled tasks, background orchestration
+  -> depends on tasks + domain/db packages as features mature
 
 packages/contracts
   -> shared request/response schemas and DTOs
@@ -114,8 +115,8 @@ packages/db
 packages/redis
   -> cache/session models, typed pipelines, Lua scripts
 
-packages/queue
-  -> BullMQ queue names, job contracts, producer helpers, cron definitions
+packages/tasks
+  -> Trigger.dev task ids, payload schemas, producers, schedules, queue metadata
 
 packages/email
   -> transactional email templates, rendering, provider abstractions
@@ -132,12 +133,12 @@ The design principle is simple: keep apps thin, keep package ownership explicit,
 | ------------------------ | -------------------------------------------------------------------- |
 | `apps/web`               | Next.js frontend                                                     |
 | `apps/api`               | NestJS API with Fastify                                              |
-| `apps/worker`            | NestJS application context for BullMQ workers and cron jobs          |
+| `apps/tasks`             | Trigger.dev task runtime and scheduled task declarations             |
 | `packages/contracts`     | Shared Zod schemas and Nest-facing DTOs                              |
 | `packages/domain`        | Framework-agnostic domain types and shared vocabulary                |
 | `packages/db`            | PostgreSQL integration, schema typing, migrations                    |
 | `packages/redis`         | Redis engines, models, pipeline/multi, Lua-backed session primitives |
-| `packages/queue`         | BullMQ contracts, producers, queue names, and cron registrations     |
+| `packages/tasks`         | Trigger.dev contracts, producers, queue metadata, and schedules      |
 | `packages/email`         | Transactional email templates, renderer, and provider abstractions   |
 | `packages/authorization` | Shared authorization primitives and ability logic                    |
 | `packages/ui`            | Shared UI primitives                                                 |
@@ -152,7 +153,7 @@ The design principle is simple: keep apps thin, keep package ownership explicit,
 | Contracts        | Zod                         |
 | Persistence      | PostgreSQL, Kysely          |
 | Cache / Sessions | Redis                       |
-| Background Jobs  | BullMQ                      |
+| Background Jobs  | Trigger.dev self-hosted     |
 | Monorepo         | pnpm, Turborepo             |
 | Language         | TypeScript                  |
 | Tooling          | ESLint, Prettier, Jest      |
@@ -174,14 +175,14 @@ If a change works but degrades the architecture, it is not considered good enoug
 The infrastructure layer has recently been strengthened in a few places that matter to day-to-day development:
 
 - `packages/redis` now includes typed `pipeline()` and `multi()` support on top of the existing engines
-- `apps/worker` and `packages/queue` provide BullMQ-backed background jobs and cron registration
+- `apps/tasks` and `packages/tasks` provide Trigger.dev-backed background work and distributed cron
 - Redis scripts are versioned and reusable through the Lua runner in `packages/redis`
 - auth session flows now use shared Redis primitives instead of app-local orchestration
 - the Redis package documentation now explains how to define models, pipelines, multi blocks, and Lua scripts
 
 If you are touching cache, sessions, or composed Redis logic, start with [packages/redis/README.md](packages/redis/README.md).
 
-If you are touching async work, cron jobs, or queue producers, start with [docs/background-jobs.md](docs/background-jobs.md).
+If you are touching async work, cron jobs, or task producers, start with [docs/background-jobs.md](docs/background-jobs.md).
 
 If you are touching transactional email templates or delivery providers, start with [packages/email/README.md](packages/email/README.md).
 
@@ -201,7 +202,15 @@ pnpm install
 docker compose -f docker/docker-compose.yml up -d
 ```
 
-This brings up PostgreSQL, Redis, and Mailpit. The Mailpit inbox is available at `http://localhost:8025`.
+This brings up PostgreSQL, Redis, MinIO, and Mailpit. The Mailpit inbox is available at `http://localhost:8025`.
+
+Trigger.dev is self-hosted through the repository Docker compose setup:
+
+```sh
+pnpm infra:trigger:up
+```
+
+The Trigger.dev dashboard is available at `http://localhost:8030`. The Trigger-internal MinIO console is available at `http://localhost:9101`, separate from the Tourna storage MinIO console on `http://localhost:9001`.
 
 ### Run the frontend
 
@@ -215,10 +224,11 @@ pnpm --filter web dev
 pnpm --filter api dev
 ```
 
-### Run the worker
+### Run the task runtime
 
 ```sh
-pnpm --filter worker dev
+pnpm --filter tasks login:self-hosted
+pnpm --filter tasks dev
 ```
 
 ## Quality Gates

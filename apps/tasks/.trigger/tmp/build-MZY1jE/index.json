@@ -1,0 +1,358 @@
+{
+  "configPath": "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger.config.mjs",
+  "customConditions": [
+  ],
+  "prompts": [
+  ],
+  "queues": [
+    {
+      "concurrencyLimit": 1,
+      "name": "tourna.maintenance"
+    },
+    {
+      "concurrencyLimit": 5,
+      "name": "tourna.notifications"
+    },
+    {
+      "concurrencyLimit": 2,
+      "name": "tourna.ratings"
+    },
+    {
+      "concurrencyLimit": 2,
+      "name": "tourna.reports"
+    }
+  ],
+  "runtime": "node",
+  "runtimeVersion": "24.12.0",
+  "tasks": [
+    {
+      "entryPoint": "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/maintenance.mjs",
+      "filePath": "trigger/maintenance.ts",
+      "id": "maintenance.heartbeat.v1",
+      "machine": {
+        "preset": "small-1x"
+      },
+      "maxDuration": 60,
+      "queue": {
+        "concurrencyLimit": 1,
+        "name": "tourna.maintenance"
+      },
+      "retry": {
+        "factor": 1,
+        "maxAttempts": 2,
+        "maxTimeoutInMs": 60000,
+        "minTimeoutInMs": 15000,
+        "randomize": false
+      },
+      "schedule": {
+        "cron": "*/15 * * * *",
+        "timezone": "UTC"
+      },
+      "triggerSource": "schedule",
+      "ttl": "1h"
+    },
+    {
+      "entryPoint": "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/maintenance.mjs",
+      "filePath": "trigger/maintenance.ts",
+      "id": "maintenance.storage.cleanup-orphans.v1",
+      "machine": {
+        "preset": "small-1x"
+      },
+      "maxDuration": 300,
+      "queue": {
+        "concurrencyLimit": 1,
+        "name": "tourna.maintenance"
+      },
+      "retry": {
+        "factor": 1,
+        "maxAttempts": 3,
+        "maxTimeoutInMs": 60000,
+        "minTimeoutInMs": 30000,
+        "randomize": false
+      },
+      "schedule": {
+        "cron": "*/10 * * * *",
+        "timezone": "UTC"
+      },
+      "triggerSource": "schedule",
+      "ttl": "1h"
+    },
+    {
+      "entryPoint": "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/notifications.mjs",
+      "filePath": "trigger/notifications.ts",
+      "id": "notifications.send-email.v1",
+      "machine": {
+        "preset": "small-1x"
+      },
+      "maxDuration": 60,
+      "payloadSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "anyOf": [
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "displayName": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "verificationUrl": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "displayName",
+                      "email",
+                      "verificationUrl"
+                    ],
+                    "type": "object"
+                  },
+                  "template": {
+                    "const": "post-registration-notification",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "template",
+                  "data"
+                ],
+                "type": "object"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "dashboardUrl": {
+                        "type": "string"
+                      },
+                      "displayName": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "displayName",
+                      "dashboardUrl"
+                    ],
+                    "type": "object"
+                  },
+                  "template": {
+                    "const": "welcome",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "template",
+                  "data"
+                ],
+                "type": "object"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "data": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "format": {
+                        "enum": [
+                          "pdf",
+                          "csv"
+                        ],
+                        "type": "string"
+                      },
+                      "reportUrl": {
+                        "type": "string"
+                      },
+                      "tournamentName": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "tournamentName",
+                      "format",
+                      "reportUrl"
+                    ],
+                    "type": "object"
+                  },
+                  "template": {
+                    "const": "tournament-report-ready",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "template",
+                  "data"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          "from": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "locale": {
+            "default": "en",
+            "enum": [
+              "en",
+              "it"
+            ],
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "default": {
+            },
+            "propertyNames": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "replyTo": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "to",
+          "locale",
+          "metadata",
+          "content"
+        ],
+        "type": "object"
+      },
+      "queue": {
+        "concurrencyLimit": 5,
+        "name": "tourna.notifications"
+      },
+      "retry": {
+        "factor": 2,
+        "maxAttempts": 5,
+        "maxTimeoutInMs": 60000,
+        "minTimeoutInMs": 30000,
+        "randomize": true
+      },
+      "ttl": "1h"
+    },
+    {
+      "entryPoint": "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/ratings.mjs",
+      "filePath": "trigger/ratings.ts",
+      "id": "ratings.recalculate-tournament.v1",
+      "machine": {
+        "preset": "medium-1x"
+      },
+      "maxDuration": 600,
+      "payloadSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "enum": [
+              "match-result-recorded",
+              "manual-rebuild",
+              "migration"
+            ],
+            "type": "string"
+          },
+          "requestedByUserId": {
+            "type": "string"
+          },
+          "tournamentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "tournamentId",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "queue": {
+        "concurrencyLimit": 2,
+        "name": "tourna.ratings"
+      },
+      "retry": {
+        "factor": 2,
+        "maxAttempts": 4,
+        "maxTimeoutInMs": 60000,
+        "minTimeoutInMs": 45000,
+        "randomize": true
+      },
+      "ttl": "1h"
+    },
+    {
+      "entryPoint": "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/reports.mjs",
+      "filePath": "trigger/reports.ts",
+      "id": "reports.generate-tournament-report.v1",
+      "machine": {
+        "preset": "medium-1x"
+      },
+      "maxDuration": 900,
+      "payloadSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false,
+        "properties": {
+          "format": {
+            "default": "json",
+            "enum": [
+              "json",
+              "pdf",
+              "csv"
+            ],
+            "type": "string"
+          },
+          "locale": {
+            "default": "en",
+            "type": "string"
+          },
+          "requestedByUserId": {
+            "type": "string"
+          },
+          "tournamentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "tournamentId",
+          "requestedByUserId",
+          "format",
+          "locale"
+        ],
+        "type": "object"
+      },
+      "queue": {
+        "concurrencyLimit": 2,
+        "name": "tourna.reports"
+      },
+      "retry": {
+        "factor": 2,
+        "maxAttempts": 3,
+        "maxTimeoutInMs": 60000,
+        "minTimeoutInMs": 60000,
+        "randomize": true
+      },
+      "ttl": "1h"
+    }
+  ],
+  "timings": {
+    "trigger/maintenance.ts": 146.032958,
+    "trigger/notifications.ts": 329.83233300000006,
+    "trigger/ratings.ts": 0.5627919999999449,
+    "trigger/reports.ts": 0.351833000000056
+  },
+  "workerEntryPoint": "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/node_modules/.pnpm/trigger.dev@4.4.6_@sinclair+typebox@0.34.49_react@19.2.0_typescript@5.9.2/node_modules/trigger.dev/dist/esm/entryPoints/dev-run-worker.mjs"
+}

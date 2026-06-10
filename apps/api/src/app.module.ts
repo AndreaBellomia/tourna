@@ -9,7 +9,7 @@ import { RedisClientModule } from './redis/redis.module'
 import { AuthModule } from './auth/auth.module'
 import { CacheModule } from './cache/cache.module'
 import { AuthorizationModule } from './authorization/authorization.module'
-import { QueueModule } from './queue/queue.module'
+import { TasksModule } from './tasks/tasks.module'
 import { StorageModule } from './storage/storage.module'
 import { ApiCacheInterceptor } from './cache/api-cache.interceptor'
 import { TeamModule } from './team/team.module'
@@ -25,7 +25,7 @@ import { UserModule } from './user/user.module'
     AuthModule,
     CacheModule,
     AuthorizationModule,
-    QueueModule,
+    TasksModule,
     StorageModule,
     TeamModule,
     ErrorModule,

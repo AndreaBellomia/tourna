@@ -89,7 +89,7 @@ describe('AuthService', () => {
     )
   })
 
-  it('enqueues a post-registration notification after successful signup', async () => {
+  it('triggers a post-registration notification after successful signup', async () => {
     const emailLookupQuery = {
       select: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
@@ -127,7 +127,7 @@ describe('AuthService', () => {
     })
   })
 
-  it('does not fail signup when the post-registration notification cannot be enqueued', async () => {
+  it('does not fail signup when the post-registration notification cannot be triggered', async () => {
     const emailLookupQuery = {
       select: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
@@ -150,7 +150,7 @@ describe('AuthService', () => {
     tokens.generateRefreshToken.mockReturnValue('refresh-token')
     tokens.hashToken.mockReturnValue('hashed-refresh-token')
     tokens.generateAccessToken.mockReturnValue('access-token')
-    emailVerification.sendVerificationEmail.mockRejectedValue(new Error('queue unavailable'))
+    emailVerification.sendVerificationEmail.mockRejectedValue(new Error('task trigger unavailable'))
 
     const result = await service.signup(
       { email: 'andrea@example.com', password: 'password123' },

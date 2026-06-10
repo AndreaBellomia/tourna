@@ -2,7 +2,7 @@
 
 Typed transactional email rendering for Tourna.
 
-This package owns email templates, email-specific components, rendering, and provider abstractions. Queue producers enqueue semantic email commands; workers render and send them through this package.
+This package owns email templates, email-specific components, rendering, and provider abstractions. Task producers trigger semantic email commands; Trigger.dev tasks render and send them through this package.
 
 The root API is `EmailEngine`, which mirrors the style of `RedisEngine`: templates are registered once and the engine routes typed payloads to the correct renderer automatically.
 
@@ -15,9 +15,9 @@ The package is organized in two main areas:
 ## Ownership
 
 - `packages/email`: templates, layout primitives, theme tokens, renderer, provider interfaces
-- `packages/queue`: job contracts and enqueue defaults
-- `apps/worker`: job consumption and email delivery orchestration
-- `apps/api`: enqueue intent only
+- `packages/tasks`: task contracts and trigger defaults
+- `apps/tasks`: task execution and email delivery orchestration
+- `apps/api`: task trigger intent only
 
 Do not import `@repo/ui` into email templates. Email clients have different rendering constraints than the web app, so this package uses email-specific components.
 
@@ -39,7 +39,7 @@ Do not import `@repo/ui` into email templates. Email clients have different rend
 
 Templates use `react-email` components and inline-safe style objects. Tailwind can be introduced later for larger template volume, but the current foundation keeps the style layer explicit and easy to audit across email clients.
 
-Contracts used by queue jobs are exported from `@repo/email/contracts`. That subpath intentionally avoids TSX rendering code so API and queue packages can validate email payloads without compiling email templates.
+Contracts used by background tasks are exported from `@repo/email/contracts`. That subpath intentionally avoids TSX rendering code so API and task packages can validate email payloads without compiling email templates.
 
 ## Localization
 

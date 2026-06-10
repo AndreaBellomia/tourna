@@ -1,1 +1,0 @@
-export const WORKER_EMAIL_SERVICE = Symbol('WORKER_EMAIL_SERVICE')

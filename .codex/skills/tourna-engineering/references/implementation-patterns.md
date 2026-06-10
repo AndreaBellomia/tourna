@@ -1,14 +1,14 @@
 # Implementation Patterns
 
-Use this reference when code changes touch reusable package APIs, NestJS integration, Redis, queue/worker, database, email, storage, or cross-package contracts.
+Use this reference when code changes touch reusable package APIs, NestJS integration, Redis, Trigger.dev tasks, database, email, storage, or cross-package contracts.
 
 ## General Style
 
 - Keep shared packages framework-light unless the package explicitly owns a framework concern.
 - Prefer typed factories, exported interfaces, Zod schemas, and small root clients over ad hoc objects passed across apps.
 - Keep package root exports intentional through `src/index.ts`; avoid deep imports from apps unless a package exposes a documented subpath such as `@repo/email/contracts`.
-- Validate untrusted or serialized data at both boundaries: before enqueue/write and before process/read.
-- Use stable names for externally persisted concepts: Redis keys, queue names, job names, scheduler ids, migration filenames, storage keys, and email template ids.
+- Validate untrusted or serialized data at both boundaries: before trigger/write and before process/read.
+- Use stable names for externally persisted concepts: Redis keys, Trigger.dev task ids, Trigger.dev queue names, schedule ids, migration filenames, storage keys, and email template ids.
 
 ## NestJS App Integration
 
@@ -16,14 +16,14 @@ Use this reference when code changes touch reusable package APIs, NestJS integra
 - Put app configuration behind typed config services backed by Zod environment schemas.
 - Use provider factories for connection creation, and service wrappers for lifecycle cleanup.
 - Export only the app service needed by other modules, not raw tokens unless local injection requires them.
-- Implement `OnModuleDestroy` or application lifecycle hooks for clients, pools, queues, and workers.
+- Implement `OnModuleDestroy` or application lifecycle hooks for clients and pools in NestJS apps.
 
 Current examples:
 
 - `apps/api/src/redis/*` wraps `@repo/redis` client and engine creation.
 - `apps/api/src/database/*` wraps `@repo/db` connections.
-- `apps/api/src/queue/*` wraps `@repo/queue` producers.
-- `apps/worker/src/worker/*` owns BullMQ worker lifecycle.
+- `apps/api/src/tasks/*` wraps `@repo/tasks` producers.
+- `apps/tasks/trigger/*` owns Trigger.dev task declarations.
 
 ## Redis
 
@@ -34,15 +34,15 @@ Current examples:
 - Put Redis-backed application features such as sessions, cache indexes, upload tracking, and cleanup primitives under `packages/redis/src/features` or the owning infrastructure package when it composes Redis.
 - Lua scripts should have typed TypeScript wrappers and focused tests.
 
-## Queue And Worker
+## Tasks
 
-- `packages/queue` owns queue names, job names, payload schemas, default job options, producers, and scheduler definitions.
-- Use queue names in the `tourna.<domain>` format and job names in the `<domain>.<action>.v<version>` format.
-- Add jobs by defining a Zod payload schema, registering the job in `TOURNA_JOB_DEFINITIONS`, adding a domain producer method, and adding a worker processor definition.
-- Producers validate payloads before enqueue; processors validate `job.data` again before side effects.
-- Use deterministic `jobId` values for idempotent logical work such as tournament reports or rating recalculation.
-- Keep worker processors as orchestrators. Move reusable business rules to `packages/domain` or the owning package.
-- Register cron jobs in `packages/queue`; the worker decides whether to register them at runtime.
+- `packages/tasks` owns Trigger.dev task ids, queue/concurrency metadata, payload schemas, retry defaults, producer contracts, and schedule metadata.
+- Use Trigger.dev queue names in the `tourna.<domain>` format and task ids in the `<domain>.<action>.v<version>` format.
+- Add tasks by defining a Zod payload schema, registering the task in `TOURNA_TASK_DEFINITIONS`, adding a producer method only when the API needs to trigger it, and declaring the Trigger.dev task in `apps/tasks/trigger`.
+- Producers validate payloads before triggering; task declarations validate payloads again before side effects.
+- Use deterministic `idempotencyKey` values for logical deduplication such as tournament reports or rating recalculation.
+- Keep task handlers as orchestrators. Move reusable business rules to `packages/domain` or the owning package.
+- Register distributed cron with Trigger.dev `schedules.task()` in `apps/tasks/trigger`; do not register cron from API startup.
 
 ## Database
 
@@ -62,7 +62,7 @@ Current examples:
 ## Email
 
 - `packages/email` owns transactional email contracts, templates, rendering, localization, and provider abstractions.
-- Export queue-safe email command contracts from `@repo/email/contracts`; keep TSX rendering code out of API and queue contracts.
+- Export task-safe email command contracts from `@repo/email/contracts`; keep TSX rendering code out of API and task contracts.
 - Add templates with a `*.contract.ts`, localized `*.messages.ts`, `*.email.tsx` renderer, registry wiring, resource wiring, and render tests.
 - Templates should use email-specific components, not `@repo/ui`.
 

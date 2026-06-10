@@ -6,37 +6,37 @@
   "types": "./src/index.ts",
   "exports": {
     ".": {
-      "source": "./src/index.ts",
+      "repo-source": "./src/index.ts",
       "types": "./src/index.ts",
       "default": "./dist/index.js"
     },
     "./auth": {
-      "source": "./src/auth/index.ts",
+      "repo-source": "./src/auth/index.ts",
       "types": "./src/auth/index.ts",
       "default": "./src/auth/index.ts"
     },
     "./pagination": {
-      "source": "./src/pagination/index.ts",
+      "repo-source": "./src/pagination/index.ts",
       "types": "./src/pagination/index.ts",
       "default": "./src/pagination/index.ts"
     },
     "./profile": {
-      "source": "./src/profile/index.ts",
+      "repo-source": "./src/profile/index.ts",
       "types": "./src/profile/index.ts",
       "default": "./src/profile/index.ts"
     },
     "./storage": {
-      "source": "./src/storage/index.ts",
+      "repo-source": "./src/storage/index.ts",
       "types": "./src/storage/index.ts",
       "default": "./src/storage/index.ts"
     },
     "./team": {
-      "source": "./src/team/index.ts",
+      "repo-source": "./src/team/index.ts",
       "types": "./src/team/index.ts",
       "default": "./src/team/index.ts"
     },
     "./nest": {
-      "source": "./src/nest.ts",
+      "repo-source": "./src/nest.ts",
       "types": "./src/nest.ts",
       "default": "./dist/nest.js"
     }

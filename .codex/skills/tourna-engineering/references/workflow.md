@@ -59,7 +59,7 @@ Use filtered or package-local commands when they cover the touched area more dir
 Update docs when a change affects:
 
 - package public APIs or ownership
-- queue names, job payloads, retry behavior, cron behavior, or worker lifecycle
+- Trigger.dev task ids, payloads, retry behavior, queue/concurrency metadata, cron behavior, or task runtime behavior
 - Redis key conventions, Lua scripts, models, or serialization
 - database schema design, migrations, or persistence operations
 - storage object keys, upload/finalization flow, or cleanup behavior

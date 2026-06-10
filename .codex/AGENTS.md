@@ -17,14 +17,14 @@
 
 - Keep apps thin and packages intentional.
 - `apps/api`: NestJS composition, modules, transport, guards, controllers, and orchestration. Do not let reusable business rules accumulate here.
-- `apps/worker`: NestJS application context for BullMQ workers, processor orchestration, lifecycle, logging, and cron registration. Keep queue contracts and reusable job logic out of the app.
+- `apps/tasks`: Trigger.dev task declarations, scheduled tasks, task-local orchestration, logging, and adapters to shared packages. Keep reusable business rules out of the app.
 - `apps/web`: Next.js routes, page composition, interaction flows, and app-facing adapters.
 - `packages/authorization`: reusable permission vocabulary, ability factories, and authorization domain helpers.
 - `packages/domain`: framework-agnostic domain vocabulary, enums, value objects, invariants, and shared business meaning.
 - `packages/contracts`: boundary-safe request and response contracts plus shared schemas.
 - `packages/db`: persistence concerns, schemas, migrations, and data access primitives.
 - `packages/redis`: cache and session infrastructure.
-- `packages/queue`: BullMQ queue names, job schemas, producer contracts, retry defaults, and scheduler definitions.
+- `packages/tasks`: Trigger.dev task ids, payload schemas, producer contracts, retry defaults, queue/concurrency metadata, and schedule definitions.
 - `packages/email`: transactional email contracts, templates, rendering, localization, and provider abstractions.
 - `packages/storage`: S3-compatible storage primitives, object key conventions, presigned URLs, upload tracking, and cleanup helpers.
 - `packages/ui`: reusable presentational UI primitives, not feature-specific product logic.

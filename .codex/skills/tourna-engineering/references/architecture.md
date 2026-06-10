@@ -25,20 +25,20 @@ Avoid:
 - burying reusable business rules in controllers or framework glue
 - leaking persistence details into public transport contracts
 
-### `apps/worker`
+### `apps/tasks`
 
 Use for:
 
-- NestJS application context for background workers
-- BullMQ worker registration, lifecycle, logging, and cron registration
-- processor orchestration for queue jobs
+- Trigger.dev task declarations under `trigger/`
+- scheduled task definitions with `schedules.task()`
+- task-local orchestration and logging
 - adapters to package services such as email, storage, and future domain services
 
 Avoid:
 
-- defining queue names, job payload contracts, retry defaults, or scheduler contracts locally
-- embedding reusable business rules in processors
-- producing API-facing transport behavior from the worker
+- defining task ids, payload contracts, retry defaults, queue/concurrency metadata, or schedule contracts locally
+- embedding reusable business rules in task handlers
+- producing API-facing transport behavior from the task runtime
 
 ### `apps/web`
 
@@ -103,15 +103,15 @@ Use for:
 
 Do not use raw Redis keys or direct ioredis commands in apps when a typed model, engine, or feature service belongs here.
 
-### `packages/queue`
+### `packages/tasks`
 
 Use for:
 
-- BullMQ queue names and queue configuration helpers
-- job names, payload schemas, retry defaults, and enqueue contracts
-- domain-specific producers and scheduler definitions
+- Trigger.dev task ids and queue/concurrency metadata
+- payload schemas, retry defaults, producer contracts, and schedule definitions
+- domain-specific task producer helpers
 
-Apps should produce or consume jobs through this package rather than redefining payloads locally.
+Apps should trigger or execute background work through this package rather than redefining payloads locally.
 
 ### `packages/email`
 
@@ -121,7 +121,7 @@ Use for:
 - React Email templates and email-only components
 - rendering, localization, and provider abstractions
 
-Queue payloads should carry semantic email commands, not rendered HTML.
+Task payloads should carry semantic email commands, not rendered HTML.
 
 ### `packages/storage`
 

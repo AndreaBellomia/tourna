@@ -1,0 +1,292 @@
+name: tourna-trigger
+
+x-logging: &logging-config
+  driver: ${LOGGING_DRIVER:-local}
+  options:
+    max-size: ${LOGGING_MAX_SIZE:-20m}
+    max-file: ${LOGGING_MAX_FILES:-5}
+    compress: ${LOGGING_COMPRESS:-true}
+
+services:
+  trigger-webapp:
+    image: ghcr.io/triggerdotdev/trigger.dev:${TRIGGER_IMAGE_TAG:-v4-beta}
+    restart: ${RESTART_POLICY:-unless-stopped}
+    logging: *logging-config
+    depends_on:
+      trigger-postgres:
+        condition: service_healthy
+      trigger-redis:
+        condition: service_healthy
+      trigger-clickhouse:
+        condition: service_healthy
+    ports:
+      - '${TRIGGER_WEBAPP_PUBLISH_IP:-0.0.0.0}:8030:3000'
+    networks:
+      - trigger-webapp
+      - trigger-supervisor
+    volumes:
+      - trigger-shared:/home/node/shared
+    user: root
+    command: sh -c "chown -R node:node /home/node/shared && exec ./scripts/entrypoint.sh"
+    environment:
+      APP_ORIGIN: ${TRIGGER_APP_ORIGIN:-http://localhost:8030}
+      LOGIN_ORIGIN: ${TRIGGER_LOGIN_ORIGIN:-http://localhost:8030}
+      API_ORIGIN: ${TRIGGER_API_ORIGIN:-http://localhost:8030}
+      ELECTRIC_ORIGIN: http://trigger-electric:3000
+      DATABASE_URL: postgresql://${TRIGGER_POSTGRES_USER:-postgres}:${TRIGGER_POSTGRES_PASSWORD:-unsafe-postgres-pw}@trigger-postgres:5432/main?schema=public&sslmode=disable
+      DIRECT_URL: postgresql://${TRIGGER_POSTGRES_USER:-postgres}:${TRIGGER_POSTGRES_PASSWORD:-unsafe-postgres-pw}@trigger-postgres:5432/main?schema=public&sslmode=disable
+      SESSION_SECRET: ${TRIGGER_SESSION_SECRET:-2818143646516f6fffd707b36f334bbb}
+      MAGIC_LINK_SECRET: ${TRIGGER_MAGIC_LINK_SECRET:-44da78b7bbb0dfe709cf38931d25dcdd}
+      ENCRYPTION_KEY: ${TRIGGER_ENCRYPTION_KEY:-f686147ab967943ebbe9ed3b496e465a}
+      MANAGED_WORKER_SECRET: ${TRIGGER_MANAGED_WORKER_SECRET:-447c29678f9eaf289e9c4b70d3dd8a7f}
+      REDIS_HOST: trigger-redis
+      REDIS_PORT: 6379
+      REDIS_TLS_DISABLED: true
+      APP_LOG_LEVEL: ${TRIGGER_APP_LOG_LEVEL:-info}
+      DEV_OTEL_EXPORTER_OTLP_ENDPOINT: ${TRIGGER_DEV_OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:8030/otel}
+      DEPLOY_REGISTRY_HOST: ${TRIGGER_DOCKER_REGISTRY_URL:-localhost:5000}
+      DEPLOY_REGISTRY_NAMESPACE: ${TRIGGER_DOCKER_REGISTRY_NAMESPACE:-trigger}
+      OBJECT_STORE_BASE_URL: http://trigger-minio:9000
+      OBJECT_STORE_ACCESS_KEY_ID: ${TRIGGER_OBJECT_STORE_ACCESS_KEY_ID:-admin}
+      OBJECT_STORE_SECRET_ACCESS_KEY: ${TRIGGER_OBJECT_STORE_SECRET_ACCESS_KEY:-very-safe-password}
+      GRACEFUL_SHUTDOWN_TIMEOUT: 1000
+      NODE_MAX_OLD_SPACE_SIZE: ${TRIGGER_NODE_MAX_OLD_SPACE_SIZE:-4096}
+      TRIGGER_BOOTSTRAP_ENABLED: 1
+      TRIGGER_BOOTSTRAP_WORKER_GROUP_NAME: bootstrap
+      TRIGGER_BOOTSTRAP_WORKER_TOKEN_PATH: /home/node/shared/worker_token
+      CLICKHOUSE_URL: http://${TRIGGER_CLICKHOUSE_USER:-default}:${TRIGGER_CLICKHOUSE_PASSWORD:-password}@trigger-clickhouse:8123?secure=false
+      CLICKHOUSE_LOG_LEVEL: ${TRIGGER_CLICKHOUSE_LOG_LEVEL:-info}
+      RUN_REPLICATION_ENABLED: ${TRIGGER_RUN_REPLICATION_ENABLED:-1}
+      RUN_REPLICATION_CLICKHOUSE_URL: http://${TRIGGER_CLICKHOUSE_USER:-default}:${TRIGGER_CLICKHOUSE_PASSWORD:-password}@trigger-clickhouse:8123
+      RUN_REPLICATION_LOG_LEVEL: ${TRIGGER_RUN_REPLICATION_LOG_LEVEL:-info}
+      INTERNAL_OTEL_TRACE_LOGGING_ENABLED: ${TRIGGER_INTERNAL_OTEL_TRACE_LOGGING_ENABLED:-0}
+      TRIGGER_TELEMETRY_DISABLED: ${TRIGGER_TELEMETRY_DISABLED:-1}
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "http.get('http://localhost:3000/healthcheck', res => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  trigger-supervisor:
+    image: ghcr.io/triggerdotdev/supervisor:${TRIGGER_IMAGE_TAG:-v4-beta}
+    restart: ${RESTART_POLICY:-unless-stopped}
+    logging: *logging-config
+    depends_on:
+      trigger-webapp:
+        condition: service_healthy
+      trigger-docker-proxy:
+        condition: service_healthy
+    networks:
+      - trigger-webapp
+      - trigger-supervisor
+      - trigger-docker-proxy
+    volumes:
+      - trigger-shared:/home/node/shared
+    user: root
+    command: sh -c "chown -R node:node /home/node/shared && exec /usr/bin/dumb-init -- pnpm run --filter supervisor start"
+    environment:
+      TRIGGER_WORKER_TOKEN: file:///home/node/shared/worker_token
+      MANAGED_WORKER_SECRET: ${TRIGGER_MANAGED_WORKER_SECRET:-447c29678f9eaf289e9c4b70d3dd8a7f}
+      TRIGGER_API_URL: http://trigger-webapp:3000
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://trigger-webapp:3000/otel
+      TRIGGER_WORKLOAD_API_DOMAIN: trigger-supervisor
+      TRIGGER_WORKLOAD_API_PORT_EXTERNAL: 8020
+      DEBUG: ${TRIGGER_SUPERVISOR_DEBUG:-1}
+      ENFORCE_MACHINE_PRESETS: ${TRIGGER_ENFORCE_MACHINE_PRESETS:-1}
+      TRIGGER_DEQUEUE_INTERVAL_MS: ${TRIGGER_DEQUEUE_INTERVAL_MS:-1000}
+      DOCKER_HOST: tcp://trigger-docker-proxy:2375
+      DOCKER_RUNNER_NETWORKS: tourna-trigger-webapp,tourna-trigger-supervisor
+      DOCKER_REGISTRY_URL: ${TRIGGER_DOCKER_REGISTRY_URL:-localhost:5000}
+      DOCKER_REGISTRY_USERNAME: ${TRIGGER_DOCKER_REGISTRY_USERNAME:-}
+      DOCKER_REGISTRY_PASSWORD: ${TRIGGER_DOCKER_REGISTRY_PASSWORD:-}
+      DOCKER_AUTOREMOVE_EXITED_CONTAINERS: ${TRIGGER_DOCKER_AUTOREMOVE_EXITED_CONTAINERS:-0}
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "http.get('http://localhost:8020/health', res => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  trigger-docker-proxy:
+    image: tecnativa/docker-socket-proxy:${TRIGGER_DOCKER_PROXY_IMAGE_TAG:-latest}
+    restart: ${RESTART_POLICY:-unless-stopped}
+    logging: *logging-config
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - trigger-docker-proxy
+    environment:
+      LOG_LEVEL: info
+      POST: 1
+      CONTAINERS: 1
+      IMAGES: 1
+      INFO: 1
+      NETWORKS: 1
+    healthcheck:
+      test: ['CMD', 'nc', '-z', '127.0.0.1', '2375']
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  trigger-postgres:
+    image: postgres:${TRIGGER_POSTGRES_IMAGE_TAG:-14}
+    restart: ${RESTART_POLICY:-unless-stopped}
+    logging: *logging-config
+    command:
+      - -c
+      - wal_level=logical
+    ports:
+      - '${TRIGGER_POSTGRES_PUBLISH_IP:-127.0.0.1}:5433:5432'
+    volumes:
+      - trigger-postgres:/var/lib/postgresql/data
+    networks:
+      - trigger-webapp
+    environment:
+      POSTGRES_USER: ${TRIGGER_POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${TRIGGER_POSTGRES_PASSWORD:-unsafe-postgres-pw}
+      POSTGRES_DB: ${TRIGGER_POSTGRES_DB:-postgres}
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', '${TRIGGER_POSTGRES_USER:-postgres}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  trigger-redis:
+    image: redis:${TRIGGER_REDIS_IMAGE_TAG:-7}
+    restart: ${RESTART_POLICY:-unless-stopped}
+    logging: *logging-config
+    ports:
+      - '${TRIGGER_REDIS_PUBLISH_IP:-127.0.0.1}:6389:6379'
+    volumes:
+      - trigger-redis:/data
+    networks:
+      - trigger-webapp
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  trigger-electric:
+    image: electricsql/electric:${TRIGGER_ELECTRIC_IMAGE_TAG:-1.2.4}
+    restart: ${RESTART_POLICY:-unless-stopped}
+    logging: *logging-config
+    depends_on:
+      trigger-postgres:
+        condition: service_healthy
+    networks:
+      - trigger-webapp
+    environment:
+      DATABASE_URL: postgresql://${TRIGGER_POSTGRES_USER:-postgres}:${TRIGGER_POSTGRES_PASSWORD:-unsafe-postgres-pw}@trigger-postgres:5432/main?schema=public&sslmode=disable
+      ELECTRIC_INSECURE: true
+      ELECTRIC_USAGE_REPORTING: false
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/v1/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  trigger-clickhouse:
+    image: bitnamilegacy/clickhouse:${TRIGGER_CLICKHOUSE_IMAGE_TAG:-latest}
+    restart: ${RESTART_POLICY:-unless-stopped}
+    logging: *logging-config
+    ports:
+      - '${TRIGGER_CLICKHOUSE_PUBLISH_IP:-127.0.0.1}:9123:8123'
+      - '${TRIGGER_CLICKHOUSE_PUBLISH_IP:-127.0.0.1}:9090:9000'
+    volumes:
+      - trigger-clickhouse:/bitnami/clickhouse
+    networks:
+      - trigger-webapp
+    environment:
+      CLICKHOUSE_ADMIN_USER: ${TRIGGER_CLICKHOUSE_USER:-default}
+      CLICKHOUSE_ADMIN_PASSWORD: ${TRIGGER_CLICKHOUSE_PASSWORD:-password}
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'clickhouse-client',
+          '--host',
+          'localhost',
+          '--port',
+          '9000',
+          '--user',
+          '${TRIGGER_CLICKHOUSE_USER:-default}',
+          '--password',
+          '${TRIGGER_CLICKHOUSE_PASSWORD:-password}',
+          '--query',
+          'SELECT 1',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  trigger-registry:
+    image: registry:${TRIGGER_REGISTRY_IMAGE_TAG:-2}
+    restart: ${RESTART_POLICY:-unless-stopped}
+    logging: *logging-config
+    ports:
+      - '${TRIGGER_REGISTRY_PUBLISH_IP:-127.0.0.1}:5000:5000'
+    networks:
+      - trigger-webapp
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://localhost:5000/']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  trigger-minio:
+    image: bitnamilegacy/minio:${TRIGGER_MINIO_IMAGE_TAG:-latest}
+    restart: ${RESTART_POLICY:-unless-stopped}
+    logging: *logging-config
+    ports:
+      - '${TRIGGER_MINIO_PUBLISH_IP:-127.0.0.1}:9100:9000'
+      - '${TRIGGER_MINIO_PUBLISH_IP:-127.0.0.1}:9101:9001'
+    networks:
+      - trigger-webapp
+    volumes:
+      - trigger-minio:/bitnami/minio/data
+    environment:
+      MINIO_ROOT_USER: ${TRIGGER_MINIO_ROOT_USER:-admin}
+      MINIO_ROOT_PASSWORD: ${TRIGGER_MINIO_ROOT_PASSWORD:-very-safe-password}
+      MINIO_DEFAULT_BUCKETS: packets
+      MINIO_BROWSER: 'on'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  trigger-clickhouse:
+  trigger-postgres:
+  trigger-redis:
+  trigger-shared:
+  trigger-minio:
+
+networks:
+  trigger-docker-proxy:
+    name: tourna-trigger-docker-proxy
+  trigger-supervisor:
+    name: tourna-trigger-supervisor
+  trigger-webapp:
+    name: tourna-trigger-webapp

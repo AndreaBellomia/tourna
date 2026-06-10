@@ -1,0 +1,148 @@
+{
+  "build": {
+  },
+  "cliPackageVersion": "4.4.6",
+  "config": {
+    "dirs": [
+      "./trigger"
+    ],
+    "project": "proj_juorqpgdlhipsiicxnks"
+  },
+  "configPath": "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger.config.mjs",
+  "contentHash": "38c5860b8c53396b3f57dcdfe6f1e280",
+  "customConditions": [
+  ],
+  "deploy": {
+    "env": {
+    }
+  },
+  "environment": "dev",
+  "externals": [
+    {
+      "name": "import-in-the-middle",
+      "version": "1.15.0"
+    }
+  ],
+  "files": [
+    {
+      "entry": "trigger/maintenance.ts",
+      "out": "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/maintenance.mjs"
+    },
+    {
+      "entry": "trigger/notifications.ts",
+      "out": "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/notifications.mjs"
+    },
+    {
+      "entry": "trigger/ratings.ts",
+      "out": "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/ratings.mjs"
+    },
+    {
+      "entry": "trigger/reports.ts",
+      "out": "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/reports.mjs"
+    }
+  ],
+  "indexWorkerEntryPoint": "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/node_modules/.pnpm/trigger.dev@4.4.6_@sinclair+typebox@0.34.49_react@19.2.0_typescript@5.9.2/node_modules/trigger.dev/dist/esm/entryPoints/dev-index-worker.mjs",
+  "otelImportHook": {
+    "include": [
+    ]
+  },
+  "outputHashes": {
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger.config.mjs": "8fu3bDTIRcg",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger.config.mjs.map": "iUpd765bi7I",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/maintenance.mjs": "15P/VzIxk/s",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/maintenance.mjs.map": "tuWpzH5jS1w",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/notifications.mjs": "XCxscanrAyI",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/notifications.mjs.map": "2ZQiaeU4poM",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/ratings.mjs": "9e4DHQkuErE",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/ratings.mjs.map": "ShBGO2q3mEE",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/reports.mjs": "kf0kaTje72M",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/apps/tasks/trigger/reports.mjs.map": "NvtVRqhoWrM",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-2MFC7V6J.mjs": "pNpDPNWCtqk",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-2MFC7V6J.mjs.map": "Tp/YN9I5MM4",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-57VDE7VG.mjs": "fGM6kfgbc7s",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-57VDE7VG.mjs.map": "vc209EvnksI",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-7SPZSQOL.mjs": "sxKpsHXEP0I",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-7SPZSQOL.mjs.map": "OEX5flTHD34",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-A4Z5FHJ7.mjs": "yscd7ei5l4I",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-A4Z5FHJ7.mjs.map": "16xiXZAe7b0",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-C3UYDWPB.mjs": "T95lf1uET6U",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-C3UYDWPB.mjs.map": "EWJR4FfLgXw",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-CLUSUH55.mjs": "J1NfMcwIPic",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-CLUSUH55.mjs.map": "IYdEJE5OQOw",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-D72VO2W7.mjs": "k7IejQY261A",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-D72VO2W7.mjs.map": "GzeR3ID4HUI",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-G5WHHY55.mjs": "WFpRPgu1NrI",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-G5WHHY55.mjs.map": "wmeLznpKvAc",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-GZYMLNHL.mjs": "FCHBLXy8n/4",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-GZYMLNHL.mjs.map": "HXBU1Zt1imU",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-ISCHZCPW.mjs": "HfFovuS+LB8",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-ISCHZCPW.mjs.map": "d2AHNmVOSrU",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-UFNFSJJH.mjs": "k+UdS4cj0Bg",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-UFNFSJJH.mjs.map": "Ltlp6zjU3l8",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-YDEPAC62.mjs": "X4wzVDAGQzs",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-YDEPAC62.mjs.map": "WJeWpZ+uvFU",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-ZGYJCD5R.mjs": "eL2nTknPVqU",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-ZGYJCD5R.mjs.map": "hPN7sHVVihQ",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-ZYFXLFUA.mjs": "wat7VRqOhx8",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/chunk-ZYFXLFUA.mjs.map": "1EH03aq2FYI",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/crypto.node-R67IYGYK.mjs": "c/+nYdPQtvM",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/crypto.node-R67IYGYK.mjs.map": "0b4tlwmkM3g",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/esm-U2OMRNYP.mjs": "PNxIuiIH+C4",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/esm-U2OMRNYP.mjs.map": "xV4TAKdd1oI",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/event-streams-2RGY6GZC.mjs": "45Glprz3t+0",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/event-streams-2RGY6GZC.mjs.map": "0b4tlwmkM3g",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/getMachineId-bsd-WBVYOUP3.mjs": "ULBc2F+zZas",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/getMachineId-bsd-WBVYOUP3.mjs.map": "0Xjg2rtzEcg",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/getMachineId-darwin-YCBVD2F2.mjs": "USa1LLtoIlw",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/getMachineId-darwin-YCBVD2F2.mjs.map": "1p7KmmgnssQ",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/getMachineId-linux-36RSIFQ6.mjs": "8c7OEscVPPo",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/getMachineId-linux-36RSIFQ6.mjs.map": "uEUXTdx8D2g",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/getMachineId-unsupported-XSR4DTAJ.mjs": "BTmA3Ncrjmg",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/getMachineId-unsupported-XSR4DTAJ.mjs.map": "Yo9QaRotxvU",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/getMachineId-win-FIFQCFR3.mjs": "3891chs4pgU",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/getMachineId-win-FIFQCFR3.mjs.map": "4jNpHcHp430",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/node_modules/.pnpm/trigger.dev@4.4.6_@sinclair+typebox@0.34.49_react@19.2.0_typescript@5.9.2/node_modules/trigger.dev/dist/esm/entryPoints/dev-index-worker.mjs": "BNi/7RdKLVg",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/node_modules/.pnpm/trigger.dev@4.4.6_@sinclair+typebox@0.34.49_react@19.2.0_typescript@5.9.2/node_modules/trigger.dev/dist/esm/entryPoints/dev-index-worker.mjs.map": "CAC/ZFs3AEc",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/node_modules/.pnpm/trigger.dev@4.4.6_@sinclair+typebox@0.34.49_react@19.2.0_typescript@5.9.2/node_modules/trigger.dev/dist/esm/entryPoints/dev-run-worker.mjs": "2vQJSN2+b2k",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/node_modules/.pnpm/trigger.dev@4.4.6_@sinclair+typebox@0.34.49_react@19.2.0_typescript@5.9.2/node_modules/trigger.dev/dist/esm/entryPoints/dev-run-worker.mjs.map": "t7VUAuzMoKI",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/s2s-ZQQQAHMM.mjs": "of/j8IiVhLo",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/s2s-ZQQQAHMM.mjs.map": "AIBQjHGTF9Q",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/server.node-N3MZXWBX.mjs": "Ee67IurQs5A",
+    "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/server.node-N3MZXWBX.mjs.map": "l85NzGA1fzw"
+  },
+  "outputPath": "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE",
+  "packageVersion": "4.4.6",
+  "runWorkerEntryPoint": "/Users/andreabellomia/project/tourna/apps/tasks/.trigger/tmp/build-MZY1jE/node_modules/.pnpm/trigger.dev@4.4.6_@sinclair+typebox@0.34.49_react@19.2.0_typescript@5.9.2/node_modules/trigger.dev/dist/esm/entryPoints/dev-run-worker.mjs",
+  "runtime": "node",
+  "sources": {
+    "package.json": {
+      "contentHash": "d0bc6b70829a78bacc829913e5ad5de2",
+      "contents": "eJzVVk1z0zAQvedXaDw9QEBy+sGXBxiY1u2UKYUJ7QmTjpA3iRJbEpKctpTw2xlJdmJaUmjpAU5xdt/uvn27lnzRQSgStIQoQZGlZmqih840A224FM7aIz2yHqw5GKa5srXnSFZaUHSk+WgEmuQwQy4F0pWwvIQQQys7ltrBw3+l+YxaV8/qCryp4AyE8RSODw/2t9PDD+lOQId6JkrQRQchT2HmS/f39/bS/snr9/snx/2DF2sXlywJHlurkjguJKPFWBqbPO1t9uaowb3vv3uTbh+d9NPdVnTLmmCl5eRkUkn9RY3yYsyV4ZydiamZIxt6Rq5njKniuNIF+nMW2CcHZrGGIbp5fR8/5AX8HLu7f5Am2EAxxK4Y5HMvY9AtoUo57ZRQpZuRI9+4P1e8yP0OGIYwFjItuW2cxlJtV0UWcsRF0ir5d+NphPVpby/tTaQ5HUta8rtvIeS9zahUIc/vjs9db7xj928vPcLY18ZhrVfqmuT6HOtK/JP61tz+R6ULLvx5AcY9oSwymsXdbtwl1mQRyqK62V/ZCJNiyEfe2uQbSl3ScAJpsJaDRhifam7hcu4mgo2BTbE9V2BWnWoWjE85cb8dhOb1FadA5CAYh9at80qDkjGUlBcu5FTqqVGUQdJtsgWEhpybaxHGSk1HcC0m3MMrEHZ528YmnzrYFtkijxvAV+mPi4Ezbrb7mu1c15qfFA7aX0/Oaepv5d+gPTCe1CoPNt13RO+SV8jcSzHY2Gp7AxvveEbWny4dK7I1WxFcZItsLIa8VOuKUtbgRb6NZ2SDPFp4Fj165yPypC1lHVTrV8q8KmCXF5CeWRDuq8mp+9F7HdrUWf2zFMt/1kT+8VNdVUtpd7hvgrSXtA8jOPPWbpYRo4BlGbFmbdkjFca9IgtSCEUD8iDLyD37bXLfrIVXADebXjfiXhNZFMDstpyB28pdLcs2d/9ahRw/U2V1wA7XwKzU554eiRt7m34qZlxLUUKYqB/5w7Z2h7SEt1QpP79lA9897ee1Ki9jo9lSu8H3+B7p3r8KidfW6xbdvDrzzg/iXUhz"
+    },
+    "trigger.config.ts": {
+      "contentHash": "8592227751ecf00642b165b781a1321c",
+      "contents": "eJyNk9Fr2zAQxt/9V3x7UjJSJ11hDENhJc1KRteWkO5ljKBZ50StrPOkc5qt5H8fdhyWjBb2Ysl3n+5+n3y2ZcVB8AxDhfU0Zl/YJbYoApdQHyXY5ZJCamg9jOZRJUnOPgqqwA+UC86bXU4xpuTX6Xw2vbqazBZ3s9vPk/F8MZt86vS6svfBvSK/uJsu7mfXSWIL9N50pft4TgBZBX6CpydMQuDQSwBAvdAHNiLQz9oGMhBGqD04wFDl+BfmXAevMf/rBqLjY0xxHwnSZk8c59qh4IDdLpIrTlYchQwMrclxVZKXVA0SoJ9sO96dtf/B7XweoUbew7VAEB2WJJAVHfU/JLc+ivY5pbhuOQ0VunbSlF2JVNlw2PI3J7MPo7PRP8A73tT63NWGYk/pyqYH31n1X/aiXrtElHWU18Av7qYDeJajY2PHtUlVi0SbdgD3Jg7HsNdgdOPQWDA2xAzfVDrscNX3Jiwxb+UZmkz3kj5E9q3xQBIsxaw1BZDXPxyZqb+kdQYJNQ3aeAewlwGl3lyIUFlJzHA22Eetn9uSuJap/9IkRovRaLTPFjoXDhne7QNBe8Ol/U2HrbbN0j5Kna+spwwqltq5k9ON2oU3l3XQYtk3HfAW79sWIi6DOl21op2RMfvIjq55ubR+mR39Xze3l5PF5OYr3pyfQ1WBTZ03NdUg2faTPyNoR4k="
+    },
+    "trigger/maintenance.ts": {
+      "contentHash": "8f8be606fbd7c469f911bdb5e8502884",
+      "contents": "eJy1VcFum0AQve9XTE6AZOH0iuq0VowSq4kdBTs9VFW0gbG9itmls0sSN/a/VyzYJjW4aqpeEDBvZ968eQMizRQZeAUdLzDJl6hhAzNSKTifDYn5HMlP8Kmrk0eHiQrMAFIupEHJZYyXyMk8IDcTrh87b2ORUcTneL5ELvNsC5iMp7ej/v2kH325j84vw8H0Kow6bFeYMFNdw/WjflMzLrOMKVtwOc2Wiie6SJeRilHr6wZK+6S+39UUdxdcJksk3a2RdBiLldQGFttjUSUG9Jq5+jMhE5cBuFvZPOid7TT0C+7DBHq9XqtQvkg6zKsK6zcy/Z/qh6OoKDAxA/fksPf1Gk6aiXl2HGZB6hkkPkNIpMh1agOAgkPNU5wQpDIQKzkT85wwcTy2YQxf7HRLFRqlKj1Y0IXePqHt0S1YiCQ4rjFATEoGljJAxo1BksHhrP0q1LE4I1L8qSQ2AbexEonySZCSKUqjA5jjDhfWAu5BFq84vSkuhIZWR5qw8QL4I8ccjwBtvFzAl0FO3Iii71Z4DWVp5DIArlcyBjfjq2K7rK1K3fgzFwZuSKVCo0+o1fIJXRs6uoDua4UB0CqnGANwtlMkp7MPVu+SvgmgKm+F1oanmW/UMBpHhoScu9721Ka680olN167n34z/1+aqmV1WpzVvDNt9mpBv8djLct6xGgNjR1xWwP6j5ZrOPMO3zV9+XfOOuKr97hqKVJhAvhwelq+2dTsNctlXPBuHQHb1wzANasM1az5I+59k3n6gPS9w7wA+kR89dEZhHfh1fjmOhxNHFiDE036F8PRhb2/uR0PpueT4XhUPYZ3w/CrcwZryGWCMyExsaIRmpwkOHXTOCDkjplt69P+7+HXkcD1v7DxbPJgT4lt2C9yTdot"
+    },
+    "trigger/notifications.ts": {
+      "contentHash": "937e0e774b3e3476a96c5b5a70e98fc4",
+      "contents": "eJx1j8FuwkAMRO/+Ct/SSlH2joTUA9yR4AesrAEr2V2wN1UQ4t8R24qGqFxn3njGEk5JM17R2iMH2pF1eMO9poDVV1Y5HFgbz9/OfFeBPGmOfh1I+g1d+kR+W9L1n/56SPmUXCbr7L8bT65pnGnrjhR9z2oupix7aSlLilYB8FiibYqWJ1U/K0vjcvLHxxUQxS9eRzXia8BfbPHuEUBUznqZh4v4cM8DDzx3i/hwA42rQcvuOTOxSsswJWq4fQLcAT8ljlg="
+    },
+    "trigger/ratings.ts": {
+      "contentHash": "c302c412235b1b92f5231909e6d05add",
+      "contents": "eJyNksFugzAQRO/+ir0BEoJ7pFQ99AOiNj+wsrdgge10badBFf9e2UQ0h4pw9puZnZG1uTgO8ANe9mTwjH6AGT7ZGSheA+uuI24UXVuvhkLoOy0AmCSOMo4Y6OwiWzRkwzsGbTt/wml0qD6yZf0ETpG1WDOZLq4N6Af/F7epX89tmtazbHu0aiT2LS/vhRB0yz7SWR+2b1kK5xWOD5OUqbFWh6dFGq1S30W5jf8zUuBpR0TmkuArUqQdgswlgcHbW0yzOLtD9kAvYtlruyfvTuZO0R4A/WQllJelcAXHl/yDAPAbdYATO6M9NUzejVcqt/xXk0oAzLWYK/EL8zcDiQ=="
+    },
+    "trigger/reports.ts": {
+      "contentHash": "4634c6efeef55c47b701b317fcf50bbd",
+      "contents": "eJyNkEtugzAQhvc+xewACcE+UqIueoCozQVGeAIW2KYzJg2KuHuFSaNkQel6vv81xvaeA9xAqoYsnlBamODM3kLyFtjUNXGh6VKKbhNlfumaHDEGOvmBHVpy4YPm0xHHzqP+jGb5KvYaw9T7MqC08o+Eh6woSuGqbNDpjlhKjmdJlKJrBCvvJKxXWLbFJvun9elNARi9+7N7YXSu4K5aR1+/oQCYAo8b1pGZ4a+BBtqAIzPDFq/vA2Mw3m1InshFWDXGbeXcqbhhcDtAGV0Fab8MzGB/gPlvAPiNJsCRvTVCBZP47kLpmvfDIFMAU66mTP0Ah4LxtQ=="
+    },
+    "tsconfig.json": {
+      "contentHash": "2aa0ae4977e62a143e4407ebb0d517e5",
+      "contents": "eJxVkE1rwzAMhu/5FULH0jSju/U0GD2OwcZOowfX0ToHxzK2DBkl++1DWbyyox+9H7KuDQDSJBT6jAfAh0SRO/mKlG1yUVrL4cNdurPJtBsyB9yqw/IYnaf0HMVxUOe1AQDAkfviSZMoB5pkkf/xF8rsi1pUcS6h95SqxJYsPD5y6F0NfUddp81ckiU8rcIhT2pPZKy0+li5mHQh0dHxdX+3v6/81/5kIh5AUqEVu2ATjRTE+P+D5fdL+0BZcAsYuL/V6yneknpw19WOaOTzdgYA/F4CcrLVp6zbVNpt8LTgeQ0IfBydrIs0AHMzNz921XUj"
+    }
+  },
+  "target": "dev"
+}

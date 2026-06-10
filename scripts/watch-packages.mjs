@@ -6,7 +6,7 @@ const packageFilters = [
   "@repo/db",
   "@repo/domain",
   "@repo/email",
-  "@repo/queue",
+  "@repo/tasks",
   "@repo/redis",
   "@repo/storage",
 ];

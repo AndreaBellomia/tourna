@@ -51,7 +51,7 @@ export class AuthService {
 
     const session = await this.buildSession(user.id, userAgent, ip)
 
-    await this.enqueuePostRegistrationNotification({
+    await this.triggerPostRegistrationNotification({
       userId: user.id,
       email: dto.email,
       displayName,
@@ -123,7 +123,7 @@ export class AuthService {
     return { accessToken, refreshToken, sessionId }
   }
 
-  private async enqueuePostRegistrationNotification(input: {
+  private async triggerPostRegistrationNotification(input: {
     userId: string
     email: string
     displayName: string
@@ -132,7 +132,7 @@ export class AuthService {
       await this.emailVerification.sendVerificationEmail(input)
     } catch (error) {
       this.logger.warn({
-        message: 'Post-registration email enqueue failed',
+        message: 'Post-registration email task trigger failed',
         userId: input.userId,
         error: error instanceof Error ? error.message : String(error),
       })

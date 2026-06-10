@@ -1,4 +1,5 @@
 import { BadRequestException } from '@nestjs/common'
+import { EmailVerificationTokenModel } from '@repo/redis'
 import { EmailVerificationService } from './email-verification.service'
 
 function createUpdateUserQuery(result: unknown[]) {
@@ -24,8 +25,8 @@ describe('EmailVerificationService', () => {
   const config = {
     get: jest.fn(),
   }
-  const queue = {
-    enqueueSendEmail: jest.fn(),
+  const tasks = {
+    triggerSendEmail: jest.fn(),
   }
   const redisClient = {
     getBuffer: jest.fn(),
@@ -55,18 +56,18 @@ describe('EmailVerificationService', () => {
     redisClient.getBuffer.mockResolvedValue(null)
     redisClient.multi.mockReturnValue(pipeline)
     redisClient.del.mockResolvedValue(1)
-    queue.enqueueSendEmail.mockResolvedValue({ id: 'job-1' })
+    tasks.triggerSendEmail.mockResolvedValue({ id: 'run-1' })
 
     service = new EmailVerificationService(
       db as never,
       tokens as never,
       config as never,
-      queue as never,
+      tasks as never,
       redis as never,
     )
   })
 
-  it('stores a hashed token and enqueues a verification email', async () => {
+  it('stores a hashed token and triggers a verification email task', async () => {
     await service.sendVerificationEmail({
       userId: 'user-1',
       email: 'andrea@example.com',
@@ -80,7 +81,7 @@ describe('EmailVerificationService', () => {
       'EX',
       604800,
     )
-    expect(queue.enqueueSendEmail).toHaveBeenCalledWith(
+    expect(tasks.triggerSendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
         to: 'andrea@example.com',
         content: {
@@ -93,7 +94,7 @@ describe('EmailVerificationService', () => {
         },
       }),
       {
-        jobId: 'email:verification:user-1:hashed-token',
+        idempotencyKey: 'email-verification-user-1-hashed-token',
       },
     )
   })
@@ -106,7 +107,7 @@ describe('EmailVerificationService', () => {
       createdAt: Date.now(),
       expiresAt: Date.now() + 604800000,
     }
-    redisClient.getBuffer.mockResolvedValue(Buffer.from(JSON.stringify(data)))
+    redisClient.getBuffer.mockResolvedValue(EmailVerificationTokenModel.codec.encode(data))
     db.db.updateTable.mockReturnValue(createUpdateUserQuery([{ id: 'user-1' }]))
 
     await expect(service.verifyEmail('raw-token')).resolves.toEqual({ verified: true })

@@ -3,7 +3,7 @@ import { EmailVerificationTokenStore } from '@repo/redis'
 import type { VerifyEmailResponse } from '@repo/contracts'
 import { AppConfigService } from '~/config/config.service'
 import { DatabaseService } from '~/database/database.service'
-import { QueueProducerService } from '~/queue/queue-producer.service'
+import { TaskProducerService } from '~/tasks/task-producer.service'
 import { RedisService } from '~/redis/redis.service'
 import { TokenService } from '~/tokens/token.service'
 
@@ -22,7 +22,7 @@ export class EmailVerificationService {
     private readonly db: DatabaseService,
     private readonly tokens: TokenService,
     private readonly config: AppConfigService,
-    private readonly queue: QueueProducerService,
+    private readonly tasks: TaskProducerService,
     redis: RedisService,
   ) {
     this.store = new EmailVerificationTokenStore(redis.getClient())
@@ -39,7 +39,7 @@ export class EmailVerificationService {
       ttlSeconds: this.config.get('EMAIL_VERIFICATION_TTL_SECONDS'),
     })
 
-    await this.queue.enqueueSendEmail(
+    await this.tasks.triggerSendEmail(
       {
         to: input.email,
         metadata: {
@@ -57,7 +57,7 @@ export class EmailVerificationService {
         },
       },
       {
-        jobId: `email-verification-${input.userId}-${tokenHash.slice(0, 16)}`,
+        idempotencyKey: `email-verification-${input.userId}-${tokenHash.slice(0, 16)}`,
       },
     )
   }

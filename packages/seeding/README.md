@@ -7,7 +7,7 @@ The package composes the infrastructure packages directly:
 - `@repo/db` for PostgreSQL connections and Kysely schema types
 - `@repo/redis` for optional Redis client setup used by scenarios that need cache/session data
 
-It intentionally stays outside `apps/api` and `apps/worker` so development fixtures and future e2e
+It intentionally stays outside `apps/api` and `apps/tasks` so development fixtures and future e2e
 fixtures can reuse the same factory vocabulary without depending on NestJS.
 
 ## Concepts
