@@ -44,7 +44,28 @@ WORKER_REPORTS_CONCURRENCY=2
 WORKER_RATINGS_CONCURRENCY=2
 WORKER_MAINTENANCE_CONCURRENCY=1
 WORKER_REGISTER_CRON=true
+WORKER_BULL_BOARD_ENABLED=false
+WORKER_BULL_BOARD_HOST=127.0.0.1
+WORKER_BULL_BOARD_PORT=3031
+WORKER_BULL_BOARD_BASE_PATH=/admin/queues
+WORKER_BULL_BOARD_READ_ONLY=false
+WORKER_BULL_BOARD_USERNAME=
+WORKER_BULL_BOARD_PASSWORD=
 ```
+
+## BullMQ Dashboard
+
+The worker can optionally start a local Bull Board UI for inspecting and managing BullMQ queues.
+
+Enable it with:
+
+```bash
+WORKER_BULL_BOARD_ENABLED=true pnpm --filter worker dev
+```
+
+Then open `http://127.0.0.1:3031/admin/queues`.
+
+The dashboard is disabled by default. When enabled, it can retry jobs, clean queues, pause or resume queues, and inspect job payloads. Set `WORKER_BULL_BOARD_READ_ONLY=true` when you only want monitoring. If the dashboard is bound outside localhost or runs in production, both `WORKER_BULL_BOARD_USERNAME` and `WORKER_BULL_BOARD_PASSWORD` are required.
 
 ## Adding Work
 

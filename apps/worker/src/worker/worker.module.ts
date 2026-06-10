@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { BullBoardModule } from '~/bull-board/bull-board.module'
 import { WorkerConfigModule } from '~/config/worker-config.module'
 import { WorkerEmailModule } from '~/email/email.module'
 import {
@@ -10,7 +11,7 @@ import {
 import { WorkerManagerService } from './worker-manager.service'
 
 @Module({
-  imports: [WorkerConfigModule, WorkerEmailModule],
+  imports: [WorkerConfigModule, WorkerEmailModule, BullBoardModule],
   providers: [
     WorkerManagerService,
     NotificationsProcessor,

@@ -9,6 +9,16 @@ import {
 import type { ConnectionOptions } from 'bullmq'
 import type { WorkerEnv } from './env.schema'
 
+export interface WorkerBullBoardConfig {
+  enabled: boolean
+  host: string
+  port: number
+  basePath: string
+  readOnly: boolean
+  username?: string
+  password?: string
+}
+
 @Injectable()
 export class WorkerConfigService {
   constructor(private readonly config: ConfigService<WorkerEnv, true>) {}
@@ -67,4 +77,20 @@ export class WorkerConfigService {
   shouldRegisterCron(): boolean {
     return this.get('WORKER_REGISTER_CRON')
   }
+
+  getBullBoardConfig(): WorkerBullBoardConfig {
+    return {
+      enabled: this.get('WORKER_BULL_BOARD_ENABLED'),
+      host: this.get('WORKER_BULL_BOARD_HOST'),
+      port: this.get('WORKER_BULL_BOARD_PORT'),
+      basePath: normalizeBasePath(this.get('WORKER_BULL_BOARD_BASE_PATH')),
+      readOnly: this.get('WORKER_BULL_BOARD_READ_ONLY'),
+      username: this.get('WORKER_BULL_BOARD_USERNAME'),
+      password: this.get('WORKER_BULL_BOARD_PASSWORD'),
+    }
+  }
+}
+
+function normalizeBasePath(path: string): string {
+  return path.length > 1 ? path.replace(/\/+$/, '') : path
 }

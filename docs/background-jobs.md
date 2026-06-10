@@ -6,23 +6,23 @@ The goal is to keep API requests fast while still supporting durable side effect
 
 ## Ownership
 
-| Layer | Responsibility |
-| --- | --- |
-| `apps/api` | Validates requests, writes state, enqueues jobs through a thin provider |
-| `apps/worker` | Runs BullMQ workers, registers cron jobs, logs job lifecycle events |
-| `packages/queue` | Owns queue names, job names, payload schemas, domain producers, cron definitions |
+| Layer             | Responsibility                                                                   |
+| ----------------- | -------------------------------------------------------------------------------- |
+| `apps/api`        | Validates requests, writes state, enqueues jobs through a thin provider          |
+| `apps/worker`     | Runs BullMQ workers, registers cron jobs, logs job lifecycle events              |
+| `packages/queue`  | Owns queue names, job names, payload schemas, domain producers, cron definitions |
 | `packages/domain` | Owns reusable business rules such as tournament report logic or Elo calculations |
-| `packages/db` | Owns persistence, future outbox tables, job status tables, and artifact records |
-| `packages/redis` | Owns low-level Redis clients, codecs, engines, and scripts |
+| `packages/db`     | Owns persistence, future outbox tables, job status tables, and artifact records  |
+| `packages/redis`  | Owns low-level Redis clients, codecs, engines, and scripts                       |
 
 ## Current Queues
 
-| Queue | Purpose |
-| --- | --- |
-| `tourna.notifications` | Email and notification side effects |
-| `tourna.reports` | Tournament report generation |
-| `tourna.ratings` | Rating and Elo recalculation |
-| `tourna.maintenance` | Cron-triggered maintenance and reconciliation work |
+| Queue                  | Purpose                                            |
+| ---------------------- | -------------------------------------------------- |
+| `tourna.notifications` | Email and notification side effects                |
+| `tourna.reports`       | Tournament report generation                       |
+| `tourna.ratings`       | Rating and Elo recalculation                       |
+| `tourna.maintenance`   | Cron-triggered maintenance and reconciliation work |
 
 Use separate queues when work needs different concurrency, retry, or operational treatment.
 
@@ -61,11 +61,20 @@ WORKER_REPORTS_CONCURRENCY=2
 WORKER_RATINGS_CONCURRENCY=2
 WORKER_MAINTENANCE_CONCURRENCY=1
 WORKER_REGISTER_CRON=true
+WORKER_BULL_BOARD_ENABLED=false
+WORKER_BULL_BOARD_HOST=127.0.0.1
+WORKER_BULL_BOARD_PORT=3031
+WORKER_BULL_BOARD_BASE_PATH=/admin/queues
+WORKER_BULL_BOARD_READ_ONLY=false
+WORKER_BULL_BOARD_USERNAME=
+WORKER_BULL_BOARD_PASSWORD=
 ```
 
 In production, enable `WORKER_REGISTER_CRON` for a single scheduler-capable deployment role, or keep all cron definitions idempotent through BullMQ scheduler ids.
 
 For local email testing, Mailpit receives SMTP on `localhost:1025` and exposes the inbox UI on `http://localhost:8025`.
+
+For local queue inspection and manual job management, set `WORKER_BULL_BOARD_ENABLED=true` and open `http://127.0.0.1:3031/admin/queues`. The dashboard binds to localhost by default. If it is bound outside localhost or used in production, configure both `WORKER_BULL_BOARD_USERNAME` and `WORKER_BULL_BOARD_PASSWORD`.
 
 ## Adding A Producer
 
@@ -144,6 +153,5 @@ pnpm lint
 
 - Add DB-backed job status for user-visible reports and rating rebuilds.
 - Add an outbox publisher for critical state transitions.
-- Add operational dashboarding through BullMQ-compatible tooling.
 - Add metrics and tracing around job durations, attempts, and failure classes.
 - Define dead-letter handling per queue once real production failure modes appear.
