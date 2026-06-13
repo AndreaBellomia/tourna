@@ -1,42 +1,29 @@
 import { QueueProducerService } from './queue-producer.service'
 import type { AppConfigService } from '~/config/config.service'
 
+const mockQueueProducer = {
+  notifications: {
+    sendEmail: jest.fn(),
+  },
+  reports: {
+    generateTournamentReport: jest.fn(),
+  },
+  ratings: {
+    recalculateTournamentRatings: jest.fn(),
+  },
+  close: jest.fn(),
+}
+
 jest.mock(
   '@repo/queue',
   () => {
-    const producer = {
-      notifications: {
-        sendEmail: jest.fn(),
-      },
-      reports: {
-        generateTournamentReport: jest.fn(),
-      },
-      ratings: {
-        recalculateTournamentRatings: jest.fn(),
-      },
-      close: jest.fn(),
-    }
-
     return {
       createBullMqConnection: jest.fn((config: unknown) => config),
-      createTournaQueueClient: jest.fn(() => producer),
-      __producer: producer,
+      createTournaQueueClient: jest.fn(() => mockQueueProducer),
     }
   },
   { virtual: true },
 )
-
-const queueModule: {
-  __producer: {
-    reports: {
-      generateTournamentReport: jest.Mock
-    }
-    ratings: {
-      recalculateTournamentRatings: jest.Mock
-    }
-    close: jest.Mock
-  }
-} = jest.requireMock('@repo/queue')
 
 describe('QueueProducerService', () => {
   const config = {
@@ -66,7 +53,7 @@ describe('QueueProducerService', () => {
       locale: 'en',
     })
 
-    expect(queueModule.__producer.reports.generateTournamentReport).toHaveBeenCalledWith(
+    expect(mockQueueProducer.reports.generateTournamentReport).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         jobId: 'report:t-1:pdf',
@@ -82,7 +69,7 @@ describe('QueueProducerService', () => {
       reason: 'manual-rebuild',
     })
 
-    expect(queueModule.__producer.ratings.recalculateTournamentRatings).toHaveBeenCalledWith(
+    expect(mockQueueProducer.ratings.recalculateTournamentRatings).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         jobId: 'ratings:t-1:manual-rebuild',

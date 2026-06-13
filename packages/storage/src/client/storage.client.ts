@@ -13,6 +13,8 @@ export function createStorageClient(options: StorageClientOptions): StorageClien
     endpoint: options.endpoint || undefined,
     region: options.region,
     forcePathStyle: options.forcePathStyle ?? false,
+    requestChecksumCalculation: 'WHEN_REQUIRED',
+    responseChecksumValidation: 'WHEN_REQUIRED',
     credentials: {
       accessKeyId: options.accessKeyId,
       secretAccessKey: options.secretAccessKey,

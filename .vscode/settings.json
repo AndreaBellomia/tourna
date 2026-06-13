@@ -31,5 +31,9 @@
     "**/node_modules": true,
     "**/coverage": true,
     "**/.pnpm-store": true
-  }
+  },
+  "jestrunner.enableTestExplorer": true,
+  "jestrunner.jestCommand": "pnpm exec jest",
+  "jestrunner.configPath": "jest.packages.config.cjs",
+  "jestrunner.runOptions": ["--runInBand"]
 }

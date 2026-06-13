@@ -9,13 +9,20 @@
       "source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./testing": {
+      "source": "./src/testing/index.ts",
+      "types": "./dist/testing/index.d.ts",
+      "default": "./dist/testing/index.js"
     }
   },
   "scripts": {
-    "watch": "tsup --watch",
-    "build": "tsup",
+    "watch": "tsup src/index.ts src/testing/index.ts --dts --watch",
+    "build": "tsup src/index.ts src/testing/index.ts --dts",
     "check-types": "tsc --noEmit",
     "test": "pnpm --filter api exec jest --config ../../jest.packages.config.cjs --testPathPatterns packages/redis/src/.*\\.spec\\.ts$ --passWithNoTests",
+    "test:integration": "pnpm --filter api exec jest --config ../../jest.packages.config.cjs --testRegex packages/redis/src/.*\\.integration-spec\\.ts$ --passWithNoTests",
+    "test:all": "pnpm --filter api exec jest --config ../../jest.packages.config.cjs --testRegex 'packages/redis/src/.*\\.(spec|integration-spec)\\.ts$' --passWithNoTests",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write \"src/**/*.ts\" \"migrations/**/*.ts\""
   },

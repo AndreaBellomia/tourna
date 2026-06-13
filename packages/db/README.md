@@ -104,3 +104,19 @@ The scripts automatically load `.env` from `../../.env`.
 - Keep migration names descriptive and stable.
 - A migration must include both `up` and `down`.
 - If you change the schema, update the types in `src/schema.ts` and the files under `src/schemas/` as well.
+
+## Test database harness
+
+`@repo/db/testing` exposes the shared integration-test harness for code that must exercise real
+PostgreSQL behavior:
+
+- `createWorkerTestDatabase(...)`
+- `resetTestDatabase(...)`
+
+The harness creates one database per Jest worker, discovers migration files from `migrations/` at
+runtime, applies the latest real Kysely migrations, and truncates application tables between tests
+while preserving migration metadata. This keeps integration specs parallel-safe without relying on
+mocks, manual migration registries, or in-memory SQL substitutes.
+
+Use it for repository/query tests and other persistence-sensitive flows. Keep pure domain logic in
+unit tests, and keep integration fixtures small and explicit.

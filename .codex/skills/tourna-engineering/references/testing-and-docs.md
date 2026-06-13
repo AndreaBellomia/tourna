@@ -18,6 +18,9 @@ Use this reference when adding behavior, changing package APIs, modifying persis
 - Queue: payload validation, job definition registration, producer defaults, deterministic job ids, and scheduler definitions.
 - Worker: processor routing, unsupported job behavior, payload parsing, side-effect orchestration, and lifecycle registration where practical.
 - Database: schema type updates with typecheck; migration `up` and `down` behavior when a database is available; query/repository primitives with focused tests when introduced.
+- Database integration tests: prefer real PostgreSQL over mocks for repository/query behavior. Use one migrated database per Jest worker, discover migrations from the migrations directory at runtime, migrate to latest before the suite, and truncate application tables between tests unless a test explicitly needs transaction-bound rollback. Integration specs should remain normal Jest tests so editors can run single files or test cases.
+- Redis integration tests: use a real Redis instance for Lua scripts, expiry, pipeline, and `MULTI/EXEC` behavior. Isolate with `@repo/redis/testing`, which creates a per-run/per-worker key prefix and deletes only matching keys; never flush a shared development database.
+- Storage integration tests: use MinIO or S3-compatible test containers for object existence, copy/delete, and presigned URL behavior. Isolate with `@repo/storage/testing`, which creates per-run/per-worker buckets and cleans them after the suite. Compose it with the Redis test harness when upload tracking is involved.
 - Email: contract validation, render output, localization resource wiring, and provider behavior.
 - Storage: object key construction, presigned flow orchestration, upload tracker behavior, finalization, and cleanup.
 - API: guards, decorators, interceptors, service orchestration, controller contracts, and e2e tests for important public flows.

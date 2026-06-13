@@ -6,7 +6,7 @@ export function buildAbility(memberships: Selectable<DatabaseSchema['memberships
   const { can, build } = new AbilityBuilder(createMongoAbility)
 
   for (const m of memberships) {
-    switch (m.role_code as DatabaseSchema['memberships']['role_code']) {
+    switch (m.role_code) {
       case 'global_admin':
         can('manage', 'all')
         break

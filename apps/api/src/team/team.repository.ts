@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { type CursorPaginatedResult, type CursorPaginationInput, paginateCursor } from '@repo/db'
+import {
+  type CursorPaginatedResult,
+  type CursorPaginationInput,
+  type KyselyDatabase,
+  paginateCursor,
+} from '@repo/db'
 import type { LifecycleStatus, TeamMembershipRole, Visibility } from '@repo/domain'
 import { DatabaseService } from '~/database/database.service'
 
@@ -164,7 +169,7 @@ export class TeamRepository {
           name,
           tag: normalizeTeamTag(tag),
           description: description ?? null,
-          slug: await this.buildAvailableTeamSlug(name),
+          slug: await this.buildAvailableTeamSlug(name, { db: trx }),
           status: 'published',
           visibility: visibility ?? 'private',
         })
@@ -205,7 +210,10 @@ export class TeamRepository {
   ): Promise<TeamDetailItem | null> {
     const values = {
       ...(updates.name
-        ? { name: updates.name, slug: await this.buildAvailableTeamSlug(updates.name, teamId) }
+        ? {
+            name: updates.name,
+            slug: await this.buildAvailableTeamSlug(updates.name, { excludeTeamId: teamId }),
+          }
         : {}),
       ...(updates.tag ? { tag: normalizeTeamTag(updates.tag) } : {}),
       ...(updates.description !== undefined ? { description: updates.description || null } : {}),
@@ -275,15 +283,22 @@ export class TeamRepository {
     }
   }
 
-  private async buildAvailableTeamSlug(name: string, excludeTeamId?: string): Promise<string> {
+  private async buildAvailableTeamSlug(
+    name: string,
+    options: {
+      excludeTeamId?: string
+      db?: Pick<KyselyDatabase, 'selectFrom'>
+    } = {},
+  ): Promise<string> {
     const base = buildTeamSlug(name)
+    const db = options.db ?? this.database.db
 
     for (let attempt = 0; attempt < 20; attempt += 1) {
       const slug = attempt === 0 ? base : `${base}-${attempt + 1}`
-      let query = this.database.db.selectFrom('teams').select('id').where('slug', '=', slug)
+      let query = db.selectFrom('teams').select('id').where('slug', '=', slug)
 
-      if (excludeTeamId) {
-        query = query.where('id', '!=', excludeTeamId)
+      if (options.excludeTeamId) {
+        query = query.where('id', '!=', options.excludeTeamId)
       }
 
       const existing = await query.executeTakeFirst()

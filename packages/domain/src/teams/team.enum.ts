@@ -30,3 +30,9 @@ export const ROSTER_STATUSES = ['draft', 'submitted', 'approved', 'locked', 'rej
 export const RosterStatusSchema = z.enum(ROSTER_STATUSES)
 
 export type RosterStatus = z.infer<typeof RosterStatusSchema>
+
+export const TEAM_INVITATION_STATUSES = ['active', 'revoked'] as const
+
+export const TeamInvitationStatusSchema = z.enum(TEAM_INVITATION_STATUSES)
+
+export type TeamInvitationStatus = z.infer<typeof TeamInvitationStatusSchema>

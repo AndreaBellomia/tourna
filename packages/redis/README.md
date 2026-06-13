@@ -13,6 +13,33 @@ This package contains the reusable Redis-specific layer for the monorepo:
 
 The goal is to give consumers clear, typed APIs without forcing them to drop down to the raw ioredis client every time.
 
+## Integration testing strategy
+
+For Redis-backed features, prefer a real Redis instance when validating Lua scripts, `MULTI/EXEC`,
+expiration behavior, or pipeline semantics. Keep unit tests for key construction and serialization,
+but do not rely on mocks for script behavior.
+
+Recommended isolation:
+
+- use a dedicated Redis container or the local Docker Compose Redis for integration runs
+- use `@repo/redis/testing` to create a client with an isolated per-run/per-worker `keyPrefix`
+- call `FLUSHDB` only on a dedicated test database, never on a shared local development database
+
+This package already centralizes key construction through `namespace` and `version`; integration
+tests should keep that shape and add the external prefix at the client boundary.
+
+Useful commands:
+
+```sh
+pnpm --filter @repo/redis test
+pnpm --filter @repo/redis test:integration
+pnpm --filter @repo/redis test:all
+```
+
+`createRedisTestEnvironment()` returns a real Redis client plus `reset()` and `destroy()` helpers.
+Cleanup uses `SCAN` plus `UNLINK` against only the generated test prefix, so development keys in the
+same Redis database are not touched.
+
 ## Package structure
 
 ```text

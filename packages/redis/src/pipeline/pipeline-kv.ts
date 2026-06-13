@@ -20,7 +20,7 @@ export class PipelineKVOps {
     return this.pipeline.track<T | null>((raw) => {
       if (raw === null) return null
       const buf = typeof raw === 'string' ? Buffer.from(raw, 'utf8') : (raw as Buffer)
-      return decodeModelValue(model, buf as Buffer, key)
+      return decodeModelValue(model, buf, key)
     })
   }
 

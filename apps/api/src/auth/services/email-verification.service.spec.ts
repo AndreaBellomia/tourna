@@ -1,4 +1,5 @@
 import { BadRequestException } from '@nestjs/common'
+import { EmailVerificationTokenModel } from '@repo/redis'
 import { EmailVerificationService } from './email-verification.service'
 
 function createUpdateUserQuery(result: unknown[]) {
@@ -93,7 +94,7 @@ describe('EmailVerificationService', () => {
         },
       }),
       {
-        jobId: 'email:verification:user-1:hashed-token',
+        jobId: 'email-verification-user-1-hashed-token',
       },
     )
   })
@@ -106,7 +107,7 @@ describe('EmailVerificationService', () => {
       createdAt: Date.now(),
       expiresAt: Date.now() + 604800000,
     }
-    redisClient.getBuffer.mockResolvedValue(Buffer.from(JSON.stringify(data)))
+    redisClient.getBuffer.mockResolvedValue(EmailVerificationTokenModel.codec.encode(data))
     db.db.updateTable.mockReturnValue(createUpdateUserQuery([{ id: 'user-1' }]))
 
     await expect(service.verifyEmail('raw-token')).resolves.toEqual({ verified: true })

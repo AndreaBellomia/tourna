@@ -1,4 +1,12 @@
 import { EmailVerificationTokenStore } from './email-verification.store'
+import {
+  EmailVerificationTokenModel,
+  type EmailVerificationTokenData,
+} from './email-verification.model'
+
+function encodeEmailVerificationToken(data: EmailVerificationTokenData): Buffer {
+  return EmailVerificationTokenModel.codec.encode(data)
+}
 
 function createMockClient() {
   const pipeline = {
@@ -49,15 +57,13 @@ describe('EmailVerificationTokenStore', () => {
   it('removes the previous token when creating a replacement for the same user', async () => {
     const { client, pipeline } = createMockClient()
     client.getBuffer.mockResolvedValue(
-      Buffer.from(
-        JSON.stringify({
-          userId: 'user-1',
-          email: 'andrea@example.com',
-          tokenHash: 'old-hash',
-          createdAt: 1,
-          expiresAt: 2,
-        }),
-      ),
+      encodeEmailVerificationToken({
+        userId: 'user-1',
+        email: 'andrea@example.com',
+        tokenHash: 'old-hash',
+        createdAt: 1,
+        expiresAt: 2,
+      }),
     )
     const store = new EmailVerificationTokenStore(client as never)
 
@@ -74,15 +80,13 @@ describe('EmailVerificationTokenStore', () => {
   it('consumes a token and removes both indexes', async () => {
     const { client } = createMockClient()
     client.getBuffer.mockResolvedValue(
-      Buffer.from(
-        JSON.stringify({
-          userId: 'user-1',
-          email: 'andrea@example.com',
-          tokenHash: 'hash-1',
-          createdAt: 1,
-          expiresAt: 2,
-        }),
-      ),
+      encodeEmailVerificationToken({
+        userId: 'user-1',
+        email: 'andrea@example.com',
+        tokenHash: 'hash-1',
+        createdAt: 1,
+        expiresAt: 2,
+      }),
     )
     client.del.mockResolvedValue(2)
     const store = new EmailVerificationTokenStore(client as never)

@@ -8,6 +8,9 @@
     "PGDATABASE",
     "PGUSER",
     "PGPASSWORD",
+    "TOURNA_TEST_DATABASE_URL",
+    "TEST_DATABASE_URL",
+    "JEST_WORKER_ID",
     "TOURNA_API_URL",
     "API_BASE_URL",
     "NODE_ENV",
@@ -15,6 +18,12 @@
     "REDIS_PORT",
     "REDIS_PASSWORD",
     "REDIS_DB",
+    "REDIS_TEST_DB",
+    "TOURNA_TEST_RUN_ID",
+    "STORAGE_TEST_ENDPOINT",
+    "STORAGE_TEST_REGION",
+    "STORAGE_TEST_ACCESS_KEY_ID",
+    "STORAGE_TEST_SECRET_ACCESS_KEY",
     "WORKER_NOTIFICATIONS_CONCURRENCY",
     "WORKER_REPORTS_CONCURRENCY",
     "WORKER_RATINGS_CONCURRENCY",
@@ -38,6 +47,12 @@
     },
     "test": {
       "dependsOn": ["^test"],
+      "outputs": []
+    },
+    "test:integration": {
+      "outputs": []
+    },
+    "test:all": {
       "outputs": []
     },
     "dev": {

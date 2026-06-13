@@ -7,6 +7,7 @@ export class MsgpackCodec<T> implements RedisCodec<T, Buffer> {
   }
 
   decode(value: Buffer): T {
-    return msgpack.decode(value)
+    const decoded = msgpack.decode(value) as unknown
+    return decoded as T
   }
 }

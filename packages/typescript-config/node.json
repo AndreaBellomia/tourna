@@ -3,6 +3,8 @@
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
+    "baseUrl": "${configDir}",
+    "customConditions": ["source"],
     "esModuleInterop": true,
     "incremental": false,
     "isolatedModules": true,
@@ -11,6 +13,10 @@
     "moduleDetection": "force",
     "moduleResolution": "bundler",
     "noUncheckedIndexedAccess": true,
+    "paths": {
+      "~": ["src"],
+      "~/*": ["src/*"]
+    },
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,

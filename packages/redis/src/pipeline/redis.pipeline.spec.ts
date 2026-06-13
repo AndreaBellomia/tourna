@@ -135,7 +135,8 @@ describe('RedisPipeline', () => {
       expect(result.value).toBe('OK')
       expect(commander.set).toHaveBeenCalledTimes(1)
 
-      const setArgs = commander.set!.mock.calls[0]
+      const setMock = commander.set!
+      const setArgs = setMock.mock.calls[0] as unknown[]
       expect(setArgs[0]).toBe('test:v1:item:xyz')
       // second arg is the encoded Buffer
       expect(Buffer.isBuffer(setArgs[1])).toBe(true)
@@ -148,7 +149,8 @@ describe('RedisPipeline', () => {
       pipe.kv.set(TestModelWithTTL, { name: 'ttl', value: 3 }, 'id')
       await pipe.exec()
 
-      const setArgs = commander.set!.mock.calls[0]
+      const setMock = commander.set!
+      const setArgs = setMock.mock.calls[0] as unknown[]
       expect(setArgs[2]).toBe('EX')
       expect(setArgs[3]).toBe(300)
     })

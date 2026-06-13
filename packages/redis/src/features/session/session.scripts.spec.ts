@@ -44,7 +44,7 @@ describe('SessionScripts', () => {
       expect(args[4]).toBe('auth:v1:user_sessions:u-1')
 
       // Session JSON
-      const sessionJson = JSON.parse(args[5] as string)
+      const sessionJson = JSON.parse(args[5] as string) as SessionData
       expect(sessionJson.userId).toBe('u-1')
       expect(sessionJson.tokenHash).toBe('hash-1')
       expect(sessionJson.userAgent).toBe('TestAgent')

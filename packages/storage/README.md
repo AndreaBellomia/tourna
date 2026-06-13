@@ -31,3 +31,29 @@ Final keys use:
 ```
 
 Private assets should be read through presigned `GET` URLs. Public assets can be served through `publicBaseUrl` or a CDN mapped to the public bucket.
+
+## Integration testing strategy
+
+Storage integration tests should use S3-compatible behavior rather than mocking the AWS SDK when
+the flow depends on object existence, copy/delete semantics, or presigned URL compatibility.
+
+Recommended isolation:
+
+- run MinIO through Docker Compose or a dedicated test container
+- use `@repo/storage/testing` to create test-only public/private buckets per run and worker
+- delete the test buckets after each integration suite
+- keep Redis upload-tracker keys isolated with the Redis test prefix strategy
+
+Mock the SDK only for pure orchestration tests where S3 protocol behavior is not under test.
+
+Useful commands:
+
+```sh
+pnpm --filter @repo/storage test
+pnpm --filter @repo/storage test:integration
+pnpm --filter @repo/storage test:all
+```
+
+`createStorageTestEnvironment()` creates isolated MinIO/S3 buckets and exposes `reset()` and
+`destroy()` helpers. Storage tests that exercise upload tracking should compose it with
+`createRedisTestEnvironment()` so object state and Redis state are cleaned together.
