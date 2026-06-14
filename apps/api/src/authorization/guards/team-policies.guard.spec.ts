@@ -54,21 +54,6 @@ describe('TeamPoliciesGuard', () => {
     )
   })
 
-  it('delegates team action policies to authorization service', async () => {
-    reflectorMock.getAllAndOverride = jest.fn((key) =>
-      key === TEAM_POLICY_KEY ? { action: Action.Invite, teamIdParam: 'id' } : undefined,
-    )
-    canAccessTeamActionMock.mockResolvedValue(true)
-
-    const request = {
-      params: { id: 'team-1' },
-      user: { userId: 'u-1', sessionId: 's-1' },
-    }
-
-    await expect(guard.canActivate(createHttpContext(request))).resolves.toBe(true)
-    expect(canAccessTeamActionMock).toHaveBeenCalledWith('u-1', 'team-1', Action.Invite)
-  })
-
   it('delegates team membership policies to authorization service', async () => {
     reflectorMock.getAllAndOverride = jest.fn((key) =>
       key === TEAM_MEMBERSHIP_POLICY_KEY ? { teamIdParam: 'id' } : undefined,

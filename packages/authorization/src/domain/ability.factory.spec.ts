@@ -62,7 +62,6 @@ describe('buildAbility', () => {
 
     expect(ability.can(Action.Update, subject(Subject.Team, { id: 'team-1' }))).toBe(true)
     expect(ability.can(Action.Update, subject(Subject.Team, { id: 'team-2' }))).toBe(false)
-    expect(ability.can(Action.Invite, subject(Subject.User, { teamId: 'team-1' }))).toBe(true)
   })
 
   it('grants player read access only for its own team matches', () => {

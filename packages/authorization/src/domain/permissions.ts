@@ -4,7 +4,6 @@ export enum Action {
   Read = 'read',
   Update = 'update',
   Delete = 'delete',
-  Invite = 'invite',
   Impersonate = 'impersonate',
 }
 

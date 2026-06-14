@@ -4,6 +4,7 @@ import { getOptionalPageData, getRequiredPageData } from '~/lib/api/page-data'
 import { getTeam } from '~/lib/api/teams/team.request'
 import { isLocale, resolveLocale } from '~/lib/i18n/config'
 import { getMessages } from '~/lib/i18n/web-i18n'
+import { AppShell } from '~/features/common/components/app-shell'
 import { TeamProfile } from '~/features/teams/components/team-profile'
 
 type TeamPageProps = {
@@ -37,8 +38,8 @@ export default async function TeamPage({ params }: TeamPageProps) {
   })
 
   return (
-    <main className="min-h-screen bg-background px-5 py-6 md:px-8">
+    <AppShell active="teams" locale={locale} messages={messages.common}>
       <TeamProfile initialTeam={team} locale={locale} messages={messages.teams} />
-    </main>
+    </AppShell>
   )
 }

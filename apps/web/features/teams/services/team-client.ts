@@ -6,10 +6,14 @@ import {
   FinalizeUploadSchema,
   StorageObjectResponseSchema,
   TeamDetailResponseSchema,
+  TeamInvitationAcceptResponseSchema,
+  TeamInvitationRequestSchema,
+  TeamInvitationResponseSchema,
   TeamListResponseSchema,
   UpdateTeamRequestSchema,
   type CreateTeamInput,
   type TeamDetailResponse,
+  type TeamInvitationInput,
   type TeamListQuery,
   type UpdateTeamInput,
 } from '@repo/contracts'
@@ -56,6 +60,27 @@ export function updateTeam(teamId: string, values: UpdateTeamInput) {
     method: 'PATCH',
     body: payload,
     fallbackErrorMessage: 'Unable to update team',
+  })
+}
+
+export function createTeamInvitation(teamId: string, values: TeamInvitationInput) {
+  const payload = TeamInvitationRequestSchema.parse(values)
+
+  return clientApiRequest({
+    path: `/api/teams/${teamId}/invitations`,
+    schema: TeamInvitationResponseSchema,
+    method: 'POST',
+    body: payload,
+    fallbackErrorMessage: 'Unable to create invitation',
+  })
+}
+
+export function acceptTeamInvitation(code: string) {
+  return clientApiRequest({
+    path: `/api/team-invitations/${encodeURIComponent(code)}/accept`,
+    schema: TeamInvitationAcceptResponseSchema,
+    method: 'POST',
+    fallbackErrorMessage: 'Unable to accept invitation',
   })
 }
 

@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { CheckCircle2, MailCheck, Save, Send } from 'lucide-react'
 import { Badge } from '@repo/ui/badge'
-import { Button } from '@repo/ui/button'
+import { Button, buttonVariants } from '@repo/ui/button'
+import { Card } from '@repo/ui/card'
 import { Input } from '@repo/ui/input'
 import { Label } from '@repo/ui/label'
 import {
@@ -162,7 +163,7 @@ export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
             }
           />
 
-          <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
+          <Card className="p-5" variant="panel">
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <Label htmlFor="profile-email">{messages.form.email}</Label>
@@ -205,12 +206,12 @@ export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
             </Button>
 
             <Link
-              className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-md border border-border bg-background px-4 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-muted"
+              className={buttonVariants({ variant: 'outline', className: 'mt-3 w-full' })}
               href={withLocale(locale, `/users/${currentProfile.nickname}`)}
             >
               {messages.form.publicProfile}
             </Link>
-          </div>
+          </Card>
         </>
       }
       onSubmit={(event) => void form.handleSubmit(submitState.onSubmit)(event)}

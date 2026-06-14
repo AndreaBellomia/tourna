@@ -77,6 +77,43 @@ const teams = {
     permissionsDescription:
       'Owner/captain actions are disabled until dedicated contracts are available.',
     disabledAction: 'Coming soon',
+    inviteButton: 'Create invite',
+  },
+  invites: {
+    title: 'Invitations',
+    description: 'Create a reusable team invite.',
+    statusTitle: 'Invitation status',
+    statusDescription:
+      'Created invitation links can be copied immediately. Listing active invitations will fit here once the backend exposes that read model.',
+    role: 'Role',
+    maxUses: 'Uses',
+    expiresAt: 'Expires',
+    submit: 'Create invitation',
+    created: 'Invitation ready.',
+    copied: 'Copied.',
+    invalid: 'Choose a valid expiration date.',
+    failed: 'Could not create the invitation.',
+    code: 'Code',
+    link: 'Link',
+    roles: {
+      owner: 'Owner',
+      captain: 'Captain',
+      player: 'Player',
+      substitute: 'Substitute',
+      coach: 'Coach',
+      manager: 'Manager',
+    },
+  },
+  settings: {
+    profileDescription:
+      'Profile, logo, Markdown description, and visibility are edited in a focused settings page.',
+  },
+  inviteAccept: {
+    metadataTitle: 'Accept team invitation',
+    title: 'Team invitation',
+    description: 'Accept this invitation to join the team.',
+    submit: 'Accept invitation',
+    failed: 'Could not accept this invitation.',
   },
   visibility: {
     private: 'Private',

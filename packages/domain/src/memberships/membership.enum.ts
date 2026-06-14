@@ -22,7 +22,7 @@ export const MembershipRoleCodeSchema = z.enum(MEMBERSHIP_ROLE_CODES)
 
 export type MembershipRoleCode = z.infer<typeof MembershipRoleCodeSchema>
 
-export const MEMBERSHIP_STATUSES = ['active', 'invited', 'suspended', 'left', 'removed'] as const
+export const MEMBERSHIP_STATUSES = ['active', 'suspended', 'left', 'removed'] as const
 
 export const MembershipStatusSchema = z.enum(MEMBERSHIP_STATUSES)
 

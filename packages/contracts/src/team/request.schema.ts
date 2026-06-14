@@ -1,4 +1,4 @@
-import { VisibilitySchema } from '@repo/domain'
+import { TeamMembershipRoleSchema, VisibilitySchema } from '@repo/domain'
 import { z } from 'zod'
 import { CursorPaginationQuerySchema } from '../pagination/cursor.schema'
 
@@ -29,3 +29,27 @@ export const TeamListQuerySchema = CursorPaginationQuerySchema.extend({
 })
 
 export type TeamListQuery = z.infer<typeof TeamListQuerySchema>
+
+export const TeamInvitationRequestSchema = z.object({
+  role: TeamMembershipRoleSchema,
+  expiresAt: z.iso.datetime().default(() => {
+    const date = new Date()
+    date.setDate(date.getDate() + 7)
+    return date.toISOString()
+  }),
+  maxUses: z.number().int().min(1).max(100),
+})
+
+export type TeamInvitationInput = z.infer<typeof TeamInvitationRequestSchema>
+
+export const TeamInvitationCodeParamSchema = z.object({
+  code: z.string().trim().min(8).max(32),
+})
+
+export type TeamInvitationCodeParam = z.infer<typeof TeamInvitationCodeParamSchema>
+
+export const TeamRemoveUserRequestSchema = z.object({
+  userId: z.string(),
+})
+
+export type TeamRemoveUserInput = z.infer<typeof TeamRemoveUserRequestSchema>

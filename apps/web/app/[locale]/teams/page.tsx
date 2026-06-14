@@ -4,7 +4,7 @@ import { getOptionalPageData } from '~/lib/api/page-data'
 import { listTeams } from '~/lib/api/teams/team.request'
 import { isLocale, resolveLocale } from '~/lib/i18n/config'
 import { getMessages } from '~/lib/i18n/web-i18n'
-import { AppHeader } from '~/features/common/components/app-header'
+import { AppShell } from '~/features/common/components/app-shell'
 import { TeamExplorer } from '~/features/teams/components/team-explorer'
 
 type TeamsPageProps = {
@@ -36,10 +36,8 @@ export default async function TeamsPage({ params }: TeamsPageProps) {
   )
 
   return (
-    <main className="min-h-screen bg-background px-5 py-6 md:px-8">
+    <AppShell active="teams" locale={locale} messages={messages.common}>
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-        <AppHeader active="teams" locale={locale} messages={messages.common} />
-
         <TeamExplorer
           initialError={initialPage ? undefined : messages.teams.list.unavailable}
           initialPage={initialPage}
@@ -47,6 +45,6 @@ export default async function TeamsPage({ params }: TeamsPageProps) {
           messages={messages.teams}
         />
       </div>
-    </main>
+    </AppShell>
   )
 }

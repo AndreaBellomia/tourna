@@ -6,7 +6,8 @@ export const teamEndpoints = {
   create: '/teams',
   join: (teamId: string) => `/teams/${teamId}/join`,
   leave: (teamId: string) => `/teams/${teamId}/leave`,
-  invite: (teamId: string) => `/teams/${teamId}/invite`,
+  invitations: (teamId: string) => `/teams/${teamId}/invitations`,
+  acceptInvitation: (code: string) => `/teams/invitations/${encodeURIComponent(code)}/accept`,
   remove: (teamId: string) => `/teams/${teamId}/remove`,
 } as const
 

@@ -17,7 +17,7 @@ const membershipRoleCodes = [
   'coach',
   'manager',
 ] as const
-const membershipStatuses = ['active', 'invited', 'suspended', 'left', 'removed'] as const
+const membershipStatuses = ['active', 'suspended', 'left', 'removed'] as const
 const lifecycleStatuses = [
   'draft',
   'published',

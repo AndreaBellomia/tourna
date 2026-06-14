@@ -116,24 +116,12 @@ export class TeamService {
     }
   }
 
-  joinTeam(userId: string, teamId: string) {
-    void userId
-    void teamId
+  async leaveTeam(userId: string, teamId: string) {
+    await this.teams.removeFromTeam(teamId, userId, 'left')
   }
 
-  leaveTeam(userId: string, teamId: string) {
-    void userId
-    void teamId
-  }
-
-  inviteToTeam(userId: string, teamId: string) {
-    void userId
-    void teamId
-  }
-
-  removeFromTeam(userId: string, teamId: string) {
-    void userId
-    void teamId
+  async removeFromTeam(userId: string, teamId: string) {
+    await this.teams.removeFromTeam(teamId, userId, 'removed')
   }
 }
 

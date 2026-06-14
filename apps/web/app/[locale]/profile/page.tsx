@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation'
 import { requireAuthenticatedPage } from '~/lib/auth/session'
 import { getRequiredPageData } from '~/lib/api/page-data'
 import { getProfile } from '~/lib/api/profile/profile.request'
-import { AppHeader } from '~/features/common/components/app-header'
+import { AppShell } from '~/features/common/components/app-shell'
 
 type ProfilePageProps = {
   params: Promise<{ locale: string }>
@@ -39,11 +39,10 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   })
 
   return (
-    <main className="min-h-screen bg-background px-5 py-6 md:px-8">
+    <AppShell active="profile" locale={locale} messages={messages.common}>
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-        <AppHeader active="profile" locale={locale} messages={messages.common} />
         <ProfileEditPanel initialProfile={profile} locale={locale} messages={messages.profile} />
       </div>
-    </main>
+    </AppShell>
   )
 }

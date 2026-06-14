@@ -3,7 +3,9 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { ArrowLeft, CalendarDays, Eye } from 'lucide-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/avatar'
 import { Badge } from '@repo/ui/badge'
+import { buttonVariants } from '@repo/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/card'
 import type { UserDetailResponse } from '@repo/contracts'
 import { type Locale, withLocale } from '~/lib/i18n/config'
@@ -45,25 +47,24 @@ export function UserProfile({ locale, messages, initialUser }: UserProfileProps)
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6">
       <Link
-        className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-border bg-background px-4 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-muted"
+        className={buttonVariants({ variant: 'outline' })}
         href={withLocale(locale, '/users')}
       >
         <ArrowLeft aria-hidden="true" className="size-4" />
         {messages.detail.back}
       </Link>
 
-      <section className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
-        <div className="border-b border-border bg-secondary px-5 py-10 text-secondary-foreground md:px-8">
+      <section className="overflow-hidden rounded-lg border border-border bg-card shadow-[0_18px_50px_rgba(3,7,18,0.24)]">
+        <div className="border-b border-border bg-muted/50 px-5 py-8 text-foreground md:px-8">
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div className="flex items-center gap-4">
-              <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-background text-xl font-semibold text-foreground">
+              <Avatar className="size-20 text-xl">
                 {user.avatarUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img alt="" className="size-full object-cover" src={user.avatarUrl} />
+                  <AvatarImage src={user.avatarUrl} />
                 ) : (
-                  initials || 'U'
+                  <AvatarFallback>{initials || 'U'}</AvatarFallback>
                 )}
-              </div>
+              </Avatar>
               <div>
                 <Badge variant="outline">@{user.nickname}</Badge>
                 <h1 className="mt-3 text-4xl font-semibold tracking-normal md:text-5xl">
@@ -84,7 +85,7 @@ export function UserProfile({ locale, messages, initialUser }: UserProfileProps)
           </div>
 
           <aside>
-            <Card>
+            <Card variant="muted">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <CalendarDays aria-hidden="true" className="size-4" />

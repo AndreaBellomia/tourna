@@ -6,5 +6,6 @@ import { TeamInvitationService } from './team-invitation.service'
   imports: [],
   controllers: [],
   providers: [TeamInvitationService, TeamInvitationRepository],
+  exports: [TeamInvitationService, TeamInvitationRepository],
 })
 export class TeamInvitationModule {}

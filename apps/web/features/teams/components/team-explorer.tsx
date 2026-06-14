@@ -14,12 +14,19 @@ import {
   Users,
   X,
 } from 'lucide-react'
+import { Alert } from '@repo/ui/alert'
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/avatar'
 import { Badge } from '@repo/ui/badge'
-import { Button } from '@repo/ui/button'
+import { Button, buttonVariants } from '@repo/ui/button'
+import { cardVariants } from '@repo/ui/card'
 import { Input } from '@repo/ui/input'
 import { Label } from '@repo/ui/label'
 import { Select } from '@repo/ui/select'
+import { cn } from '@repo/ui/utils'
 import { type TeamListResponse, type TeamSummaryResponse } from '@repo/contracts'
+import { EmptyState } from '~/features/common/components/empty-state'
+import { ListToolbar } from '~/features/common/components/list-toolbar'
+import { PageHeader } from '~/features/common/components/page-header'
 import { type Locale, withLocale } from '~/lib/i18n/config'
 import type { Messages } from '~/lib/i18n/web-i18n'
 import { fetchTeams } from '~/features/teams/services/team-client'
@@ -51,6 +58,7 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
     defaultValues: { search: '', visibility: 'all' },
   })
   const searchValue = searchForm.watch('search')
+  const visibilityValue = searchForm.watch('visibility')
 
   const queryFromValues = useCallback((values: SearchValues, cursor?: string) => {
     return {
@@ -118,41 +126,49 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
 
   const hasTeams = teams.length > 0
   const resultLabel = useMemo(() => `${teams.length} team`, [teams.length])
+  const hasActiveFilters = Boolean(searchValue.trim()) || visibilityValue !== 'all'
+
+  function resetFilters() {
+    const values: SearchValues = { search: '', visibility: 'all' }
+
+    searchForm.reset(values)
+    loadFirstPage(values)
+  }
 
   return (
     <section className="space-y-5">
-      <div className="flex flex-col gap-4 border-b border-border pb-5 lg:flex-row lg:items-end lg:justify-between">
-        <div className="max-w-3xl">
-          <Badge variant="secondary" className="mb-3 gap-1.5">
-            <Users aria-hidden="true" className="size-3.5" />
-            {messages.list.eyebrow}
-          </Badge>
-          <h1 className="text-3xl font-semibold tracking-normal md:text-4xl">
-            {messages.list.title}
-          </h1>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            {messages.list.description}
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="outline" className="w-fit">
-            {resultLabel}
-          </Badge>
-          <Link
-            className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
-            href={withLocale(locale, '/teams/new')}
-          >
-            <Plus aria-hidden="true" className="size-4" />
-            {messages.list.create}
-          </Link>
-        </div>
-      </div>
+      <PageHeader
+        badgeIcon={<Users aria-hidden="true" className="size-3.5" />}
+        description={messages.list.description}
+        eyebrow={messages.list.eyebrow}
+        title={messages.list.title}
+        actions={
+          <>
+            <Badge variant="outline" className="w-fit">
+              {resultLabel}
+            </Badge>
+            <Link className={buttonVariants()} href={withLocale(locale, '/teams/new')}>
+              <Plus aria-hidden="true" className="size-4" />
+              {messages.list.create}
+            </Link>
+          </>
+        }
+      />
 
-      <form
-        className="rounded-lg border border-border bg-card p-3 shadow-sm"
-        onSubmit={(event) => void searchForm.handleSubmit(loadFirstPage)(event)}
-      >
-        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_220px_auto] lg:items-end">
+      <form onSubmit={(event) => void searchForm.handleSubmit(loadFirstPage)(event)}>
+        <ListToolbar
+          resetDisabled={!hasActiveFilters}
+          resetLabel={messages.list.reset}
+          onReset={resetFilters}
+          activeFilters={
+            <>
+              {searchValue.trim() ? <Badge variant="accent">{searchValue.trim()}</Badge> : null}
+              {visibilityValue !== 'all' ? (
+                <Badge variant="outline">{messages.visibility[visibilityValue]}</Badge>
+              ) : null}
+            </>
+          }
+        >
           <div className="space-y-2">
             <Label className="inline-flex items-center gap-2" htmlFor="team-search">
               <SlidersHorizontal aria-hidden="true" className="size-4 text-accent" />
@@ -198,15 +214,18 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
               <Select
                 id="team-visibility"
                 className="h-11 pl-9"
-                {...searchForm.register('visibility')}
-              >
-                <option value="all">{messages.list.allVisibilities}</option>
-                {visibilityOptions.map((visibility) => (
-                  <option key={visibility} value={visibility}>
-                    {messages.visibility[visibility]}
-                  </option>
-                ))}
-              </Select>
+                options={[
+                  { value: 'all', label: messages.list.allVisibilities },
+                  ...visibilityOptions.map((visibility) => ({
+                    value: visibility,
+                    label: messages.visibility[visibility],
+                  })),
+                ]}
+                value={visibilityValue}
+                onValueChange={(value) =>
+                  searchForm.setValue('visibility', value as SearchValues['visibility'])
+                }
+              />
             </div>
           </div>
 
@@ -214,13 +233,11 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
             <Search aria-hidden="true" className="size-4" />
             {messages.list.search}
           </Button>
-        </div>
+        </ListToolbar>
       </form>
 
       {error ? (
-        <p className="rounded-md border border-destructive/25 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {error}
-        </p>
+        <Alert variant="destructive">{error}</Alert>
       ) : null}
 
       {hasTeams ? (
@@ -230,12 +247,19 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
           ))}
         </div>
       ) : (
-        <div className="rounded-lg border border-dashed border-border bg-card px-5 py-10 text-center">
-          <p className="text-lg font-semibold">{messages.list.emptyTitle}</p>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
-            {error ? messages.list.unavailable : messages.list.emptyDescription}
-          </p>
-        </div>
+        <EmptyState
+          title={messages.list.emptyTitle}
+          description={error ? messages.list.unavailable : messages.list.emptyDescription}
+          action={
+            <Link
+              className={buttonVariants({ variant: 'outline' })}
+              href={withLocale(locale, '/teams/new')}
+            >
+              <Plus aria-hidden="true" className="size-4" />
+              {messages.list.create}
+            </Link>
+          }
+        />
       )}
 
       <div ref={sentinelRef} className="h-1" />
@@ -268,18 +292,19 @@ function TeamTile({
 
   return (
     <Link
-      className="group rounded-lg border border-border bg-card p-4 transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-accent/60 hover:shadow-md"
+      className={cn(cardVariants({ variant: 'interactive' }), 'group block p-4')}
       href={withLocale(locale, `/teams/${team.slug}`)}
     >
       <div className="flex items-start gap-3">
-        <div className="flex size-12 shrink-0 items-center justify-center rounded-md bg-primary text-sm font-semibold text-primary-foreground">
+        <Avatar className="size-12 border-primary/25 bg-primary/15">
           {team.logoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img alt="" className="size-full rounded-md object-cover" src={team.logoUrl} />
+            <AvatarImage src={team.logoUrl} />
           ) : (
-            initials || 'TM'
+            <AvatarFallback className="bg-primary text-primary-foreground">
+              {initials || 'TM'}
+            </AvatarFallback>
           )}
-        </div>
+        </Avatar>
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
             <p className="truncate font-semibold">{team.name}</p>

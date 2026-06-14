@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useState, useTransition, type FormEvent } from 'react'
 import { ArrowRight, LockKeyhole, Mail, ShieldCheck } from 'lucide-react'
+import { Alert } from '@repo/ui/alert'
 import { Badge } from '@repo/ui/badge'
 import { Button } from '@repo/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui/card'
@@ -47,7 +48,7 @@ export function AuthPanel({ locale, messages }: { locale: Locale; messages: Auth
   const content = messages[mode]
 
   return (
-    <Card className="w-full max-w-md border-[#d8d0bd] bg-card/95 shadow-[0_24px_70px_rgba(23,23,18,0.14)]">
+    <Card className="w-full max-w-md" variant="panel">
       <CardHeader className="gap-4">
         <div className="flex items-center justify-between gap-3">
           <Badge variant="outline" className="gap-1.5">
@@ -121,9 +122,7 @@ export function AuthPanel({ locale, messages }: { locale: Locale; messages: Auth
           </div>
 
           {message ? (
-            <p className="rounded-md border border-destructive/25 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              {message}
-            </p>
+            <Alert variant="destructive">{message}</Alert>
           ) : null}
 
           <Button className="w-full" loading={isPending} size="lg" type="submit">

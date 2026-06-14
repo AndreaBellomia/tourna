@@ -2,8 +2,11 @@
 
 import type { ComponentProps, ReactNode, RefObject } from 'react'
 import { Camera, Eye, FilePenLine, Trash2 } from 'lucide-react'
+import { Alert } from '@repo/ui/alert'
 import { Button } from '@repo/ui/button'
+import { Card } from '@repo/ui/card'
 import { Label } from '@repo/ui/label'
+import { Separator } from '@repo/ui/separator'
 import { Textarea } from '@repo/ui/textarea'
 import { cn } from '@repo/ui/utils'
 import { MarkdownContent } from '~/features/teams/components/markdown-content'
@@ -28,9 +31,9 @@ export function EditorFormLayout({
       )}
       {...props}
     >
-      <section className="min-w-0 rounded-lg border border-border bg-card p-5 shadow-sm">
+      <Card className="min-w-0 p-5" variant="panel">
         {children}
-      </section>
+      </Card>
       <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">{sidebar}</aside>
     </form>
   )
@@ -56,34 +59,37 @@ export function EditorFormHeader({
   onModeChange,
 }: EditorFormHeaderProps) {
   return (
-    <div className="flex flex-col gap-3 border-b border-border pb-5 md:flex-row md:items-center md:justify-between">
-      <div>
-        <p className="text-sm font-medium text-accent">{eyebrow}</p>
-        <h1 className="mt-1 text-3xl font-semibold">{title}</h1>
-        {description ? (
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
-        ) : null}
+    <div className="space-y-5">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="text-sm font-medium text-accent">{eyebrow}</p>
+          <h1 className="mt-1 text-3xl font-semibold">{title}</h1>
+          {description ? (
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
+          ) : null}
+        </div>
+        <div className="inline-flex w-fit rounded-md border border-border bg-muted/50 p-1">
+          <Button
+            size="sm"
+            type="button"
+            variant={mode === 'edit' ? 'secondary' : 'ghost'}
+            onClick={() => onModeChange('edit')}
+          >
+            <FilePenLine aria-hidden="true" className="size-4" />
+            {editLabel}
+          </Button>
+          <Button
+            size="sm"
+            type="button"
+            variant={mode === 'preview' ? 'secondary' : 'ghost'}
+            onClick={() => onModeChange('preview')}
+          >
+            <Eye aria-hidden="true" className="size-4" />
+            {previewLabel}
+          </Button>
+        </div>
       </div>
-      <div className="inline-flex w-fit rounded-md border border-border bg-background p-1">
-        <Button
-          size="sm"
-          type="button"
-          variant={mode === 'edit' ? 'secondary' : 'ghost'}
-          onClick={() => onModeChange('edit')}
-        >
-          <FilePenLine aria-hidden="true" className="size-4" />
-          {editLabel}
-        </Button>
-        <Button
-          size="sm"
-          type="button"
-          variant={mode === 'preview' ? 'secondary' : 'ghost'}
-          onClick={() => onModeChange('preview')}
-        >
-          <Eye aria-hidden="true" className="size-4" />
-          {previewLabel}
-        </Button>
-      </div>
+      <Separator />
     </div>
   )
 }
@@ -114,7 +120,7 @@ export function MarkdownEditorField({
           {...textareaProps}
         />
       ) : (
-        <div className="min-h-80 rounded-md border border-border bg-background p-4">
+        <div className="min-h-80 rounded-md border border-border bg-input/25 p-4">
           <MarkdownContent value={previewValue} emptyLabel={emptyPreviewLabel} />
         </div>
       )}
@@ -132,9 +138,9 @@ export function FormNotice({ message }: { message?: string | null }) {
   if (!message) return null
 
   return (
-    <p className="mt-4 rounded-md border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
+    <Alert className="mt-4" variant="info">
       {message}
-    </p>
+    </Alert>
   )
 }
 
@@ -166,7 +172,7 @@ export function ImageUploadControl({
   removeLabel,
 }: ImageUploadControlProps) {
   return (
-    <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
+    <Card className="p-5" variant="panel">
       <div className="flex items-center gap-4">
         <div className="relative flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-muted text-2xl font-semibold">
           {imageUrl ? (
@@ -177,7 +183,7 @@ export function ImageUploadControl({
           )}
           <Button
             aria-label={actionLabel}
-            className="absolute bottom-2 right-2 size-9 border border-border bg-background/95 shadow-sm"
+            className="absolute bottom-2 right-2 size-9 border border-border bg-background/95"
             loading={isUploading}
             size="icon"
             type="button"
@@ -211,6 +217,6 @@ export function ImageUploadControl({
         type="file"
         onChange={(event) => onFileSelected(event.target.files?.[0])}
       />
-    </div>
+    </Card>
   )
 }

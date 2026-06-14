@@ -1,4 +1,4 @@
-import { render } from 'react-email'
+import { renderToStaticMarkup } from 'react-dom/server'
 import type { EmailTemplatePayload } from '../contracts'
 import type { RenderedEmail } from '../renderer/render-email'
 import type { EmailTemplateDefinition } from '../templates/types'
@@ -13,7 +13,7 @@ export class BaseEmailRenderer<TDefinitions extends EmailTemplateDefinitionRecor
     return template in this.definitions
   }
 
-  async render(payload: EmailTemplatePayload, context: EmailRenderContext): Promise<RenderedEmail> {
+  render(payload: EmailTemplatePayload, context: EmailRenderContext): Promise<RenderedEmail> {
     const definition = this.definitions[payload.template]
 
     if (!definition) {
@@ -22,10 +22,10 @@ export class BaseEmailRenderer<TDefinitions extends EmailTemplateDefinitionRecor
 
     const props = definition.schema.parse(payload.data)
 
-    return {
+    return Promise.resolve({
       subject: definition.subject(props, context),
-      html: await render(definition.render(props, context)),
+      html: renderToStaticMarkup(definition.render(props, context)),
       text: definition.text(props, context),
-    }
+    })
   }
 }

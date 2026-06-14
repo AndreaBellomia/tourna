@@ -1,14 +1,21 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ArrowRight, Search, SlidersHorizontal, UserRound, X } from 'lucide-react'
+import { Alert } from '@repo/ui/alert'
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/avatar'
 import { Badge } from '@repo/ui/badge'
+import { cardVariants } from '@repo/ui/card'
 import { Button } from '@repo/ui/button'
 import { Input } from '@repo/ui/input'
 import { Label } from '@repo/ui/label'
+import { cn } from '@repo/ui/utils'
 import type { UserListResponse, UserSummaryResponse } from '@repo/contracts'
+import { EmptyState } from '~/features/common/components/empty-state'
+import { ListToolbar } from '~/features/common/components/list-toolbar'
+import { PageHeader } from '~/features/common/components/page-header'
 import { type Locale, withLocale } from '~/lib/i18n/config'
 import type { Messages } from '~/lib/i18n/web-i18n'
 import { MarkdownContent } from '~/features/teams/components/markdown-content'
@@ -31,13 +38,15 @@ export function UserExplorer({ locale, messages, initialPage, initialError }: Us
   const [users, setUsers] = useState<UserSummaryResponse[]>(initialPage?.data ?? [])
   const [pageInfo, setPageInfo] = useState(initialPage?.pageInfo ?? null)
   const [error, setError] = useState<string | null>(initialError ?? null)
-  const [isPending, startTransition] = useTransition()
+  const [isLoading, setIsLoading] = useState(false)
+  const activeRequestRef = useRef<string | null>(null)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
   const activeQueryRef = useRef<SearchValues>({ search: '' })
   const searchForm = useForm<SearchValues>({
     defaultValues: { search: '' },
   })
   const searchValue = searchForm.watch('search')
+  const hasActiveFilters = Boolean(searchValue.trim())
 
   const queryFromValues = useCallback((values: SearchValues, cursor?: string) => {
     return {
@@ -48,41 +57,65 @@ export function UserExplorer({ locale, messages, initialPage, initialError }: Us
     }
   }, [])
 
+  const beginLoad = useCallback((requestKey: string) => {
+    if (activeRequestRef.current) return false
+
+    activeRequestRef.current = requestKey
+    setIsLoading(true)
+
+    return true
+  }, [])
+
+  const finishLoad = useCallback((requestKey: string) => {
+    if (activeRequestRef.current !== requestKey) return
+
+    activeRequestRef.current = null
+    setIsLoading(false)
+  }, [])
+
   const loadFirstPage = useCallback(
     (values: SearchValues) => {
+      const requestKey = `first:${values.search.trim()}`
+      if (!beginLoad(requestKey)) return
+
       activeQueryRef.current = values
       setError(null)
 
-      startTransition(() => {
-        void fetchUsers(queryFromValues(values))
-          .then((page) => {
-            setUsers(page.data)
-            setPageInfo(page.pageInfo)
-          })
-          .catch((loadError: unknown) => {
-            setError(loadError instanceof Error ? loadError.message : messages.list.unavailable)
-          })
-      })
-    },
-    [messages.list.unavailable, queryFromValues],
-  )
-
-  const loadNextPage = useCallback(() => {
-    if (!pageInfo?.hasNextPage || !pageInfo.nextCursor || isPending) return
-
-    const nextCursor = pageInfo.nextCursor
-
-    startTransition(() => {
-      void fetchUsers(queryFromValues(activeQueryRef.current, nextCursor))
+      void fetchUsers(queryFromValues(values))
         .then((page) => {
-          setUsers((current) => mergeUsers(current, page.data))
+          setUsers(page.data)
           setPageInfo(page.pageInfo)
         })
         .catch((loadError: unknown) => {
           setError(loadError instanceof Error ? loadError.message : messages.list.unavailable)
         })
-    })
-  }, [isPending, messages.list.unavailable, pageInfo, queryFromValues])
+        .finally(() => finishLoad(requestKey))
+    },
+    [beginLoad, finishLoad, messages.list.unavailable, queryFromValues],
+  )
+
+  function resetFilters() {
+    searchForm.reset({ search: '' })
+    loadFirstPage({ search: '' })
+  }
+
+  const loadNextPage = useCallback(() => {
+    if (!pageInfo?.hasNextPage || !pageInfo.nextCursor || activeRequestRef.current) return
+
+    const nextCursor = pageInfo.nextCursor
+    const requestKey = `next:${nextCursor}`
+    if (!beginLoad(requestKey)) return
+
+    void fetchUsers(queryFromValues(activeQueryRef.current, nextCursor))
+      .then((page) => {
+        setUsers((current) => mergeUsers(current, page.data))
+        setPageInfo(page.pageInfo)
+      })
+      .catch((loadError: unknown) => {
+        setError(loadError instanceof Error ? loadError.message : messages.list.unavailable)
+      })
+      .finally(() => finishLoad(requestKey))
+  }, [beginLoad, finishLoad, messages.list.unavailable, pageInfo, queryFromValues])
 
   useEffect(() => {
     const sentinel = sentinelRef.current
@@ -104,29 +137,27 @@ export function UserExplorer({ locale, messages, initialPage, initialError }: Us
 
   return (
     <section className="space-y-5">
-      <div className="flex flex-col gap-4 border-b border-border pb-5 lg:flex-row lg:items-end lg:justify-between">
-        <div className="max-w-3xl">
-          <Badge variant="secondary" className="mb-3 gap-1.5">
-            <UserRound aria-hidden="true" className="size-3.5" />
-            {messages.list.eyebrow}
+      <PageHeader
+        badgeIcon={<UserRound aria-hidden="true" className="size-3.5" />}
+        description={messages.list.description}
+        eyebrow={messages.list.eyebrow}
+        title={messages.list.title}
+        actions={
+          <Badge variant="outline" className="w-fit">
+            {users.length} user
           </Badge>
-          <h1 className="text-3xl font-semibold tracking-normal md:text-4xl">
-            {messages.list.title}
-          </h1>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            {messages.list.description}
-          </p>
-        </div>
-        <Badge variant="outline" className="w-fit">
-          {users.length} user
-        </Badge>
-      </div>
+        }
+      />
 
-      <form
-        className="rounded-lg border border-border bg-card p-3 shadow-sm"
-        onSubmit={(event) => void searchForm.handleSubmit(loadFirstPage)(event)}
-      >
-        <div className="flex flex-col gap-3 md:flex-row md:items-end">
+      <form onSubmit={(event) => void searchForm.handleSubmit(loadFirstPage)(event)}>
+        <ListToolbar
+          resetDisabled={!hasActiveFilters}
+          resetLabel={messages.list.reset}
+          onReset={resetFilters}
+          activeFilters={
+            searchValue.trim() ? <Badge variant="accent">{searchValue.trim()}</Badge> : null
+          }
+        >
           <div className="min-w-0 flex-1 space-y-2">
             <Label className="inline-flex items-center gap-2" htmlFor="user-search">
               <SlidersHorizontal aria-hidden="true" className="size-4 text-accent" />
@@ -161,17 +192,15 @@ export function UserExplorer({ locale, messages, initialPage, initialError }: Us
             </div>
           </div>
 
-          <Button className="h-11 md:w-44" loading={isPending} type="submit">
+          <Button className="h-11 md:w-44" loading={isLoading} type="submit">
             <Search aria-hidden="true" className="size-4" />
             {messages.list.search}
           </Button>
-        </div>
+        </ListToolbar>
       </form>
 
       {error ? (
-        <p className="rounded-md border border-destructive/25 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {error}
-        </p>
+        <Alert variant="destructive">{error}</Alert>
       ) : null}
 
       {users.length > 0 ? (
@@ -181,18 +210,16 @@ export function UserExplorer({ locale, messages, initialPage, initialError }: Us
           ))}
         </div>
       ) : (
-        <div className="rounded-lg border border-dashed border-border bg-card px-5 py-10 text-center">
-          <p className="text-lg font-semibold">{messages.list.emptyTitle}</p>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
-            {error ? messages.list.unavailable : messages.list.emptyDescription}
-          </p>
-        </div>
+        <EmptyState
+          title={messages.list.emptyTitle}
+          description={error ? messages.list.unavailable : messages.list.emptyDescription}
+        />
       )}
 
       <div ref={sentinelRef} className="h-1" />
       {pageInfo?.hasNextPage ? (
         <div className="flex justify-center">
-          <Button loading={isPending} type="button" variant="outline" onClick={loadNextPage}>
+          <Button loading={isLoading} type="button" variant="outline" onClick={loadNextPage}>
             {messages.list.loadMore}
           </Button>
         </div>
@@ -219,18 +246,17 @@ function UserTile({
 
   return (
     <Link
-      className="group rounded-lg border border-border bg-card p-4 transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-accent/60 hover:shadow-md"
+      className={cn(cardVariants({ variant: 'interactive' }), 'group block p-4')}
       href={withLocale(locale, `/users/${user.nickname}`)}
     >
       <div className="flex items-start gap-3">
-        <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-md bg-secondary text-sm font-semibold text-secondary-foreground">
+        <Avatar className="size-12">
           {user.avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img alt="" className="size-full object-cover" src={user.avatarUrl} />
+            <AvatarImage src={user.avatarUrl} />
           ) : (
-            initials || 'U'
+            <AvatarFallback>{initials || 'U'}</AvatarFallback>
           )}
-        </div>
+        </Avatar>
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
             <p className="truncate font-semibold">{user.display_name}</p>

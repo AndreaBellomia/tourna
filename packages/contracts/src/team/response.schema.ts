@@ -50,3 +50,19 @@ export const TeamDetailResponseSchema = TeamSummarySchema.extend({
 })
 
 export type TeamDetailResponse = z.infer<typeof TeamDetailResponseSchema>
+
+export const TeamInvitationResponseSchema = z.object({
+  code: z.string(),
+  teamId: z.string(),
+  role: TeamMembershipRoleSchema,
+  maxUses: z.number().int().positive().nullable(),
+  expiresAt: z.iso.datetime(),
+})
+
+export type TeamInvitationResponse = z.infer<typeof TeamInvitationResponseSchema>
+
+export const TeamInvitationAcceptResponseSchema = z.object({
+  teamId: z.string(),
+})
+
+export type TeamInvitationAcceptResponse = z.infer<typeof TeamInvitationAcceptResponseSchema>

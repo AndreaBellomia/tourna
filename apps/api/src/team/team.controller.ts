@@ -14,8 +14,13 @@ import { Action } from '@repo/authorization'
 import type { TeamListResponse } from '@repo/contracts'
 import {
   CreateTeamDto,
+  TeamDetailResponseDto,
+  TeamInvitationAcceptResponseDto,
+  TeamInvitationDto,
+  TeamInvitationResponseDto,
   TeamListQueryDto,
   TeamListResponseDto,
+  TeamRemoveUserDto,
   UpdateTeamDto,
 } from '@repo/contracts/nest'
 import type { JwtPayload } from '@repo/domain'
@@ -27,10 +32,14 @@ import {
 import { CurrentUser } from '~/common/decorators/current-user.decorator'
 import { Public } from '~/common/decorators/public.decorator'
 import { TeamService } from './team.service'
+import { TeamInvitationService } from './invitations/team-invitation.service'
 
 @Controller('teams')
 export class TeamController {
-  constructor(private readonly teamService: TeamService) {}
+  constructor(
+    private readonly teamService: TeamService,
+    private readonly teamInvitationService: TeamInvitationService,
+  ) {}
 
   @Public()
   @Get()
@@ -46,7 +55,10 @@ export class TeamController {
   @Public()
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async getTeam(@CurrentUser() user: JwtPayload | undefined, @Param('id') id: string) {
+  async getTeam(
+    @CurrentUser() user: JwtPayload | undefined,
+    @Param('id') id: string,
+  ): Promise<TeamDetailResponseDto> {
     return await this.teamService.getTeam(id, user?.userId)
   }
 
@@ -65,18 +77,30 @@ export class TeamController {
   @RequireTeamManagement()
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  updateTeam(
+  async updateTeam(
     @CurrentUser() user: JwtPayload,
     @Param('id') id: string,
     @Body() body: UpdateTeamDto,
-  ) {
-    return this.teamService.updateTeam(user.userId, id, body)
+  ): Promise<TeamDetailResponseDto> {
+    return await this.teamService.updateTeam(user.userId, id, body)
   }
 
-  @Post(':id/join')
+  @RequireTeamPolicy(Action.Manage)
+  @Post(':id/invitations')
   @HttpCode(HttpStatus.OK)
-  joinTeam(@CurrentUser() user: JwtPayload, @Param('id') id: string) {
-    return this.teamService.joinTeam(user.userId, id)
+  @ApiOkResponse({ type: TeamInvitationResponseDto })
+  async createInvite(
+    @CurrentUser() user: JwtPayload,
+    @Param('id') id: string,
+    @Body() body: TeamInvitationDto,
+  ): Promise<TeamInvitationResponseDto> {
+    return await this.teamInvitationService.createReusableTeamInvitation({
+      createdById: user.userId,
+      teamId: id,
+      role: body.role,
+      expiresAt: new Date(body.expiresAt),
+      maxUses: body.maxUses,
+    })
   }
 
   @RequireTeamMembership()
@@ -86,17 +110,20 @@ export class TeamController {
     return this.teamService.leaveTeam(user.userId, id)
   }
 
-  @RequireTeamPolicy(Action.Invite)
-  @Post(':id/invite')
+  @RequireTeamPolicy(Action.Manage)
+  @Post(':id/remove-member')
   @HttpCode(HttpStatus.OK)
-  inviteToTeam(@CurrentUser() user: JwtPayload, @Param('id') id: string) {
-    return this.teamService.inviteToTeam(user.userId, id)
+  removeMember(@Param('id') id: string, @Body() body: TeamRemoveUserDto) {
+    return this.teamService.removeFromTeam(body.userId, id)
   }
 
-  @RequireTeamManagement()
-  @Post(':id/remove')
+  @Post('invitations/:code/accept')
   @HttpCode(HttpStatus.OK)
-  removeFromTeam(@CurrentUser() user: JwtPayload, @Param('id') id: string) {
-    return this.teamService.removeFromTeam(user.userId, id)
+  @ApiOkResponse({ type: TeamInvitationAcceptResponseDto })
+  async acceptInvite(
+    @CurrentUser() user: JwtPayload,
+    @Param('code') code: string,
+  ): Promise<TeamInvitationAcceptResponseDto> {
+    return await this.teamInvitationService.acceptTeamInvitation(code, user.userId)
   }
 }

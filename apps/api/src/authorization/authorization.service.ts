@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Action, buildAbility, Subject, teamSubject, userSubject } from '@repo/authorization'
+import { Action, buildAbility, Subject, teamSubject } from '@repo/authorization'
 import { CacheService } from '~/cache/cache.service'
 import { CacheKeys } from '@repo/redis'
 import { DatabaseService } from '~/database/database.service'
@@ -60,11 +60,6 @@ export class AuthorizationService {
 
     if (appAbility.can(action, target)) return true
 
-    if (action === Action.Invite) {
-      const targetUser = userSubject({ teamId: team.id })
-      if (appAbility.can(Action.Invite, targetUser)) return true
-    }
-
     const teamMembership = await this.getActiveTeamMembership(userId, teamId)
     if (!teamMembership) return false
 
@@ -115,10 +110,7 @@ export class AuthorizationService {
     if (action === Action.Read) return true
 
     const isManagementAction =
-      action === Action.Manage ||
-      action === Action.Update ||
-      action === Action.Delete ||
-      action === Action.Invite
+      action === Action.Manage || action === Action.Update || action === Action.Delete
 
     return isManagementAction ? TEAM_MANAGEMENT_ROLES.has(role) : false
   }

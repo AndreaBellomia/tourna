@@ -14,16 +14,12 @@ const mockQueueProducer = {
   close: jest.fn(),
 }
 
-jest.mock(
-  '@repo/queue',
-  () => {
-    return {
-      createBullMqConnection: jest.fn((config: unknown) => config),
-      createTournaQueueClient: jest.fn(() => mockQueueProducer),
-    }
-  },
-  { virtual: true },
-)
+jest.mock('@repo/queue', () => {
+  return {
+    createBullMqConnection: jest.fn((config: unknown) => config),
+    createTournaQueueClient: jest.fn(() => mockQueueProducer),
+  }
+})
 
 describe('QueueProducerService', () => {
   const config = {

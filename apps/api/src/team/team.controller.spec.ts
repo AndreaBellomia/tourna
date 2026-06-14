@@ -7,8 +7,13 @@ jest.mock('@repo/db', () => {
   }
 })
 
+jest.mock('./invitations/team-invitation.repository', () => ({
+  TeamInvitationRepository: class TeamInvitationRepository {},
+}))
+
 import { Test, TestingModule } from '@nestjs/testing'
 import { TeamController } from './team.controller'
+import { TeamInvitationService } from './invitations/team-invitation.service'
 import { TeamService } from './team.service'
 
 describe('TeamController', () => {
@@ -16,13 +21,22 @@ describe('TeamController', () => {
   const teamServiceMock = {
     getTeams: jest.fn(),
   }
+  const teamInvitationServiceMock = {
+    createReusableTeamInvitation: jest.fn(),
+    acceptTeamInvitation: jest.fn(),
+  }
 
   beforeEach(async () => {
     teamServiceMock.getTeams.mockReset()
+    teamInvitationServiceMock.createReusableTeamInvitation.mockReset()
+    teamInvitationServiceMock.acceptTeamInvitation.mockReset()
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TeamController],
-      providers: [{ provide: TeamService, useValue: teamServiceMock }],
+      providers: [
+        { provide: TeamService, useValue: teamServiceMock },
+        { provide: TeamInvitationService, useValue: teamInvitationServiceMock },
+      ],
     }).compile()
 
     controller = module.get<TeamController>(TeamController)
@@ -61,6 +75,47 @@ describe('TeamController', () => {
         visibility: 'public',
       },
       undefined,
+    )
+  })
+
+  it('creates a reusable team invitation through the invitation service', async () => {
+    const response = {
+      code: 'TNA-ABCD-2345',
+      teamId: 'team-1',
+      role: 'player',
+      maxUses: 5,
+      expiresAt: '2026-06-30T10:00:00.000Z',
+    }
+
+    teamInvitationServiceMock.createReusableTeamInvitation.mockResolvedValue(response)
+
+    await expect(
+      controller.createInvite({ userId: 'user-1' } as never, 'team-1', {
+        role: 'player',
+        maxUses: 5,
+        expiresAt: '2026-06-30T10:00:00.000Z',
+      }),
+    ).resolves.toBe(response)
+    expect(teamInvitationServiceMock.createReusableTeamInvitation).toHaveBeenCalledWith({
+      createdById: 'user-1',
+      teamId: 'team-1',
+      role: 'player',
+      maxUses: 5,
+      expiresAt: new Date('2026-06-30T10:00:00.000Z'),
+    })
+  })
+
+  it('accepts a team invitation through the invitation service', async () => {
+    const response = { teamId: 'team-1' }
+
+    teamInvitationServiceMock.acceptTeamInvitation.mockResolvedValue(response)
+
+    await expect(
+      controller.acceptInvite({ userId: 'user-1' } as never, 'TNA-ABCD-2345'),
+    ).resolves.toBe(response)
+    expect(teamInvitationServiceMock.acceptTeamInvitation).toHaveBeenCalledWith(
+      'TNA-ABCD-2345',
+      'user-1',
     )
   })
 })

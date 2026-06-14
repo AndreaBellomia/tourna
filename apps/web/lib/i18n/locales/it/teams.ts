@@ -77,6 +77,43 @@ const teams = {
     permissionsDescription:
       'Azioni owner/captain disabilitate fino alla disponibilita dei contract dedicati.',
     disabledAction: 'In arrivo',
+    inviteButton: 'Crea invito',
+  },
+  invites: {
+    title: 'Inviti',
+    description: 'Crea un invito riutilizzabile per il team.',
+    statusTitle: 'Stato inviti',
+    statusDescription:
+      'I link invito creati possono essere copiati subito. La lista degli inviti attivi entrera qui quando il backend esporra il modello di lettura.',
+    role: 'Ruolo',
+    maxUses: 'Usi',
+    expiresAt: 'Scadenza',
+    submit: 'Crea invito',
+    created: 'Invito pronto.',
+    copied: 'Copiato.',
+    invalid: 'Scegli una data di scadenza valida.',
+    failed: "Creazione dell'invito non riuscita.",
+    code: 'Codice',
+    link: 'Link',
+    roles: {
+      owner: 'Owner',
+      captain: 'Captain',
+      player: 'Player',
+      substitute: 'Substitute',
+      coach: 'Coach',
+      manager: 'Manager',
+    },
+  },
+  settings: {
+    profileDescription:
+      'Profilo, logo, descrizione Markdown e visibilita si modificano in una pagina impostazioni dedicata.',
+  },
+  inviteAccept: {
+    metadataTitle: 'Accetta invito team',
+    title: 'Invito team',
+    description: 'Accetta questo invito per entrare nel team.',
+    submit: 'Accetta invito',
+    failed: 'Non e stato possibile accettare questo invito.',
   },
   visibility: {
     private: 'Privato',

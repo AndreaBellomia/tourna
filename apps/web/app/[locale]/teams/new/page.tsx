@@ -2,9 +2,11 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
+import { buttonVariants } from '@repo/ui/button'
 import { isLocale, resolveLocale, withLocale } from '~/lib/i18n/config'
 import { getMessages } from '~/lib/i18n/web-i18n'
 import { requireAuthenticatedPage } from '~/lib/auth/session'
+import { AppShell } from '~/features/common/components/app-shell'
 import { TeamForm } from '~/features/teams/components/team-form'
 
 type NewTeamPageProps = {
@@ -33,10 +35,10 @@ export default async function NewTeamPage({ params }: NewTeamPageProps) {
   const messages = getMessages(locale)
 
   return (
-    <main className="min-h-screen bg-background px-5 py-6 md:px-8">
+    <AppShell active="teams" locale={locale} messages={messages.common}>
       <div className="mx-auto mb-5 w-full max-w-6xl">
         <Link
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-border bg-background px-4 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-muted"
+          className={buttonVariants({ variant: 'outline' })}
           href={withLocale(locale, '/teams')}
         >
           <ArrowLeft aria-hidden="true" className="size-4" />
@@ -44,6 +46,6 @@ export default async function NewTeamPage({ params }: NewTeamPageProps) {
         </Link>
       </div>
       <TeamForm locale={locale} messages={messages.teams} mode="create" />
-    </main>
+    </AppShell>
   )
 }

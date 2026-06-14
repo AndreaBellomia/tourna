@@ -1,5 +1,7 @@
 import { createZodDto } from 'nestjs-zod'
 import {
+  TeamInvitationAcceptResponseSchema,
+  TeamInvitationResponseSchema,
   TeamDetailResponseSchema,
   TeamListResponseSchema,
   TeamSummarySchema,
@@ -13,3 +15,9 @@ export class TeamViewerMembershipDto extends createZodDto(TeamViewerMembershipSc
 export class TeamListResponseDto extends createZodDto(TeamListResponseSchema) {}
 
 export class TeamDetailResponseDto extends createZodDto(TeamDetailResponseSchema) {}
+
+export class TeamInvitationResponseDto extends createZodDto(TeamInvitationResponseSchema) {}
+
+export class TeamInvitationAcceptResponseDto extends createZodDto(
+  TeamInvitationAcceptResponseSchema,
+) {}

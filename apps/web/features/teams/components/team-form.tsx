@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { Save } from 'lucide-react'
 import { Button } from '@repo/ui/button'
+import { Card } from '@repo/ui/card'
 import { Input } from '@repo/ui/input'
 import { Label } from '@repo/ui/label'
 import { Select } from '@repo/ui/select'
@@ -59,6 +60,7 @@ export function TeamForm({ locale, messages, mode, team }: TeamFormProps) {
   })
   const description = form.watch('description')
   const logoObjectKey = form.watch('logoObjectKey')
+  const visibility = form.watch('visibility')
   const logoUrl = logoObjectKey === team?.logoObjectKey ? (team?.logoUrl ?? null) : pendingLogoUrl
   const title = mode === 'create' ? messages.form.title : messages.detail.editTitle
   const submitLabel = mode === 'create' ? messages.form.submit : messages.form.save
@@ -141,20 +143,24 @@ export function TeamForm({ locale, messages, mode, team }: TeamFormProps) {
             />
           ) : null}
 
-          <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
+          <Card className="p-5" variant="panel">
             <div className="space-y-2">
               <Label htmlFor="create-team-visibility">{messages.form.visibility}</Label>
               <Select
                 id="create-team-visibility"
-                {...form.register('visibility')}
                 disabled={!canSubmit}
-              >
-                {visibilityOptions.map((visibility) => (
-                  <option key={visibility} value={visibility}>
-                    {messages.visibility[visibility]}
-                  </option>
-                ))}
-              </Select>
+                options={visibilityOptions.map((option) => ({
+                  value: option,
+                  label: messages.visibility[option],
+                }))}
+                value={visibility}
+                onValueChange={(value) =>
+                  form.setValue('visibility', value as TeamFormValues['visibility'], {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
+              />
             </div>
 
             <FormNotice message={submitState.notice} />
@@ -168,7 +174,7 @@ export function TeamForm({ locale, messages, mode, team }: TeamFormProps) {
               <Save aria-hidden="true" className="size-4" />
               {submitLabel}
             </Button>
-          </div>
+          </Card>
         </>
       }
       onSubmit={(event) => void form.handleSubmit(submitState.onSubmit)(event)}

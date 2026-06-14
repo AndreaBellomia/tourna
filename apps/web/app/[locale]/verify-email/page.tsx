@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { CheckCircle2, CircleAlert } from 'lucide-react'
+import { buttonVariants } from '@repo/ui/button'
 import { verifyEmail } from '~/lib/api/auth/auth.request'
 import { isLocale, resolveLocale, withLocale } from '~/lib/i18n/config'
 import { getMessages } from '~/lib/i18n/web-i18n'
@@ -53,7 +54,7 @@ export default async function VerifyEmailPage({ params, searchParams }: VerifyEm
         </div>
 
         <Link
-          className="mt-6 inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+          className={buttonVariants({ className: 'mt-6 w-full' })}
           href={withLocale(locale, '/profile')}
         >
           {messages.auth.emailVerification.profileAction}

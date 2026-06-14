@@ -5,7 +5,12 @@ import {
   type KyselyDatabase,
   paginateCursor,
 } from '@repo/db'
-import type { LifecycleStatus, TeamMembershipRole, Visibility } from '@repo/domain'
+import type {
+  LifecycleStatus,
+  MembershipStatus,
+  TeamMembershipRole,
+  Visibility,
+} from '@repo/domain'
 import { DatabaseService } from '~/database/database.service'
 
 type TeamListRow = {
@@ -281,6 +286,22 @@ export class TeamRepository {
       role: membership.role,
       canManage: isTeamManagementRole(membership.role),
     }
+  }
+
+  async removeFromTeam(
+    teamId: string,
+    userId: string,
+    reason: Extract<MembershipStatus, 'left' | 'removed'>,
+  ): Promise<void> {
+    await this.database.db
+      .updateTable('team_memberships')
+      .set({
+        status: reason,
+        left_at: new Date(),
+      })
+      .where('team_id', '=', teamId)
+      .where('user_id', '=', userId)
+      .execute()
   }
 
   private async buildAvailableTeamSlug(
