@@ -13,8 +13,8 @@ import type {
   TeamInvitationInput,
   TeamInvitationCreateResponse,
 } from '@repo/contracts'
-import { type Locale, withLocale } from '~/lib/i18n/config'
-import type { Messages } from '~/lib/i18n/web-i18n'
+import { withLocale } from '~/lib/i18n/config'
+import { useI18n, useTranslations } from '~/lib/i18n/client'
 import { createTeamInvitation } from '~/features/teams/services/team-client'
 
 type InvitationRole = TeamInvitationInput['role']
@@ -22,12 +22,12 @@ type InvitationRole = TeamInvitationInput['role']
 const invitationRoles: InvitationRole[] = ['player', 'substitute', 'coach', 'manager', 'captain']
 
 type TeamInvitationPanelProps = {
-  locale: Locale
-  messages: Messages['teams']['invites']
   team: Pick<TeamDetailResponse, 'id'>
 }
 
-export function TeamInvitationPanel({ locale, messages, team }: TeamInvitationPanelProps) {
+export function TeamInvitationPanel({ team }: TeamInvitationPanelProps) {
+  const { locale } = useI18n()
+  const t = useTranslations('teams')
   const [origin, setOrigin] = useState('')
   const [role, setRole] = useState<InvitationRole>('player')
   const [maxUses, setMaxUses] = useState(1)
@@ -54,7 +54,7 @@ export function TeamInvitationPanel({ locale, messages, team }: TeamInvitationPa
     const expiresAtDate = new Date(expiresAt)
 
     if (Number.isNaN(expiresAtDate.getTime())) {
-      setNotice(messages.invalid)
+      setNotice(t('invites.invalid'))
       return
     }
 
@@ -66,10 +66,10 @@ export function TeamInvitationPanel({ locale, messages, team }: TeamInvitationPa
       })
         .then((createdInvitation) => {
           setInvitation(createdInvitation)
-          setNotice(messages.created)
+          setNotice(t('invites.created'))
         })
         .catch((error: unknown) => {
-          setNotice(error instanceof Error ? error.message : messages.failed)
+          setNotice(error instanceof Error ? error.message : t('invites.failed'))
         })
     })
   }
@@ -79,7 +79,7 @@ export function TeamInvitationPanel({ locale, messages, team }: TeamInvitationPa
 
     void navigator.clipboard.writeText(value).then(() => {
       setCopied(target)
-      setNotice(messages.copied)
+      setNotice(t('invites.copied'))
     })
   }
 
@@ -88,22 +88,24 @@ export function TeamInvitationPanel({ locale, messages, team }: TeamInvitationPa
       <form className="space-y-4" onSubmit={onSubmit}>
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h3 className="text-base font-semibold">{messages.title}</h3>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">{messages.description}</p>
+            <h3 className="text-base font-semibold">{t('invites.title')}</h3>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+              {t('invites.description')}
+            </p>
           </div>
-          <Button aria-label={messages.submit} loading={isPending} size="icon" type="submit">
+          <Button aria-label={t('invites.submit')} loading={isPending} size="icon" type="submit">
             <Send aria-hidden="true" className="size-4" />
           </Button>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="team-invite-role">{messages.role}</Label>
+            <Label htmlFor="team-invite-role">{t('invites.role')}</Label>
             <Select
               id="team-invite-role"
               options={invitationRoles.map((option) => ({
                 value: option,
-                label: messages.roles[option],
+                label: t(`invites.roles.${option}`),
               }))}
               value={role}
               onValueChange={(value) => setRole(value as InvitationRole)}
@@ -111,7 +113,7 @@ export function TeamInvitationPanel({ locale, messages, team }: TeamInvitationPa
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="team-invite-max-uses">{messages.maxUses}</Label>
+            <Label htmlFor="team-invite-max-uses">{t('invites.maxUses')}</Label>
             <Input
               id="team-invite-max-uses"
               max={100}
@@ -124,7 +126,7 @@ export function TeamInvitationPanel({ locale, messages, team }: TeamInvitationPa
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="team-invite-expires-at">{messages.expiresAt}</Label>
+          <Label htmlFor="team-invite-expires-at">{t('invites.expiresAt')}</Label>
           <Input
             id="team-invite-expires-at"
             min={formatDateTimeLocal(new Date())}
@@ -138,14 +140,14 @@ export function TeamInvitationPanel({ locale, messages, team }: TeamInvitationPa
           <div className="space-y-3 rounded-md border border-border bg-muted/30 p-3">
             <CopyField
               copied={copied === 'code'}
-              label={messages.code}
+              label={t('invites.code')}
               value={invitation.code}
               onCopy={() => copyValue(invitation.code, 'code')}
             />
             <CopyField
               copied={copied === 'link'}
               icon="link"
-              label={messages.link}
+              label={t('invites.link')}
               value={invitationLink}
               onCopy={() => copyValue(invitationLink, 'link')}
             />

@@ -4,17 +4,17 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowRight, CircleAlert, TicketCheck } from 'lucide-react'
 import { Button } from '@repo/ui/button'
-import { type Locale, withLocale } from '~/lib/i18n/config'
-import type { Messages } from '~/lib/i18n/web-i18n'
+import { withLocale } from '~/lib/i18n/config'
+import { useI18n, useTranslations } from '~/lib/i18n/client'
 import { acceptTeamInvitation } from '~/features/teams/services/team-client'
 
 type TeamInvitationAcceptProps = {
   code: string
-  locale: Locale
-  messages: Messages['teams']['inviteAccept']
 }
 
-export function TeamInvitationAccept({ code, locale, messages }: TeamInvitationAcceptProps) {
+export function TeamInvitationAccept({ code }: TeamInvitationAcceptProps) {
+  const { locale } = useI18n()
+  const t = useTranslations('teams')
   const router = useRouter()
   const [message, setMessage] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
@@ -29,7 +29,7 @@ export function TeamInvitationAccept({ code, locale, messages }: TeamInvitationA
           router.refresh()
         })
         .catch((error: unknown) => {
-          setMessage(error instanceof Error ? error.message : messages.failed)
+          setMessage(error instanceof Error ? error.message : t('inviteAccept.failed'))
         })
     })
   }
@@ -46,8 +46,8 @@ export function TeamInvitationAccept({ code, locale, messages }: TeamInvitationA
             )}
           </div>
           <div>
-            <h1 className="text-xl font-semibold">{messages.title}</h1>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">{messages.description}</p>
+            <h1 className="text-xl font-semibold">{t('inviteAccept.title')}</h1>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">{t('inviteAccept.description')}</p>
           </div>
         </div>
 
@@ -58,7 +58,7 @@ export function TeamInvitationAccept({ code, locale, messages }: TeamInvitationA
         {message ? <p className="mt-4 text-sm text-destructive">{message}</p> : null}
 
         <Button className="mt-6 w-full" loading={isPending} size="lg" onClick={onAccept}>
-          {messages.submit}
+          {t('inviteAccept.submit')}
           <ArrowRight aria-hidden="true" className="size-4" />
         </Button>
       </div>

@@ -10,15 +10,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo
 import { Input } from '@repo/ui/input'
 import { Label } from '@repo/ui/label'
 import { TabsList, TabsTrigger } from '@repo/ui/tabs'
-import { type Locale, withLocale } from '~/lib/i18n/config'
-import { type Messages } from '~/lib/i18n/web-i18n'
+import { withLocale } from '~/lib/i18n/config'
+import { useI18n, useTranslations } from '~/lib/i18n/client'
 import { submitAuth } from '~/features/auth/services/auth-client'
 
 type AuthMode = 'login' | 'signup'
 
-type AuthMessages = Messages['auth']
-
-export function AuthPanel({ locale, messages }: { locale: Locale; messages: AuthMessages }) {
+export function AuthPanel() {
+  const { locale } = useI18n()
+  const t = useTranslations('auth')
   const router = useRouter()
   const [mode, setMode] = useState<AuthMode>('login')
   const [email, setEmail] = useState('')
@@ -33,7 +33,13 @@ export function AuthPanel({ locale, messages }: { locale: Locale; messages: Auth
     setFieldErrors({})
 
     startTransition(() => {
-      void submitAuth(mode, { email, password }, locale, messages.errors).then((result) => {
+      void submitAuth(mode, { email, password }, locale, {
+        invalidData: t('errors.invalidData'),
+        invalidCredentials: t('errors.invalidCredentials'),
+        requestFailed: t('errors.requestFailed'),
+        email: t('errors.email'),
+        password: t('errors.password'),
+      }).then((result) => {
         if (!result.ok) {
           setMessage(result.message)
           setFieldErrors(result.issues ?? {})
@@ -45,30 +51,28 @@ export function AuthPanel({ locale, messages }: { locale: Locale; messages: Auth
     })
   }
 
-  const content = messages[mode]
-
   return (
     <Card className="w-full max-w-md" variant="panel">
       <CardHeader className="gap-4">
         <div className="flex items-center justify-between gap-3">
           <Badge variant="outline" className="gap-1.5">
             <ShieldCheck aria-hidden="true" className="size-3.5 text-success" />
-            {messages.badge}
+            {t('badge')}
           </Badge>
-          <span className="font-mono text-xs text-muted-foreground">{messages.version}</span>
+          <span className="font-mono text-xs text-muted-foreground">{t('version')}</span>
         </div>
 
         <div className="space-y-2">
-          <CardTitle>{content.title}</CardTitle>
-          <CardDescription>{content.description}</CardDescription>
+          <CardTitle>{t(`${mode}.title`)}</CardTitle>
+          <CardDescription>{t(`${mode}.description`)}</CardDescription>
         </div>
 
         <TabsList aria-label="Seleziona flusso di autenticazione">
           <TabsTrigger type="button" active={mode === 'login'} onClick={() => setMode('login')}>
-            {messages.login.tab}
+            {t('login.tab')}
           </TabsTrigger>
           <TabsTrigger type="button" active={mode === 'signup'} onClick={() => setMode('signup')}>
-            {messages.signup.tab}
+            {t('signup.tab')}
           </TabsTrigger>
         </TabsList>
       </CardHeader>
@@ -76,7 +80,7 @@ export function AuthPanel({ locale, messages }: { locale: Locale; messages: Auth
       <CardContent>
         <form className="space-y-5" onSubmit={onSubmit}>
           <div className="space-y-2">
-            <Label htmlFor="email">{messages.fields.email}</Label>
+            <Label htmlFor="email">{t('fields.email')}</Label>
             <div className="relative">
               <Mail
                 aria-hidden="true"
@@ -88,7 +92,7 @@ export function AuthPanel({ locale, messages }: { locale: Locale; messages: Auth
                 inputMode="email"
                 name="email"
                 onChange={(event) => setEmail(event.target.value)}
-                placeholder={messages.fields.emailPlaceholder}
+                placeholder={t('fields.emailPlaceholder')}
                 required
                 type="email"
                 value={email}
@@ -99,7 +103,7 @@ export function AuthPanel({ locale, messages }: { locale: Locale; messages: Auth
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">{messages.fields.password}</Label>
+            <Label htmlFor="password">{t('fields.password')}</Label>
             <div className="relative">
               <LockKeyhole
                 aria-hidden="true"
@@ -111,7 +115,7 @@ export function AuthPanel({ locale, messages }: { locale: Locale; messages: Auth
                 minLength={8}
                 name="password"
                 onChange={(event) => setPassword(event.target.value)}
-                placeholder={messages.fields.passwordPlaceholder}
+                placeholder={t('fields.passwordPlaceholder')}
                 required
                 type="password"
                 value={password}
@@ -126,7 +130,7 @@ export function AuthPanel({ locale, messages }: { locale: Locale; messages: Auth
           ) : null}
 
           <Button className="w-full" loading={isPending} size="lg" type="submit">
-            {content.action}
+            {t(`${mode}.action`)}
             <ArrowRight aria-hidden="true" className="size-4" />
           </Button>
         </form>

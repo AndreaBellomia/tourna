@@ -1,5 +1,5 @@
-import { notFound } from 'next/navigation'
-import { isLocale } from '~/lib/i18n/config'
+import { I18nProvider } from '~/lib/i18n/client'
+import { getPageI18n } from '~/lib/i18n/web-i18n'
 
 export function generateStaticParams() {
   return [{ locale: 'it' }, { locale: 'en' }]
@@ -12,11 +12,11 @@ export default async function LocaleLayout({
   children: React.ReactNode
   params: Promise<{ locale: string }>
 }>) {
-  const { locale } = await params
+  const { locale, messages } = await getPageI18n(params)
 
-  if (!isLocale(locale)) {
-    notFound()
-  }
-
-  return children
+  return (
+    <I18nProvider locale={locale} messages={messages}>
+      {children}
+    </I18nProvider>
+  )
 }

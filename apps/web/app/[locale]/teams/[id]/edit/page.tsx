@@ -1,13 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { buttonVariants } from '@repo/ui/button'
-import { getRequiredPageData } from '~/lib/api/page-data'
-import { getTeam } from '~/lib/api/teams/team.request'
 import { requireAuthenticatedPage } from '~/lib/auth/session'
-import { isLocale, resolveLocale, withLocale } from '~/lib/i18n/config'
-import { getMessages } from '~/lib/i18n/web-i18n'
+import { withLocale } from '~/lib/i18n/config'
+import { getMetadataTranslator, getPageI18n } from '~/lib/i18n/web-i18n'
 import { AppShell } from '~/features/common/components/app-shell'
 import { TeamEditPanel } from '~/features/teams/components/team-edit-panel'
 
@@ -16,28 +13,21 @@ type EditTeamPageProps = {
 }
 
 export async function generateMetadata({ params }: EditTeamPageProps): Promise<Metadata> {
-  const { locale } = await params
-  const messages = getMessages(resolveLocale(locale))
+  const { t } = await getMetadataTranslator(params, 'teams')
 
   return {
-    title: messages.teams.detail.editTitle,
-    description: messages.teams.metadata.description,
+    title: t('detail.editTitle'),
+    description: t('metadata.description'),
   }
 }
 
 export default async function EditTeamPage({ params }: EditTeamPageProps) {
-  const { locale, id } = await params
-
-  if (!isLocale(locale)) {
-    notFound()
-  }
+  const { locale, params: { id }, messages } = await getPageI18n(params)
 
   await requireAuthenticatedPage(locale)
 
-  const messages = getMessages(locale)
-
   return (
-    <AppShell active="teams" locale={locale} messages={messages.common}>
+    <AppShell active="teams">
       <div className="mx-auto mb-5 w-full max-w-6xl">
         <Link
           className={buttonVariants({ variant: 'outline' })}
@@ -47,7 +37,7 @@ export default async function EditTeamPage({ params }: EditTeamPageProps) {
           {messages.teams.detail.back}
         </Link>
       </div>
-      <TeamEditPanel locale={locale} messages={messages.teams} />
+      <TeamEditPanel />
     </AppShell>
   )
 }

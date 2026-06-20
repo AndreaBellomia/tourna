@@ -27,8 +27,8 @@ import { type TeamListResponse, type TeamSummaryResponse } from '@repo/contracts
 import { EmptyState } from '~/features/common/components/empty-state'
 import { ListToolbar } from '~/features/common/components/list-toolbar'
 import { PageHeader } from '~/features/common/components/page-header'
-import { type Locale, withLocale } from '~/lib/i18n/config'
-import type { Messages } from '~/lib/i18n/web-i18n'
+import { withLocale } from '~/lib/i18n/config'
+import { useI18n, useTranslations } from '~/lib/i18n/client'
 import { fetchTeams } from '~/features/teams/services/team-client'
 import { MarkdownContent } from './markdown-content'
 
@@ -36,8 +36,6 @@ const PAGE_SIZE = 12
 const visibilityOptions = ['private', 'unlisted', 'public'] as const
 
 type TeamExplorerProps = {
-  locale: Locale
-  messages: Messages['teams']
   initialPage: TeamListResponse | null
   initialError?: string
 }
@@ -47,10 +45,14 @@ type SearchValues = {
   visibility: (typeof visibilityOptions)[number] | 'all'
 }
 
-export function TeamExplorer({ locale, messages, initialPage, initialError }: TeamExplorerProps) {
+export function TeamExplorer({ initialPage, initialError }: TeamExplorerProps) {
+  const { locale } = useI18n()
+  const t = useTranslations('teams')
   const [teams, setTeams] = useState<TeamSummaryResponse[]>(initialPage?.data ?? [])
   const [pageInfo, setPageInfo] = useState(initialPage?.pageInfo ?? null)
-  const [error, setError] = useState<string | null>(initialError ?? null)
+  const [error, setError] = useState<string | null>(
+    initialError ?? (initialPage ? null : t('list.unavailable')),
+  )
   const [isPending, startTransition] = useTransition()
   const sentinelRef = useRef<HTMLDivElement | null>(null)
   const activeQueryRef = useRef<SearchValues>({ search: '', visibility: 'all' })
@@ -82,11 +84,11 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
             setPageInfo(page.pageInfo)
           })
           .catch((loadError: unknown) => {
-            setError(loadError instanceof Error ? loadError.message : messages.list.unavailable)
+            setError(loadError instanceof Error ? loadError.message : t('list.unavailable'))
           })
       })
     },
-    [messages.list.unavailable, queryFromValues],
+    [queryFromValues, t],
   )
 
   const loadNextPage = useCallback(() => {
@@ -101,10 +103,10 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
           setPageInfo(page.pageInfo)
         })
         .catch((loadError: unknown) => {
-          setError(loadError instanceof Error ? loadError.message : messages.list.unavailable)
+          setError(loadError instanceof Error ? loadError.message : t('list.unavailable'))
         })
     })
-  }, [isPending, messages.list.unavailable, pageInfo, queryFromValues])
+  }, [isPending, pageInfo, queryFromValues, t])
 
   useEffect(() => {
     const sentinel = sentinelRef.current
@@ -139,9 +141,9 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
     <section className="space-y-5">
       <PageHeader
         badgeIcon={<Users aria-hidden="true" className="size-3.5" />}
-        description={messages.list.description}
-        eyebrow={messages.list.eyebrow}
-        title={messages.list.title}
+        description={t('list.description')}
+        eyebrow={t('list.eyebrow')}
+        title={t('list.title')}
         actions={
           <>
             <Badge variant="outline" className="w-fit">
@@ -149,7 +151,7 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
             </Badge>
             <Link className={buttonVariants()} href={withLocale(locale, '/teams/new')}>
               <Plus aria-hidden="true" className="size-4" />
-              {messages.list.create}
+              {t('list.create')}
             </Link>
           </>
         }
@@ -158,13 +160,13 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
       <form onSubmit={(event) => void searchForm.handleSubmit(loadFirstPage)(event)}>
         <ListToolbar
           resetDisabled={!hasActiveFilters}
-          resetLabel={messages.list.reset}
+          resetLabel={t('list.reset')}
           onReset={resetFilters}
           activeFilters={
             <>
               {searchValue.trim() ? <Badge variant="accent">{searchValue.trim()}</Badge> : null}
               {visibilityValue !== 'all' ? (
-                <Badge variant="outline">{messages.visibility[visibilityValue]}</Badge>
+                <Badge variant="outline">{t(`visibility.${visibilityValue}`)}</Badge>
               ) : null}
             </>
           }
@@ -172,7 +174,7 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
           <div className="space-y-2">
             <Label className="inline-flex items-center gap-2" htmlFor="team-search">
               <SlidersHorizontal aria-hidden="true" className="size-4 text-accent" />
-              {messages.list.search}
+              {t('list.search')}
             </Label>
             <div className="relative">
               <Search
@@ -181,7 +183,7 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
               />
               <Input
                 id="team-search"
-                placeholder={messages.list.searchPlaceholder}
+                placeholder={t('list.searchPlaceholder')}
                 className="h-11 pr-11 pl-9"
                 {...searchForm.register('search')}
               />
@@ -205,7 +207,7 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="team-visibility">{messages.list.visibility}</Label>
+            <Label htmlFor="team-visibility">{t('list.visibility')}</Label>
             <div className="relative">
               <Filter
                 aria-hidden="true"
@@ -215,10 +217,10 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
                 id="team-visibility"
                 className="h-11 pl-9"
                 options={[
-                  { value: 'all', label: messages.list.allVisibilities },
+                  { value: 'all', label: t('list.allVisibilities') },
                   ...visibilityOptions.map((visibility) => ({
                     value: visibility,
-                    label: messages.visibility[visibility],
+                    label: t(`visibility.${visibility}`),
                   })),
                 ]}
                 value={visibilityValue}
@@ -231,7 +233,7 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
 
           <Button className="h-11 lg:w-44" loading={isPending} type="submit">
             <Search aria-hidden="true" className="size-4" />
-            {messages.list.search}
+            {t('list.search')}
           </Button>
         </ListToolbar>
       </form>
@@ -243,20 +245,20 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
       {hasTeams ? (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {teams.map((team) => (
-            <TeamTile key={team.id} locale={locale} messages={messages} team={team} />
+            <TeamTile key={team.id} team={team} />
           ))}
         </div>
       ) : (
         <EmptyState
-          title={messages.list.emptyTitle}
-          description={error ? messages.list.unavailable : messages.list.emptyDescription}
+          title={t('list.emptyTitle')}
+          description={error ? t('list.unavailable') : t('list.emptyDescription')}
           action={
             <Link
               className={buttonVariants({ variant: 'outline' })}
               href={withLocale(locale, '/teams/new')}
             >
               <Plus aria-hidden="true" className="size-4" />
-              {messages.list.create}
+              {t('list.create')}
             </Link>
           }
         />
@@ -266,7 +268,7 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
       {pageInfo?.hasNextPage ? (
         <div className="flex justify-center">
           <Button loading={isPending} type="button" variant="outline" onClick={loadNextPage}>
-            {messages.list.loadMore}
+            {t('list.loadMore')}
           </Button>
         </div>
       ) : null}
@@ -274,15 +276,9 @@ export function TeamExplorer({ locale, messages, initialPage, initialError }: Te
   )
 }
 
-function TeamTile({
-  locale,
-  messages,
-  team,
-}: {
-  locale: Locale
-  messages: Messages['teams']
-  team: TeamSummaryResponse
-}) {
+function TeamTile({ team }: { team: TeamSummaryResponse }) {
+  const { locale } = useI18n()
+  const t = useTranslations('teams')
   const initials = team.name
     .split(' ')
     .map((part) => part[0])
@@ -320,12 +316,12 @@ function TeamTile({
       </div>
 
       <div className="mt-3 line-clamp-2 min-h-11">
-        <MarkdownContent value={team.description} emptyLabel={messages.detail.emptyDescription} />
+        <MarkdownContent value={team.description} emptyLabel={t('detail.emptyDescription')} />
       </div>
 
       <div className="mt-4 flex items-center justify-between gap-3">
         <Badge variant={team.visibility === 'public' ? 'success' : 'outline'}>
-          {messages.visibility[team.visibility]}
+          {t(`visibility.${team.visibility}`)}
         </Badge>
         <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
           {team.status === 'published' ? (

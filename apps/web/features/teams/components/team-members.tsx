@@ -7,16 +7,13 @@ import { Card } from '@repo/ui/card'
 import { Separator } from '@repo/ui/separator'
 import { MailPlus, Users } from 'lucide-react'
 import { Badge } from '@repo/ui/badge'
-import { Locale, withLocale } from '~/lib/i18n/config'
-import { Messages } from '~/lib/i18n/web-i18n'
+import { withLocale } from '~/lib/i18n/config'
+import { useI18n, useTranslations } from '~/lib/i18n/client'
 import { useTeam } from '../hooks/team-provider'
 
-type TeamMembersProps = {
-  locale: Locale
-  messages: Messages['teams']
-}
-
-export function TeamMembers({ locale, messages }: TeamMembersProps) {
+export function TeamMembers() {
+  const { locale } = useI18n()
+  const t = useTranslations('teams')
   const { team } = useTeam()
   const viewerMembership = team.viewerMembership
   const canManage = Boolean(viewerMembership?.canManage)
@@ -27,16 +24,16 @@ export function TeamMembers({ locale, messages }: TeamMembersProps) {
         <div>
           <div className="flex items-center gap-2 text-lg font-semibold">
             <Users aria-hidden="true" className="size-4" />
-            {messages.detail.membersTitle}
+            {t('detail.membersTitle')}
           </div>
           <p className="mt-1 text-sm leading-6 text-muted-foreground">
-            {messages.detail.membersDescription}
+            {t('detail.membersDescription')}
           </p>
         </div>
         {canManage ? (
           <Button type="button" variant="outline" onClick={() => {}}>
             <MailPlus aria-hidden="true" className="size-4" />
-            {messages.detail.inviteButton}
+            {t('detail.inviteButton')}
           </Button>
         ) : null}
       </div>
@@ -68,7 +65,7 @@ export function TeamMembers({ locale, messages }: TeamMembersProps) {
           ))
         ) : (
           <Card className="border-dashed p-5 text-sm text-muted-foreground" variant="muted">
-            {messages.detail.emptyMembers}
+            {t('detail.emptyMembers')}
           </Card>
         )}
       </div>

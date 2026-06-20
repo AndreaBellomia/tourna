@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
 import { getOptionalPageData } from '~/lib/api/page-data'
 import { listUsers } from '~/lib/api/users/user.request'
-import { isLocale, resolveLocale } from '~/lib/i18n/config'
-import { getMessages } from '~/lib/i18n/web-i18n'
+import { getLocaleParams, getMetadataTranslator } from '~/lib/i18n/web-i18n'
 import { AppShell } from '~/features/common/components/app-shell'
 import { UserExplorer } from '~/features/users/components/user-explorer'
 
@@ -12,23 +10,16 @@ type UsersPageProps = {
 }
 
 export async function generateMetadata({ params }: UsersPageProps): Promise<Metadata> {
-  const { locale } = await params
-  const messages = getMessages(resolveLocale(locale))
+  const { t } = await getMetadataTranslator(params, 'users')
 
   return {
-    title: messages.users.metadata.title,
-    description: messages.users.metadata.description,
+    title: t('metadata.title'),
+    description: t('metadata.description'),
   }
 }
 
 export default async function UsersPage({ params }: UsersPageProps) {
-  const { locale } = await params
-
-  if (!isLocale(locale)) {
-    notFound()
-  }
-
-  const messages = getMessages(locale)
+  const { locale } = await getLocaleParams(params)
   const initialPage = await getOptionalPageData(
     () => listUsers({ limit: 12, direction: 'next' }, locale),
     null,
@@ -36,13 +27,10 @@ export default async function UsersPage({ params }: UsersPageProps) {
   )
 
   return (
-    <AppShell active="users" locale={locale} messages={messages.common}>
+    <AppShell active="users">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
         <UserExplorer
-          initialError={initialPage ? undefined : messages.users.list.unavailable}
           initialPage={initialPage}
-          locale={locale}
-          messages={messages.users}
         />
       </div>
     </AppShell>

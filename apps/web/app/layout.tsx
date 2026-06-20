@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import './globals.css'
 import { defaultLocale } from '~/lib/i18n/config'
-import { getMessages } from '~/lib/i18n/web-i18n'
+import metadataMessages from '~/lib/i18n/locales/en/metadata'
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -13,14 +13,12 @@ const geistMono = localFont({
   variable: '--font-geist-mono',
 })
 
-const messages = getMessages(defaultLocale)
-
 export const metadata: Metadata = {
   title: {
-    default: messages.metadata.appName,
-    template: messages.metadata.template,
+    default: metadataMessages.appName,
+    template: metadataMessages.template,
   },
-  description: messages.metadata.description,
+  description: metadataMessages.description,
 }
 
 export default function RootLayout({
@@ -30,7 +28,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang={defaultLocale}>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>{children}</body>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        {children}
+      </body>
     </html>
   )
 }

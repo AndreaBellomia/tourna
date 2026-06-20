@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
-import { notFound, redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { Activity, GitBranch, RadioTower, Trophy } from 'lucide-react'
 import { Badge } from '@repo/ui/badge'
 import { authCookieNames } from '~/lib/auth/cookies'
-import { isLocale, resolveLocale, withLocale } from '~/lib/i18n/config'
-import { getMessages } from '~/lib/i18n/web-i18n'
+import { withLocale } from '~/lib/i18n/config'
+import { getMetadataTranslator, getPageI18n } from '~/lib/i18n/web-i18n'
 import { AuthPanel } from '~/features/auth/components/auth-panel'
 
 type LoginPageProps = {
@@ -13,23 +13,16 @@ type LoginPageProps = {
 }
 
 export async function generateMetadata({ params }: LoginPageProps): Promise<Metadata> {
-  const { locale } = await params
-  const messages = getMessages(resolveLocale(locale))
+  const { t } = await getMetadataTranslator(params, 'metadata')
 
   return {
-    title: messages.metadata.loginTitle,
-    description: messages.metadata.loginDescription,
+    title: t('loginTitle'),
+    description: t('loginDescription'),
   }
 }
 
 export default async function LoginPage({ params }: LoginPageProps) {
-  const { locale } = await params
-
-  if (!isLocale(locale)) {
-    notFound()
-  }
-
-  const messages = getMessages(locale)
+  const { locale, messages } = await getPageI18n(params)
   const cookieStore = await cookies()
 
   if (cookieStore.has(authCookieNames.accessToken)) {
@@ -113,7 +106,7 @@ export default async function LoginPage({ params }: LoginPageProps) {
         </section>
 
         <section className="flex items-center justify-center lg:justify-end">
-          <AuthPanel locale={locale} messages={messages.auth} />
+          <AuthPanel />
         </section>
       </div>
     </main>

@@ -14,8 +14,8 @@ export function readRequestLocale(request: Request): Locale {
   return readLocaleFromHeaders(request.headers)
 }
 
-export function createAuthErrorResponse(error: unknown, locale: Locale) {
-  const messages = getMessages(locale).auth.errors
+export async function createAuthErrorResponse(error: unknown, locale: Locale) {
+  const messages = (await getMessages(locale)).auth.errors
 
   if (error instanceof z.ZodError) {
     return NextResponse.json(

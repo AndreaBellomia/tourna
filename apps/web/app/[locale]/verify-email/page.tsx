@@ -1,11 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
 import { CheckCircle2, CircleAlert } from 'lucide-react'
 import { buttonVariants } from '@repo/ui/button'
 import { verifyEmail } from '~/lib/api/auth/auth.request'
-import { isLocale, resolveLocale, withLocale } from '~/lib/i18n/config'
-import { getMessages } from '~/lib/i18n/web-i18n'
+import { withLocale } from '~/lib/i18n/config'
+import { getMetadataTranslator, getPageI18n } from '~/lib/i18n/web-i18n'
 
 type VerifyEmailPageProps = {
   params: Promise<{ locale: string }>
@@ -13,24 +12,18 @@ type VerifyEmailPageProps = {
 }
 
 export async function generateMetadata({ params }: VerifyEmailPageProps): Promise<Metadata> {
-  const { locale } = await params
-  const messages = getMessages(resolveLocale(locale))
+  const { t } = await getMetadataTranslator(params, 'auth')
 
   return {
-    title: messages.auth.emailVerification.metadataTitle,
-    description: messages.auth.emailVerification.metadataDescription,
+    title: t('emailVerification.metadataTitle'),
+    description: t('emailVerification.metadataDescription'),
   }
 }
 
 export default async function VerifyEmailPage({ params, searchParams }: VerifyEmailPageProps) {
-  const { locale } = await params
+  const { locale, messages } = await getPageI18n(params)
   const { token } = await searchParams
 
-  if (!isLocale(locale)) {
-    notFound()
-  }
-
-  const messages = getMessages(locale)
   const result = token ? await verifyToken(token) : { ok: false }
   const Icon = result.ok ? CheckCircle2 : CircleAlert
 

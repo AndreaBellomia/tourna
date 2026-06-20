@@ -16,8 +16,8 @@ import {
   type TeamDetailResponse,
   type UpdateTeamInput,
 } from '@repo/contracts'
-import { type Locale, withLocale } from '~/lib/i18n/config'
-import type { Messages } from '~/lib/i18n/web-i18n'
+import { withLocale } from '~/lib/i18n/config'
+import { useI18n, useTranslations } from '~/lib/i18n/client'
 import {
   EditorFormHeader,
   EditorFormLayout,
@@ -33,8 +33,6 @@ import { submitTeam, updateTeam, uploadTeamLogo } from '~/features/teams/service
 const visibilityOptions = ['private', 'unlisted', 'public'] as const
 
 type TeamFormProps = {
-  locale: Locale
-  messages: Messages['teams']
   mode: 'create' | 'edit'
   team?: TeamDetailResponse
 }
@@ -43,7 +41,9 @@ type TeamFormValues = CreateTeamInput & {
   logoObjectKey?: string | null
 }
 
-export function TeamForm({ locale, messages, mode, team }: TeamFormProps) {
+export function TeamForm({ mode, team }: TeamFormProps) {
+  const { locale } = useI18n()
+  const t = useTranslations('teams')
   const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [viewMode, setViewMode] = useState<EditorViewMode>('edit')
@@ -62,8 +62,8 @@ export function TeamForm({ locale, messages, mode, team }: TeamFormProps) {
   const logoObjectKey = form.watch('logoObjectKey')
   const visibility = form.watch('visibility')
   const logoUrl = logoObjectKey === team?.logoObjectKey ? (team?.logoUrl ?? null) : pendingLogoUrl
-  const title = mode === 'create' ? messages.form.title : messages.detail.editTitle
-  const submitLabel = mode === 'create' ? messages.form.submit : messages.form.save
+  const title = mode === 'create' ? t('form.title') : t('detail.editTitle')
+  const submitLabel = mode === 'create' ? t('form.submit') : t('form.save')
   const canSubmit = mode === 'create' || team?.viewerMembership?.canManage
 
   const schema = useMemo(
@@ -71,9 +71,9 @@ export function TeamForm({ locale, messages, mode, team }: TeamFormProps) {
     [mode],
   )
   const submitState = useZodSubmit<TeamFormValues, typeof schema, TeamDetailResponse>({
-    failedMessage: messages.form.failed,
+    failedMessage: t('form.failed'),
     form,
-    invalidMessage: messages.form.invalid,
+    invalidMessage: t('form.invalid'),
     schema,
     normalize: (values) => ({
       ...values,
@@ -84,7 +84,7 @@ export function TeamForm({ locale, messages, mode, team }: TeamFormProps) {
         ? submitTeam(values as CreateTeamInput)
         : updateTeam(team?.id ?? '', values as UpdateTeamInput),
     onSuccess: (savedTeam, { setNotice }) => {
-      setNotice(mode === 'create' ? messages.form.success : messages.form.saved)
+      setNotice(mode === 'create' ? t('form.success') : t('form.saved'))
       router.push(withLocale(locale, `/teams/${savedTeam.slug}`))
       router.refresh()
     },
@@ -95,7 +95,7 @@ export function TeamForm({ locale, messages, mode, team }: TeamFormProps) {
 
     submitState.setNotice(null)
     if (file.size > 4 * 1024 * 1024) {
-      submitState.setNotice(messages.form.uploadFailed)
+      submitState.setNotice(t('form.uploadFailed'))
       return
     }
 
@@ -112,7 +112,7 @@ export function TeamForm({ locale, messages, mode, team }: TeamFormProps) {
           })
         })
         .catch((error: unknown) => {
-          submitState.setNotice(error instanceof Error ? error.message : messages.form.uploadFailed)
+          submitState.setNotice(error instanceof Error ? error.message : t('form.uploadFailed'))
         })
     })
   }
@@ -123,14 +123,14 @@ export function TeamForm({ locale, messages, mode, team }: TeamFormProps) {
         <>
           {team ? (
             <ImageUploadControl
-              actionLabel={messages.form.uploadLogo}
+              actionLabel={t('form.uploadLogo')}
               fallbackLabel={team.tag || 'TM'}
-              help={messages.form.logoHelp}
+              help={t('form.logoHelp')}
               imageUrl={logoUrl}
               inputRef={fileInputRef}
               isUploading={isUploadingLogo}
-              label={messages.form.logo}
-              removeLabel={logoObjectKey ? messages.form.removeLogo : undefined}
+              label={t('form.logo')}
+              removeLabel={logoObjectKey ? t('form.removeLogo') : undefined}
               onFileSelected={onLogoSelected}
               onRemove={
                 logoObjectKey
@@ -145,13 +145,13 @@ export function TeamForm({ locale, messages, mode, team }: TeamFormProps) {
 
           <Card className="p-5" variant="panel">
             <div className="space-y-2">
-              <Label htmlFor="create-team-visibility">{messages.form.visibility}</Label>
+              <Label htmlFor="create-team-visibility">{t('form.visibility')}</Label>
               <Select
                 id="create-team-visibility"
                 disabled={!canSubmit}
                 options={visibilityOptions.map((option) => ({
                   value: option,
-                  label: messages.visibility[option],
+                  label: t(`visibility.${option}`),
                 }))}
                 value={visibility}
                 onValueChange={(value) =>
@@ -180,19 +180,19 @@ export function TeamForm({ locale, messages, mode, team }: TeamFormProps) {
       onSubmit={(event) => void form.handleSubmit(submitState.onSubmit)(event)}
     >
       <EditorFormHeader
-        editLabel={messages.form.editMode}
-        eyebrow={messages.form.eyebrow}
+        editLabel={t('form.editMode')}
+        eyebrow={t('form.eyebrow')}
         mode={viewMode}
-        previewLabel={messages.form.previewMode}
+        previewLabel={t('form.previewMode')}
         title={title}
         onModeChange={setViewMode}
       />
       <div className="mt-5 space-y-5">
         <div className="space-y-2">
-          <Label htmlFor="team-name">{messages.form.name}</Label>
+          <Label htmlFor="team-name">{t('form.name')}</Label>
           <Input
             id="team-name"
-            placeholder={messages.form.namePlaceholder}
+            placeholder={t('form.namePlaceholder')}
             {...form.register('name')}
             disabled={!canSubmit}
           />
@@ -200,12 +200,12 @@ export function TeamForm({ locale, messages, mode, team }: TeamFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="team-tag">{messages.form.tag}</Label>
+          <Label htmlFor="team-tag">{t('form.tag')}</Label>
           <Input
             id="team-tag"
             className="font-mono uppercase"
             maxLength={4}
-            placeholder={messages.form.tagPlaceholder}
+            placeholder={t('form.tagPlaceholder')}
             {...form.register('tag')}
             disabled={!canSubmit}
           />
@@ -214,11 +214,11 @@ export function TeamForm({ locale, messages, mode, team }: TeamFormProps) {
 
         <div className="space-y-2">
           <MarkdownEditorField
-            emptyPreviewLabel={messages.form.emptyPreview}
+            emptyPreviewLabel={t('form.emptyPreview')}
             id="team-description"
-            label={messages.form.summary}
+            label={t('form.summary')}
             mode={viewMode}
-            placeholder={messages.form.summaryPlaceholder}
+            placeholder={t('form.summaryPlaceholder')}
             previewValue={description}
             {...form.register('description')}
             disabled={!canSubmit}

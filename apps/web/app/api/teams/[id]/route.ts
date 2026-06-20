@@ -2,7 +2,6 @@ import { TeamDetailResponseSchema, UpdateTeamRequestSchema } from '@repo/contrac
 import {
   authenticatedApiRequest,
   jsonWithAuth,
-  optionalAuthenticatedApiRequest,
 } from '~/lib/api/auth/authenticated-request'
 import { badRequest } from '~/lib/api/responses'
 import { teamEndpoints } from '~/lib/api/teams/team.endpoint'

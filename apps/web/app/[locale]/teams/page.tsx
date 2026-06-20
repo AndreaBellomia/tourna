@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
 import { getOptionalPageData } from '~/lib/api/page-data'
 import { listTeams } from '~/lib/api/teams/team.request'
-import { isLocale, resolveLocale } from '~/lib/i18n/config'
-import { getMessages } from '~/lib/i18n/web-i18n'
+import { getLocaleParams, getMetadataTranslator } from '~/lib/i18n/web-i18n'
 import { AppShell } from '~/features/common/components/app-shell'
 import { TeamExplorer } from '~/features/teams/components/team-explorer'
 
@@ -12,23 +10,16 @@ type TeamsPageProps = {
 }
 
 export async function generateMetadata({ params }: TeamsPageProps): Promise<Metadata> {
-  const { locale } = await params
-  const messages = getMessages(resolveLocale(locale))
+  const { t } = await getMetadataTranslator(params, 'teams')
 
   return {
-    title: messages.teams.metadata.title,
-    description: messages.teams.metadata.description,
+    title: t('metadata.title'),
+    description: t('metadata.description'),
   }
 }
 
 export default async function TeamsPage({ params }: TeamsPageProps) {
-  const { locale } = await params
-
-  if (!isLocale(locale)) {
-    notFound()
-  }
-
-  const messages = getMessages(locale)
+  const { locale } = await getLocaleParams(params)
   const initialPage = await getOptionalPageData(
     () => listTeams({ limit: 12, direction: 'next' }, locale),
     null,
@@ -36,14 +27,9 @@ export default async function TeamsPage({ params }: TeamsPageProps) {
   )
 
   return (
-    <AppShell active="teams" locale={locale} messages={messages.common}>
+    <AppShell active="teams">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-        <TeamExplorer
-          initialError={initialPage ? undefined : messages.teams.list.unavailable}
-          initialPage={initialPage}
-          locale={locale}
-          messages={messages.teams}
-        />
+        <TeamExplorer initialPage={initialPage} />
       </div>
     </AppShell>
   )

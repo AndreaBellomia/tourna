@@ -8,18 +8,19 @@ import { Badge } from '@repo/ui/badge'
 import { buttonVariants } from '@repo/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/card'
 import type { UserDetailResponse } from '@repo/contracts'
-import { type Locale, withLocale } from '~/lib/i18n/config'
-import type { Messages } from '~/lib/i18n/web-i18n'
+import { withLocale } from '~/lib/i18n/config'
+import { useFormatters, useI18n, useTranslations } from '~/lib/i18n/client'
 import { MarkdownContent } from '~/features/teams/components/markdown-content'
 import { fetchUser } from '~/features/users/services/user-client'
 
 type UserProfileProps = {
-  locale: Locale
-  messages: Messages['users']
   initialUser: UserDetailResponse
 }
 
-export function UserProfile({ locale, messages, initialUser }: UserProfileProps) {
+export function UserProfile({ initialUser }: UserProfileProps) {
+  const { locale } = useI18n()
+  const format = useFormatters()
+  const t = useTranslations('users')
   const [user, setUser] = useState(initialUser)
   const initials = user.display_name
     .split(' ')
@@ -51,7 +52,7 @@ export function UserProfile({ locale, messages, initialUser }: UserProfileProps)
         href={withLocale(locale, '/users')}
       >
         <ArrowLeft aria-hidden="true" className="size-4" />
-        {messages.detail.back}
+        {t('detail.back')}
       </Link>
 
       <section className="overflow-hidden rounded-lg border border-border bg-card shadow-[0_18px_50px_rgba(3,7,18,0.24)]">
@@ -79,9 +80,9 @@ export function UserProfile({ locale, messages, initialUser }: UserProfileProps)
           <div className="min-w-0 space-y-4">
             <div className="flex items-center gap-2">
               <Eye aria-hidden="true" className="size-4 text-accent" />
-              <h2 className="text-xl font-semibold">{messages.detail.overview}</h2>
+              <h2 className="text-xl font-semibold">{t('detail.overview')}</h2>
             </div>
-            <MarkdownContent value={user.bio} emptyLabel={messages.detail.emptyBio} />
+            <MarkdownContent value={user.bio} emptyLabel={t('detail.emptyBio')} />
           </div>
 
           <aside>
@@ -89,12 +90,12 @@ export function UserProfile({ locale, messages, initialUser }: UserProfileProps)
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <CalendarDays aria-hidden="true" className="size-4" />
-                  {messages.detail.joined}
+                  {t('detail.joined')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="font-mono text-sm text-muted-foreground">
-                  {new Date(user.createdAt).toLocaleDateString(locale)}
+                  {format.date(user.createdAt)}
                 </p>
               </CardContent>
             </Card>

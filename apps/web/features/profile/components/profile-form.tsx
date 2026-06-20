@@ -15,8 +15,8 @@ import {
   type ProfileSummaryResponse,
   type UpdateProfileInput,
 } from '@repo/contracts'
-import { type Locale, withLocale } from '~/lib/i18n/config'
-import type { Messages } from '~/lib/i18n/web-i18n'
+import { withLocale } from '~/lib/i18n/config'
+import { useI18n, useTranslations } from '~/lib/i18n/client'
 import {
   EditorFormHeader,
   EditorFormLayout,
@@ -34,12 +34,12 @@ import {
 } from '~/features/profile/services/profile-client'
 
 type ProfileFormProps = {
-  locale: Locale
-  messages: Messages['profile']
   profile: ProfileSummaryResponse
 }
 
-export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
+export function ProfileForm({ profile }: ProfileFormProps) {
+  const { locale } = useI18n()
+  const t = useTranslations('profile')
   const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [currentProfile, setCurrentProfile] = useState(profile)
@@ -71,9 +71,9 @@ export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
     [currentProfile.display_name, displayName],
   )
   const submitState = useZodSubmit({
-    failedMessage: messages.form.failed,
+    failedMessage: t('form.failed'),
     form,
-    invalidMessage: messages.form.invalid,
+    invalidMessage: t('form.invalid'),
     normalize: (values) => ({
       ...values,
       bio: values.bio || null,
@@ -90,7 +90,7 @@ export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
         bio: savedProfile.bio ?? '',
         avatarObjectKey: savedProfile.avatarObjectKey,
       })
-      setNotice(messages.form.saved)
+      setNotice(t('form.saved'))
       router.refresh()
     },
   })
@@ -100,7 +100,7 @@ export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
 
     submitState.setNotice(null)
     if (file.size > 4 * 1024 * 1024) {
-      submitState.setNotice(messages.form.uploadFailed)
+      submitState.setNotice(t('form.uploadFailed'))
       return
     }
 
@@ -115,10 +115,10 @@ export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
             shouldDirty: true,
             shouldValidate: true,
           })
-          submitState.setNotice(messages.form.saved)
+          submitState.setNotice(t('form.saved'))
         })
         .catch((error: unknown) => {
-          submitState.setNotice(error instanceof Error ? error.message : messages.form.uploadFailed)
+          submitState.setNotice(error instanceof Error ? error.message : t('form.uploadFailed'))
         })
     })
   }
@@ -129,11 +129,11 @@ export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
     startResendVerificationTransition(() => {
       void resendEmailVerification()
         .then(() => {
-          submitState.setNotice(messages.form.verificationSent)
+          submitState.setNotice(t('form.verificationSent'))
         })
         .catch((error: unknown) => {
           submitState.setNotice(
-            error instanceof Error ? error.message : messages.form.verificationFailed,
+            error instanceof Error ? error.message : t('form.verificationFailed'),
           )
         })
     })
@@ -144,14 +144,14 @@ export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
       sidebar={
         <>
           <ImageUploadControl
-            actionLabel={messages.form.upload}
+            actionLabel={t('form.upload')}
             fallbackLabel={initials || 'U'}
-            help={messages.form.avatarHelp}
+            help={t('form.avatarHelp')}
             imageUrl={avatarUrl}
             inputRef={fileInputRef}
             isUploading={isUploading}
-            label={messages.form.avatar}
-            removeLabel={avatarObjectKey ? messages.form.removeAvatar : undefined}
+            label={t('form.avatar')}
+            removeLabel={avatarObjectKey ? t('form.removeAvatar') : undefined}
             onFileSelected={onAvatarSelected}
             onRemove={
               avatarObjectKey
@@ -166,11 +166,11 @@ export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
           <Card className="p-5" variant="panel">
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
-                <Label htmlFor="profile-email">{messages.form.email}</Label>
+                <Label htmlFor="profile-email">{t('form.email')}</Label>
                 <Badge variant={currentProfile.emailVerified ? 'success' : 'outline'}>
                   {currentProfile.emailVerified
-                    ? messages.form.emailVerified
-                    : messages.form.emailUnverified}
+                    ? t('form.emailVerified')
+                    : t('form.emailUnverified')}
                 </Badge>
               </div>
               <Input id="profile-email" disabled value={currentProfile.email} />
@@ -187,12 +187,12 @@ export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
                 onClick={onResendVerificationEmail}
               >
                 <Send aria-hidden="true" className="size-4" />
-                {messages.form.resendVerification}
+                {t('form.resendVerification')}
               </Button>
             ) : (
               <div className="mt-5 flex items-center gap-2 rounded-md border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
                 <CheckCircle2 aria-hidden="true" className="size-4 text-success" />
-                {messages.form.emailVerifiedDescription}
+                {t('form.emailVerifiedDescription')}
               </div>
             )}
 
@@ -202,14 +202,14 @@ export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
               ) : (
                 <MailCheck aria-hidden="true" className="size-4" />
               )}
-              {messages.form.save}
+              {t('form.save')}
             </Button>
 
             <Link
               className={buttonVariants({ variant: 'outline', className: 'mt-3 w-full' })}
               href={withLocale(locale, `/users/${currentProfile.nickname}`)}
             >
-              {messages.form.publicProfile}
+              {t('form.publicProfile')}
             </Link>
           </Card>
         </>
@@ -217,31 +217,31 @@ export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
       onSubmit={(event) => void form.handleSubmit(submitState.onSubmit)(event)}
     >
       <EditorFormHeader
-        description={messages.form.description}
-        editLabel={messages.form.editMode}
-        eyebrow={messages.form.eyebrow}
+        description={t('form.description')}
+        editLabel={t('form.editMode')}
+        eyebrow={t('form.eyebrow')}
         mode={viewMode}
-        previewLabel={messages.form.previewMode}
-        title={messages.form.title}
+        previewLabel={t('form.previewMode')}
+        title={t('form.title')}
         onModeChange={setViewMode}
       />
       <div className="mt-5 space-y-5">
         <div className="space-y-2">
-          <Label htmlFor="profile-display-name">{messages.form.displayName}</Label>
+          <Label htmlFor="profile-display-name">{t('form.displayName')}</Label>
           <Input
             id="profile-display-name"
-            placeholder={messages.form.displayNamePlaceholder}
+            placeholder={t('form.displayNamePlaceholder')}
             {...form.register('display_name')}
           />
           <FieldError message={form.formState.errors.display_name?.message} />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="profile-nickname">{messages.form.nickname}</Label>
+          <Label htmlFor="profile-nickname">{t('form.nickname')}</Label>
           <Input
             id="profile-nickname"
             className="font-mono lowercase"
-            placeholder={messages.form.nicknamePlaceholder}
+            placeholder={t('form.nicknamePlaceholder')}
             {...form.register('nickname')}
           />
           <FieldError message={form.formState.errors.nickname?.message} />
@@ -249,11 +249,11 @@ export function ProfileForm({ locale, messages, profile }: ProfileFormProps) {
 
         <div className="space-y-2">
           <MarkdownEditorField
-            emptyPreviewLabel={messages.form.emptyPreview}
+            emptyPreviewLabel={t('form.emptyPreview')}
             id="profile-bio"
-            label={messages.form.bio}
+            label={t('form.bio')}
             mode={viewMode}
-            placeholder={messages.form.bioPlaceholder}
+            placeholder={t('form.bioPlaceholder')}
             previewValue={bio}
             {...form.register('bio')}
           />

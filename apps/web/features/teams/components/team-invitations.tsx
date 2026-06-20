@@ -1,18 +1,13 @@
 'use client'
 
 import { MailPlus } from 'lucide-react'
-import { Locale } from '~/lib/i18n/config'
-import { Messages } from '~/lib/i18n/web-i18n'
+import { useTranslations } from '~/lib/i18n/client'
 import { TeamInvitationPanel } from './team-invitation-panel'
 import { useTeam } from '../hooks/team-provider'
 import { Card, CardDescription, CardHeader, CardTitle } from '@repo/ui/card'
 
-type TeamMembersProps = {
-  locale: Locale
-  messages: Messages['teams']
-}
-
-export function TeamInvitations({ locale, messages }: TeamMembersProps) {
+export function TeamInvitations() {
+  const t = useTranslations('teams')
   const { team } = useTeam()
 
   return (
@@ -21,19 +16,19 @@ export function TeamInvitations({ locale, messages }: TeamMembersProps) {
         <div>
           <div className="flex items-center gap-2 text-lg font-semibold">
             <MailPlus aria-hidden="true" className="size-4" />
-            {messages.invites.title}
+            {t('invites.title')}
           </div>
           <p className="mt-1 text-sm leading-6 text-muted-foreground">
-            {messages.invites.description}
+            {t('invites.description')}
           </p>
         </div>
-        <TeamInvitationPanel locale={locale} messages={messages.invites} team={team} />
+        <TeamInvitationPanel team={team} />
       </div>
 
       <Card variant="muted">
         <CardHeader>
-          <CardTitle className="text-base">{messages.invites.statusTitle}</CardTitle>
-          <CardDescription>{messages.invites.statusDescription}</CardDescription>
+          <CardTitle className="text-base">{t('invites.statusTitle')}</CardTitle>
+          <CardDescription>{t('invites.statusDescription')}</CardDescription>
         </CardHeader>
       </Card>
     </section>

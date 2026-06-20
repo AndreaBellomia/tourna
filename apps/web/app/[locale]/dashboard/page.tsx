@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { notFound } from 'next/navigation'
 import {
   CalendarDays,
   Inbox,
@@ -18,31 +17,24 @@ import { AppShell } from '~/features/common/components/app-shell'
 import { EmptyState } from '~/features/common/components/empty-state'
 import { PageHeader } from '~/features/common/components/page-header'
 import { requireAuthenticatedPage } from '~/lib/auth/session'
-import { isLocale, resolveLocale, withLocale } from '~/lib/i18n/config'
-import { getMessages } from '~/lib/i18n/web-i18n'
+import { withLocale } from '~/lib/i18n/config'
+import { getMetadataTranslator, getPageI18n } from '~/lib/i18n/web-i18n'
 
 type DashboardPageProps = {
   params: Promise<{ locale: string }>
 }
 
 export async function generateMetadata({ params }: DashboardPageProps): Promise<Metadata> {
-  const { locale } = await params
-  const messages = getMessages(resolveLocale(locale))
+  const { t } = await getMetadataTranslator(params, 'metadata')
 
   return {
-    title: messages.metadata.dashboardTitle,
-    description: messages.metadata.dashboardDescription,
+    title: t('dashboardTitle'),
+    description: t('dashboardDescription'),
   }
 }
 
 export default async function DashboardPage({ params }: DashboardPageProps) {
-  const { locale } = await params
-
-  if (!isLocale(locale)) {
-    notFound()
-  }
-
-  const messages = getMessages(locale)
+  const { locale, messages } = await getPageI18n(params)
   await requireAuthenticatedPage(locale)
 
   const stats = [
@@ -52,7 +44,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   ]
 
   return (
-    <AppShell active="dashboard" locale={locale} messages={messages.common}>
+    <AppShell active="dashboard">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
         <PageHeader
           badgeIcon={<CalendarDays aria-hidden="true" className="size-3.5" />}

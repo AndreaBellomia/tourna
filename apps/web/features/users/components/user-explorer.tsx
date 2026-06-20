@@ -16,16 +16,14 @@ import type { UserListResponse, UserSummaryResponse } from '@repo/contracts'
 import { EmptyState } from '~/features/common/components/empty-state'
 import { ListToolbar } from '~/features/common/components/list-toolbar'
 import { PageHeader } from '~/features/common/components/page-header'
-import { type Locale, withLocale } from '~/lib/i18n/config'
-import type { Messages } from '~/lib/i18n/web-i18n'
+import { withLocale } from '~/lib/i18n/config'
+import { useI18n, useTranslations } from '~/lib/i18n/client'
 import { MarkdownContent } from '~/features/teams/components/markdown-content'
 import { fetchUsers } from '~/features/users/services/user-client'
 
 const PAGE_SIZE = 12
 
 type UserExplorerProps = {
-  locale: Locale
-  messages: Messages['users']
   initialPage: UserListResponse | null
   initialError?: string
 }
@@ -34,10 +32,13 @@ type SearchValues = {
   search: string
 }
 
-export function UserExplorer({ locale, messages, initialPage, initialError }: UserExplorerProps) {
+export function UserExplorer({ initialPage, initialError }: UserExplorerProps) {
+  const t = useTranslations('users')
   const [users, setUsers] = useState<UserSummaryResponse[]>(initialPage?.data ?? [])
   const [pageInfo, setPageInfo] = useState(initialPage?.pageInfo ?? null)
-  const [error, setError] = useState<string | null>(initialError ?? null)
+  const [error, setError] = useState<string | null>(
+    initialError ?? (initialPage ? null : t('list.unavailable')),
+  )
   const [isLoading, setIsLoading] = useState(false)
   const activeRequestRef = useRef<string | null>(null)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
@@ -87,11 +88,11 @@ export function UserExplorer({ locale, messages, initialPage, initialError }: Us
           setPageInfo(page.pageInfo)
         })
         .catch((loadError: unknown) => {
-          setError(loadError instanceof Error ? loadError.message : messages.list.unavailable)
+          setError(loadError instanceof Error ? loadError.message : t('list.unavailable'))
         })
         .finally(() => finishLoad(requestKey))
     },
-    [beginLoad, finishLoad, messages.list.unavailable, queryFromValues],
+    [beginLoad, finishLoad, queryFromValues, t],
   )
 
   function resetFilters() {
@@ -112,10 +113,10 @@ export function UserExplorer({ locale, messages, initialPage, initialError }: Us
         setPageInfo(page.pageInfo)
       })
       .catch((loadError: unknown) => {
-        setError(loadError instanceof Error ? loadError.message : messages.list.unavailable)
+        setError(loadError instanceof Error ? loadError.message : t('list.unavailable'))
       })
       .finally(() => finishLoad(requestKey))
-  }, [beginLoad, finishLoad, messages.list.unavailable, pageInfo, queryFromValues])
+  }, [beginLoad, finishLoad, pageInfo, queryFromValues, t])
 
   useEffect(() => {
     const sentinel = sentinelRef.current
@@ -139,9 +140,9 @@ export function UserExplorer({ locale, messages, initialPage, initialError }: Us
     <section className="space-y-5">
       <PageHeader
         badgeIcon={<UserRound aria-hidden="true" className="size-3.5" />}
-        description={messages.list.description}
-        eyebrow={messages.list.eyebrow}
-        title={messages.list.title}
+        description={t('list.description')}
+        eyebrow={t('list.eyebrow')}
+        title={t('list.title')}
         actions={
           <Badge variant="outline" className="w-fit">
             {users.length} user
@@ -152,7 +153,7 @@ export function UserExplorer({ locale, messages, initialPage, initialError }: Us
       <form onSubmit={(event) => void searchForm.handleSubmit(loadFirstPage)(event)}>
         <ListToolbar
           resetDisabled={!hasActiveFilters}
-          resetLabel={messages.list.reset}
+          resetLabel={t('list.reset')}
           onReset={resetFilters}
           activeFilters={
             searchValue.trim() ? <Badge variant="accent">{searchValue.trim()}</Badge> : null
@@ -161,7 +162,7 @@ export function UserExplorer({ locale, messages, initialPage, initialError }: Us
           <div className="min-w-0 flex-1 space-y-2">
             <Label className="inline-flex items-center gap-2" htmlFor="user-search">
               <SlidersHorizontal aria-hidden="true" className="size-4 text-accent" />
-              {messages.list.search}
+              {t('list.search')}
             </Label>
             <div className="relative">
               <Search
@@ -170,7 +171,7 @@ export function UserExplorer({ locale, messages, initialPage, initialError }: Us
               />
               <Input
                 id="user-search"
-                placeholder={messages.list.searchPlaceholder}
+                placeholder={t('list.searchPlaceholder')}
                 className="h-11 pr-11 pl-9"
                 {...searchForm.register('search')}
               />
@@ -194,7 +195,7 @@ export function UserExplorer({ locale, messages, initialPage, initialError }: Us
 
           <Button className="h-11 md:w-44" loading={isLoading} type="submit">
             <Search aria-hidden="true" className="size-4" />
-            {messages.list.search}
+            {t('list.search')}
           </Button>
         </ListToolbar>
       </form>
@@ -206,13 +207,13 @@ export function UserExplorer({ locale, messages, initialPage, initialError }: Us
       {users.length > 0 ? (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {users.map((user) => (
-            <UserTile key={user.id} locale={locale} messages={messages} user={user} />
+            <UserTile key={user.id} user={user} />
           ))}
         </div>
       ) : (
         <EmptyState
-          title={messages.list.emptyTitle}
-          description={error ? messages.list.unavailable : messages.list.emptyDescription}
+          title={t('list.emptyTitle')}
+          description={error ? t('list.unavailable') : t('list.emptyDescription')}
         />
       )}
 
@@ -220,7 +221,7 @@ export function UserExplorer({ locale, messages, initialPage, initialError }: Us
       {pageInfo?.hasNextPage ? (
         <div className="flex justify-center">
           <Button loading={isLoading} type="button" variant="outline" onClick={loadNextPage}>
-            {messages.list.loadMore}
+            {t('list.loadMore')}
           </Button>
         </div>
       ) : null}
@@ -228,15 +229,9 @@ export function UserExplorer({ locale, messages, initialPage, initialError }: Us
   )
 }
 
-function UserTile({
-  locale,
-  messages,
-  user,
-}: {
-  locale: Locale
-  messages: Messages['users']
-  user: UserSummaryResponse
-}) {
+function UserTile({ user }: { user: UserSummaryResponse }) {
+  const { locale } = useI18n()
+  const t = useTranslations('users')
   const initials = user.display_name
     .split(' ')
     .map((part) => part[0])
@@ -270,7 +265,7 @@ function UserTile({
       </div>
 
       <div className="mt-3 line-clamp-2 min-h-11">
-        <MarkdownContent value={user.bio} emptyLabel={messages.detail.emptyBio} />
+        <MarkdownContent value={user.bio} emptyLabel={t('detail.emptyBio')} />
       </div>
     </Link>
   )

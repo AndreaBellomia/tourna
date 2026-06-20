@@ -7,16 +7,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/avatar'
 import { buttonVariants } from '@repo/ui/button'
 
 import { useTeam } from '../hooks/team-provider'
-import { Messages } from '~/lib/i18n/web-i18n'
-import { Locale, withLocale } from '~/lib/i18n/config'
+import { withLocale } from '~/lib/i18n/config'
+import { useI18n, useTranslations } from '~/lib/i18n/client'
 import { cn } from '@repo/ui/utils'
 
 type TeamSection = 'overview' | 'members' | 'invitations' | 'settings'
 
 type TeamSidebarProps = {
-  locale: Locale
   children: React.ReactNode
-  messages: Messages['teams']
 }
 
 type SidebarSection = {
@@ -27,7 +25,9 @@ type SidebarSection = {
   exact?: boolean
 }
 
-export function TeamSidebar({ locale, messages, children }: Readonly<TeamSidebarProps>) {
+export function TeamSidebar({ children }: Readonly<TeamSidebarProps>) {
+  const { locale } = useI18n()
+  const t = useTranslations('teams')
   const pathname = usePathname()
   const { team, canManage } = useTeam()
   const initials = getInitials(team.name, 'TM')
@@ -36,14 +36,14 @@ export function TeamSidebar({ locale, messages, children }: Readonly<TeamSidebar
   const sections: SidebarSection[] = [
     {
       key: 'overview',
-      label: messages.detail.overview,
+      label: t('detail.overview'),
       icon: Eye,
       href: teamHref,
       exact: true,
     },
     {
       key: 'members',
-      label: messages.detail.membersTitle,
+      label: t('detail.membersTitle'),
       icon: Users,
       href: `${teamHref}/members`,
     },
@@ -51,13 +51,13 @@ export function TeamSidebar({ locale, messages, children }: Readonly<TeamSidebar
       ? [
           {
             key: 'invitations' as const,
-            label: messages.invites.title,
+            label: t('invites.title'),
             icon: MailPlus,
             href: `${teamHref}/invitations`,
           },
           {
             key: 'settings' as const,
-            label: messages.detail.settings,
+            label: t('detail.settings'),
             icon: Settings,
             href: `${teamHref}/settings`,
           },
@@ -81,13 +81,13 @@ export function TeamSidebar({ locale, messages, children }: Readonly<TeamSidebar
           href={withLocale(locale, '/teams')}
         >
           <ArrowLeft aria-hidden="true" className="size-4" />
-          {messages.detail.back}
+          {t('detail.back')}
         </Link>
 
         {canManage ? (
           <Link className={buttonVariants()} href={withLocale(locale, `/teams/${team.slug}/edit`)}>
             <Pencil aria-hidden="true" className="size-4" />
-            {messages.detail.editTitle}
+            {t('detail.editTitle')}
           </Link>
         ) : null}
       </div>
@@ -118,17 +118,17 @@ export function TeamSidebar({ locale, messages, children }: Readonly<TeamSidebar
             <div className="grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1.5 rounded-lg border border-border bg-card/70 px-3 py-2 text-xs">
               {team.viewerMembership ? (
                 <>
-                  <span className="text-muted-foreground">{messages.detail.role}</span>
+                  <span className="text-muted-foreground">{t('detail.role')}</span>
                   <span className="text-right font-medium text-foreground">
                     {team.viewerMembership.role}
                   </span>
                 </>
               ) : null}
-              <span className="text-muted-foreground">{messages.detail.status}</span>
+              <span className="text-muted-foreground">{t('detail.status')}</span>
               <span className="text-right font-medium text-foreground">{team.status}</span>
-              <span className="text-muted-foreground">{messages.detail.visibility}</span>
+              <span className="text-muted-foreground">{t('detail.visibility')}</span>
               <span className="text-right font-medium text-foreground">
-                {messages.visibility[team.visibility]}
+                {t(`visibility.${team.visibility}`)}
               </span>
             </div>
           </div>
