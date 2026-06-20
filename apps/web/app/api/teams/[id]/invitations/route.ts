@@ -1,4 +1,4 @@
-import { TeamInvitationRequestSchema, TeamInvitationResponseSchema } from '@repo/contracts'
+import { TeamInvitationRequestSchema, TeamInvitationCreateResponseSchema } from '@repo/contracts'
 import { authenticatedApiRequest, jsonWithAuth } from '~/lib/api/auth/authenticated-request'
 import { badRequest } from '~/lib/api/responses'
 import { teamEndpoints } from '~/lib/api/teams/team.endpoint'
@@ -19,7 +19,7 @@ export const POST = withRouteHandler<TeamInvitationRouteContext>(async (request,
   const result = await authenticatedApiRequest(
     request,
     teamEndpoints.invitations(id),
-    TeamInvitationResponseSchema,
+    TeamInvitationCreateResponseSchema,
     {
       method: 'POST',
       body: payload,

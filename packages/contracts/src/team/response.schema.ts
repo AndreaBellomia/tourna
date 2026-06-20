@@ -1,4 +1,9 @@
-import { LifecycleStatusSchema, TeamMembershipRoleSchema, VisibilitySchema } from '@repo/domain'
+import {
+  LifecycleStatusSchema,
+  TeamInvitationStatusSchema,
+  TeamMembershipRoleSchema,
+  VisibilitySchema,
+} from '@repo/domain'
 import { z } from 'zod'
 import { createCursorPaginatedResponseSchema } from '../pagination/cursor.schema'
 
@@ -51,7 +56,7 @@ export const TeamDetailResponseSchema = TeamSummarySchema.extend({
 
 export type TeamDetailResponse = z.infer<typeof TeamDetailResponseSchema>
 
-export const TeamInvitationResponseSchema = z.object({
+export const TeamInvitationCreateResponseSchema = z.object({
   code: z.string(),
   teamId: z.string(),
   role: TeamMembershipRoleSchema,
@@ -59,10 +64,30 @@ export const TeamInvitationResponseSchema = z.object({
   expiresAt: z.iso.datetime(),
 })
 
-export type TeamInvitationResponse = z.infer<typeof TeamInvitationResponseSchema>
+export type TeamInvitationCreateResponse = z.infer<typeof TeamInvitationCreateResponseSchema>
 
 export const TeamInvitationAcceptResponseSchema = z.object({
   teamId: z.string(),
 })
 
 export type TeamInvitationAcceptResponse = z.infer<typeof TeamInvitationAcceptResponseSchema>
+
+export const TeamInvitationResponseSchema = z.object({
+  id: z.string(),
+  teamId: z.string(),
+  role: TeamMembershipRoleSchema,
+  assignedTo: z.string().nullable(),
+  maxUses: z.number().int().positive().nullable(),
+  usedCount: z.number().int().nonnegative(),
+  expiresAt: z.iso.datetime().nullable(),
+  createdAt: z.iso.datetime(),
+  status: TeamInvitationStatusSchema,
+})
+
+export type TeamInvitationResponse = z.infer<typeof TeamInvitationResponseSchema>
+
+export const TeamInvitationListResponseSchema = createCursorPaginatedResponseSchema(
+  TeamInvitationResponseSchema,
+)
+
+export type TeamInvitationListResponse = z.infer<typeof TeamInvitationListResponseSchema>

@@ -12,25 +12,6 @@ type TeamRouteContext = {
   params: Promise<Record<string, string>>
 }
 
-export const GET = withRouteHandler<TeamRouteContext>(async (request, context) => {
-  const { id } = await context.params
-
-  if (!id) {
-    throw badRequest('Missing team id')
-  }
-
-  const result = await optionalAuthenticatedApiRequest(
-    request,
-    teamEndpoints.detail(id),
-    TeamDetailResponseSchema,
-    {
-      cache: 'no-store',
-    },
-  )
-
-  return jsonWithAuth(result)
-})
-
 export const PATCH = withRouteHandler<TeamRouteContext>(async (request, context) => {
   const { id } = await context.params
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { TeamMembershipRole } from '@repo/domain'
+import { CursorPaginationInput, paginateCursor } from '@repo/db'
+import { TeamInvitationStatus, TeamMembershipRole } from '@repo/domain'
 import { sql } from 'kysely'
 import { DatabaseService } from '~/database/database.service'
 
@@ -11,6 +12,23 @@ type TeamInvitationLookup = {
   max_uses: number | null
   used_count: number
   expires_at: Date | null
+}
+
+type TeamInvitationListRow = {
+  id: string
+  team_id: string
+  role: TeamMembershipRole
+  assigned_to: string | null
+  max_uses: number | null
+  used_count: number
+  expires_at: Date | null
+  created_at: Date
+  status: TeamInvitationStatus
+}
+
+export type GetTeamInvitationsInput = {
+  pagination: CursorPaginationInput
+  teamId: string
 }
 
 @Injectable()
@@ -131,5 +149,47 @@ export class TeamInvitationRepository {
       .executeTakeFirst()
 
     return !!result
+  }
+
+  async getTeamInvitations(input: GetTeamInvitationsInput) {
+    const query = this.database.db
+      .selectFrom('team_invitations')
+      .where('team_id', '=', input.teamId)
+      .select([
+        'id',
+        'team_id',
+        'role',
+        'assigned_to',
+        'max_uses',
+        'used_count',
+        'expires_at',
+        'created_at',
+        'status',
+      ])
+
+    return await paginateCursor(query, {
+      pagination: input.pagination,
+      cursor: {
+        column: 'created_at',
+        outputKey: 'created_at',
+        idColumn: 'id',
+        direction: 'desc',
+      },
+      mapItem: toTeamInvitationListItem,
+    })
+  }
+}
+
+function toTeamInvitationListItem(inv: TeamInvitationListRow) {
+  return {
+    id: inv.id,
+    teamId: inv.team_id,
+    role: inv.role,
+    assignedTo: inv.assigned_to,
+    maxUses: inv.max_uses,
+    usedCount: inv.used_count,
+    expiresAt: inv.expires_at?.toISOString() || null,
+    createdAt: inv.created_at.toISOString(),
+    status: inv.status,
   }
 }

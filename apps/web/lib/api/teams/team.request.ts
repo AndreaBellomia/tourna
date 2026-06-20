@@ -5,6 +5,7 @@ import {
   type CreateTeamInput,
   type TeamListQuery,
 } from '@repo/contracts'
+import { optionalAuthenticatedServerApiRequest } from '~/lib/api/auth/server-authenticated-request'
 import { apiRequest } from '~/lib/api/http'
 import type { Locale } from '~/lib/i18n/config'
 import { teamEndpoints, teamListEndpoint } from './team.endpoint'
@@ -17,7 +18,7 @@ export function listTeams(query: Partial<TeamListQuery> = {}, locale?: Locale) {
 }
 
 export function getTeam(teamId: string, locale?: Locale) {
-  return apiRequest(teamEndpoints.detail(teamId), TeamDetailResponseSchema, {
+  return optionalAuthenticatedServerApiRequest(teamEndpoints.detail(teamId), TeamDetailResponseSchema, {
     cache: 'no-store',
     locale,
   })

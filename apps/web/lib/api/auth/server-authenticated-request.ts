@@ -45,6 +45,34 @@ export async function authenticatedServerApiRequest<TSchema extends z.ZodType>(
   }
 }
 
+export async function optionalAuthenticatedServerApiRequest<TSchema extends z.ZodType>(
+  path: string,
+  schema: TSchema,
+  options: ServerAuthenticatedRequestOptions = {},
+): Promise<z.infer<TSchema>> {
+  const cookieStore = await cookies()
+  const refreshToken = cookieStore.get(authCookieNames.refreshToken)?.value
+
+  if (!refreshToken) {
+    return apiRequest(path, schema, options)
+  }
+
+  try {
+    return await authenticatedServerApiRequest(path, schema, options)
+  } catch (error) {
+    if (shouldFallbackToPublicRequest(error)) {
+      console.warn('[auth] optional server api request fell back to public view', {
+        path,
+        reason: readFallbackReason(error),
+      })
+
+      return apiRequest(path, schema, options)
+    }
+
+    throw error
+  }
+}
+
 function requestWithAccessToken<TSchema extends z.ZodType>(
   path: string,
   schema: TSchema,
@@ -69,4 +97,24 @@ function shouldRefreshAfterError(error: unknown): error is ApiError {
       error.code === 'AUTH_ACCESS_TOKEN_MISSING' ||
       error.code === 'Unauthorized')
   )
+}
+
+function shouldFallbackToPublicRequest(error: unknown) {
+  return (error instanceof ApiError && error.status === 401) || isFetchFailure(error)
+}
+
+function isFetchFailure(error: unknown): error is TypeError {
+  return error instanceof TypeError && error.message === 'fetch failed'
+}
+
+function readFallbackReason(error: unknown) {
+  if (error instanceof ApiError) {
+    return `${error.status}:${error.code}`
+  }
+
+  if (error instanceof Error) {
+    return error.message
+  }
+
+  return 'unknown'
 }

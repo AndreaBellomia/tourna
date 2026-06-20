@@ -1,7 +1,11 @@
 import { TeamInvitationRepository } from './team-invitation.repository'
 import { randomInt, createHash } from 'node:crypto'
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
-import type { TeamInvitationAcceptResponse, TeamInvitationResponse } from '@repo/contracts'
+import type {
+  CursorPaginationQuery,
+  TeamInvitationAcceptResponse,
+  TeamInvitationCreateResponse,
+} from '@repo/contracts'
 import { TeamMembershipRole } from '@repo/domain'
 
 const INVITE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
@@ -43,7 +47,7 @@ export class TeamInvitationService {
     teamId: string
     role: TeamMembershipRole
     expiresAt: Date
-  }): Promise<TeamInvitationResponse> {
+  }): Promise<TeamInvitationCreateResponse> {
     const code = await this.generateInvitationCode()
 
     await this.teamInvitations.createTeamInvitation({
@@ -77,7 +81,7 @@ export class TeamInvitationService {
     role: TeamMembershipRole
     maxUses?: number
     expiresAt: Date
-  }): Promise<TeamInvitationResponse> {
+  }): Promise<TeamInvitationCreateResponse> {
     const code = await this.generateInvitationCode()
 
     await this.teamInvitations.createTeamInvitation({
@@ -131,6 +135,10 @@ export class TeamInvitationService {
     return {
       teamId: invitation.team_id,
     }
+  }
+
+  async getInvitationsForTeam(query: CursorPaginationQuery, teamId: string) {
+    return await this.teamInvitations.getTeamInvitations({ pagination: query, teamId })
   }
 }
 

@@ -8,7 +8,11 @@ import { Card } from '@repo/ui/card'
 import { Input } from '@repo/ui/input'
 import { Label } from '@repo/ui/label'
 import { Select } from '@repo/ui/select'
-import type { TeamDetailResponse, TeamInvitationInput, TeamInvitationResponse } from '@repo/contracts'
+import type {
+  TeamDetailResponse,
+  TeamInvitationInput,
+  TeamInvitationCreateResponse,
+} from '@repo/contracts'
 import { type Locale, withLocale } from '~/lib/i18n/config'
 import type { Messages } from '~/lib/i18n/web-i18n'
 import { createTeamInvitation } from '~/features/teams/services/team-client'
@@ -28,7 +32,7 @@ export function TeamInvitationPanel({ locale, messages, team }: TeamInvitationPa
   const [role, setRole] = useState<InvitationRole>('player')
   const [maxUses, setMaxUses] = useState(1)
   const [expiresAt, setExpiresAt] = useState(defaultExpiryInputValue)
-  const [invitation, setInvitation] = useState<TeamInvitationResponse | null>(null)
+  const [invitation, setInvitation] = useState<TeamInvitationCreateResponse | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
   const [copied, setCopied] = useState<'code' | 'link' | null>(null)
   const [isPending, startTransition] = useTransition()
@@ -38,7 +42,9 @@ export function TeamInvitationPanel({ locale, messages, team }: TeamInvitationPa
   }, [])
 
   const invitationLink =
-    invitation && origin ? `${origin}${withLocale(locale, `/teams/invitations/${invitation.code}`)}` : ''
+    invitation && origin
+      ? `${origin}${withLocale(locale, `/teams/invitations/${invitation.code}`)}`
+      : ''
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()

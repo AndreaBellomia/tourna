@@ -58,7 +58,6 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["^build"],
       "with": ["//#watch:packages"]
     },
     "dev:app": {

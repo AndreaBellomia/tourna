@@ -1,17 +1,15 @@
-import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getOptionalPageData, getRequiredPageData } from '~/lib/api/page-data'
+import { TeamMembers } from '~/features/teams/components/team-members'
+import { getOptionalPageData } from '~/lib/api/page-data'
 import { getTeam } from '~/lib/api/teams/team.request'
 import { isLocale, resolveLocale } from '~/lib/i18n/config'
 import { getMessages } from '~/lib/i18n/web-i18n'
-import { AppShell } from '~/features/common/components/app-shell'
-import { TeamProfile } from '~/features/teams/components/team-profile'
 
 type TeamPageProps = {
   params: Promise<{ locale: string; id: string }>
 }
 
-export async function generateMetadata({ params }: TeamPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: TeamPageProps) {
   const { locale, id } = await params
   const messages = getMessages(resolveLocale(locale))
   const team = await getOptionalPageData(() => getTeam(id, resolveLocale(locale)), null, {
@@ -24,22 +22,14 @@ export async function generateMetadata({ params }: TeamPageProps): Promise<Metad
   }
 }
 
-export default async function TeamPage({ params }: TeamPageProps) {
-  const { locale, id } = await params
+export default async function TeamMembersPage({ params }: TeamPageProps) {
+  const { locale } = await params
 
   if (!isLocale(locale)) {
     notFound()
   }
 
   const messages = getMessages(locale)
-  const team = await getRequiredPageData(() => getTeam(id, locale), {
-    context: `teams.detail.page:${id}`,
-    notFoundStatuses: [403, 404],
-  })
 
-  return (
-    <AppShell active="teams" locale={locale} messages={messages.common}>
-      <TeamProfile initialTeam={team} locale={locale} messages={messages.teams} />
-    </AppShell>
-  )
+  return <TeamMembers locale={locale} messages={messages.teams} />
 }

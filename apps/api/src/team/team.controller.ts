@@ -11,17 +11,19 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Action } from '@repo/authorization'
-import type { TeamListResponse } from '@repo/contracts'
+import type { CursorPaginationQuery, TeamListResponse } from '@repo/contracts'
 import {
   CreateTeamDto,
   TeamDetailResponseDto,
   TeamInvitationAcceptResponseDto,
   TeamInvitationDto,
-  TeamInvitationResponseDto,
+  TeamInvitationCreateResponseDto,
   TeamListQueryDto,
   TeamListResponseDto,
   TeamRemoveUserDto,
   UpdateTeamDto,
+  TeamInvitationResponseDto,
+  TeamInvitationListResponseDto,
 } from '@repo/contracts/nest'
 import type { JwtPayload } from '@repo/domain'
 import {
@@ -88,12 +90,12 @@ export class TeamController {
   @RequireTeamPolicy(Action.Manage)
   @Post(':id/invitations')
   @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ type: TeamInvitationResponseDto })
+  @ApiOkResponse({ type: TeamInvitationCreateResponseDto })
   async createInvite(
     @CurrentUser() user: JwtPayload,
     @Param('id') id: string,
     @Body() body: TeamInvitationDto,
-  ): Promise<TeamInvitationResponseDto> {
+  ): Promise<TeamInvitationCreateResponseDto> {
     return await this.teamInvitationService.createReusableTeamInvitation({
       createdById: user.userId,
       teamId: id,
@@ -115,6 +117,17 @@ export class TeamController {
   @HttpCode(HttpStatus.OK)
   removeMember(@Param('id') id: string, @Body() body: TeamRemoveUserDto) {
     return this.teamService.removeFromTeam(body.userId, id)
+  }
+
+  @Get(':id/invitations')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: TeamInvitationListResponseDto })
+  async getInvitations(
+    @CurrentUser() user: JwtPayload,
+    @Param('id') id: string,
+    @Query() query: CursorPaginationQuery,
+  ): Promise<TeamInvitationListResponseDto> {
+    return await this.teamInvitationService.getInvitationsForTeam(query, id)
   }
 
   @Post('invitations/:code/accept')

@@ -35,11 +35,6 @@ export default async function EditTeamPage({ params }: EditTeamPageProps) {
   await requireAuthenticatedPage(locale)
 
   const messages = getMessages(locale)
-  const team = await getRequiredPageData(() => getTeam(id, locale), {
-    context: `teams.edit.page:${id}`,
-    notFoundStatuses: [403, 404],
-    unauthorizedRedirectTo: withLocale(locale, '/login'),
-  })
 
   return (
     <AppShell active="teams" locale={locale} messages={messages.common}>
@@ -52,7 +47,7 @@ export default async function EditTeamPage({ params }: EditTeamPageProps) {
           {messages.teams.detail.back}
         </Link>
       </div>
-      <TeamEditPanel initialTeam={team} locale={locale} messages={messages.teams} />
+      <TeamEditPanel locale={locale} messages={messages.teams} />
     </AppShell>
   )
 }

@@ -8,7 +8,7 @@ import {
   TeamDetailResponseSchema,
   TeamInvitationAcceptResponseSchema,
   TeamInvitationRequestSchema,
-  TeamInvitationResponseSchema,
+  TeamInvitationCreateResponseSchema,
   TeamListResponseSchema,
   UpdateTeamRequestSchema,
   type CreateTeamInput,
@@ -68,7 +68,7 @@ export function createTeamInvitation(teamId: string, values: TeamInvitationInput
 
   return clientApiRequest({
     path: `/api/teams/${teamId}/invitations`,
-    schema: TeamInvitationResponseSchema,
+    schema: TeamInvitationCreateResponseSchema,
     method: 'POST',
     body: payload,
     fallbackErrorMessage: 'Unable to create invitation',
