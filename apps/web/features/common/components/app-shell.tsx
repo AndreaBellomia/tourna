@@ -3,10 +3,10 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { LayoutDashboard, LogOut, Plus, Settings, Trophy, UserCircle, Users } from 'lucide-react'
-import { Badge } from '@repo/ui/badge'
-import { Button, buttonVariants } from '@repo/ui/button'
-import { Separator } from '@repo/ui/separator'
-import { cn } from '@repo/ui/utils'
+import { Badge } from '@repo/ui/components/badge'
+import { Button, buttonVariants } from '@repo/ui/components/button'
+import { Separator } from '@repo/ui/components/separator'
+import { cn } from '@repo/ui/lib/utils'
 import { logout } from '~/features/common/actions/logout'
 import { withLocale } from '~/lib/i18n/config'
 import { useI18n, useTranslations } from '~/lib/i18n/client'
@@ -114,7 +114,7 @@ function ShellBrand({ compact }: { compact?: boolean }) {
       <div className="min-w-0">
         <div className="flex items-center gap-2">
           <p className="truncate text-lg font-semibold leading-none">{t('product')}</p>
-          {!compact ? <Badge variant="accent">Ops</Badge> : null}
+          {!compact ? <Badge variant="secondary">Ops</Badge> : null}
         </div>
         <p className="mt-1 truncate text-xs text-muted-foreground">{t('subtitle')}</p>
       </div>

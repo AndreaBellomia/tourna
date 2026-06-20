@@ -16,31 +16,8 @@
   <img alt="License" src="https://img.shields.io/badge/license-PolyForm%20Noncommercial-blue?style=for-the-badge">
 </p>
 
----
-
-## Table of Contents
-
-- [Tourna](#tourna)
-  - [Table of Contents](#table-of-contents)
-  - [Why This Project Exists](#why-this-project-exists)
-  - [What Tourna Is](#what-tourna-is)
-  - [Portfolio Intent](#portfolio-intent)
-  - [Core Product Areas](#core-product-areas)
-  - [Architecture Snapshot](#architecture-snapshot)
-  - [Monorepo Structure](#monorepo-structure)
-  - [Tech Stack](#tech-stack)
-  - [Engineering Standards](#engineering-standards)
-  - [Recent Platform Additions](#recent-platform-additions)
-  - [Local Development](#local-development)
-    - [Install dependencies](#install-dependencies)
-    - [Start infrastructure](#start-infrastructure)
-    - [Run the frontend](#run-the-frontend)
-    - [Run the API](#run-the-api)
-  - [Quality Gates](#quality-gates)
-  - [Roadmap Direction](#roadmap-direction)
-  - [Licensing](#licensing)
-  - [Collaboration](#collaboration)
-  - [Project Instructions](#project-instructions)
+> [!IMPORTANT]
+> This repository is documented for GitHub-first reading. Internal links use repository-relative paths, headings are anchor-friendly, and the docs intentionally prefer GitHub-supported Markdown features.
 
 ## Why This Project Exists
 
@@ -65,9 +42,24 @@ The product direction includes:
 
 The goal is to support increasingly complex workflows without losing clarity in either product behavior or code ownership.
 
+## Documentation Map
+
+| Document | Purpose |
+| --- | --- |
+| [CONTRIBUTING.md](./CONTRIBUTING.md) | Collaboration policy and contribution expectations |
+| [docs/background-jobs.md](./docs/background-jobs.md) | Queue, worker, and cron behavior |
+| [docs/storage.md](./docs/storage.md) | Storage flows and object lifecycle |
+| [docs/repository-documentation.md](./docs/repository-documentation.md) | GitHub-friendly documentation conventions for this repo |
+| [packages/db/README.md](./packages/db/README.md) | Database package overview and migration workflows |
+| [packages/redis/README.md](./packages/redis/README.md) | Redis models, scripts, pipelines, and session primitives |
+| [packages/queue/README.md](./packages/queue/README.md) | Queue contracts, job definitions, and producers |
+| [packages/email/README.md](./packages/email/README.md) | Email contracts, templates, and provider abstractions |
+| [AGENTS.md](./AGENTS.md) | Root bridge for repository instructions |
+| [.codex/AGENTS.md](./.codex/AGENTS.md) | Repo-wide AI engineering defaults |
+
 ## Portfolio Intent
 
-This repository is meant to show how I think about software when the target is not only correctness, but also:
+This repository is meant to show how software should feel when the target is not only correctness, but also:
 
 - architectural discipline
 - long-term maintainability
@@ -79,83 +71,85 @@ In practical terms, Tourna is as much about codebase stewardship as it is about 
 
 ## Core Product Areas
 
-| Area            | Focus                                                        |
-| --------------- | ------------------------------------------------------------ |
-| Authentication  | Secure signup, login, refresh, session lifecycle             |
-| Authorization   | Scoped permissions, memberships, access policies             |
-| Tournament Core | Tournament lifecycle and related entities                    |
-| Participation   | Registration and participation flows                         |
-| Operations      | Event progress, management tooling, administrative workflows |
+| Area | Focus |
+| --- | --- |
+| Authentication | Secure signup, login, refresh, session lifecycle |
+| Authorization | Scoped permissions, memberships, access policies |
+| Tournament Core | Tournament lifecycle and related entities |
+| Participation | Registration and participation flows |
+| Operations | Event progress, management tooling, administrative workflows |
 
 ## Architecture Snapshot
 
-```text
-apps/web
-  -> UI composition, routes, interaction flows
-  -> depends on contracts + ui
+```mermaid
+flowchart TD
+  subgraph Apps
+    WEB["apps/web<br/>UI composition, routes, interaction flows"]
+    API["apps/api<br/>Transport, modules, guards, orchestration"]
+    WORKER["apps/worker<br/>BullMQ processors, cron registration, background orchestration"]
+  end
 
-apps/api
-  -> transport, modules, guards, orchestration
-  -> depends on contracts + domain + db + redis + queue + authorization
+  subgraph Shared Packages
+    CONTRACTS["packages/contracts"]
+    DOMAIN["packages/domain"]
+    DB["packages/db"]
+    REDIS["packages/redis"]
+    QUEUE["packages/queue"]
+    AUTH["packages/authorization"]
+    EMAIL["packages/email"]
+    UI["packages/ui"]
+  end
 
-apps/worker
-  -> BullMQ processors, cron registration, background orchestration
-  -> depends on queue + domain/db packages as features mature
-
-packages/contracts
-  -> shared request/response schemas and DTOs
-
-packages/domain
-  -> framework-agnostic domain vocabulary and types
-
-packages/db
-  -> persistence schema, Kysely integration, migrations
-
-packages/redis
-  -> cache/session models, typed pipelines, Lua scripts
-
-packages/queue
-  -> BullMQ queue names, job contracts, producer helpers, cron definitions
-
-packages/email
-  -> transactional email templates, rendering, provider abstractions
-
-packages/ui
-  -> reusable presentational primitives
+  WEB --> CONTRACTS
+  WEB --> UI
+  API --> CONTRACTS
+  API --> DOMAIN
+  API --> DB
+  API --> REDIS
+  API --> QUEUE
+  API --> AUTH
+  WORKER --> QUEUE
+  WORKER --> DOMAIN
+  WORKER --> DB
+  WORKER --> REDIS
+  EMAIL --> CONTRACTS
 ```
 
 The design principle is simple: keep apps thin, keep package ownership explicit, and prevent product logic from dissolving into framework glue.
 
-## Monorepo Structure
+<details>
+<summary>Monorepo structure</summary>
 
-| Path                     | Responsibility                                                       |
-| ------------------------ | -------------------------------------------------------------------- |
-| `apps/web`               | Next.js frontend                                                     |
-| `apps/api`               | NestJS API with Fastify                                              |
-| `apps/worker`            | NestJS application context for BullMQ workers and cron jobs          |
-| `packages/contracts`     | Shared Zod schemas and Nest-facing DTOs                              |
-| `packages/domain`        | Framework-agnostic domain types and shared vocabulary                |
-| `packages/db`            | PostgreSQL integration, schema typing, migrations                    |
-| `packages/redis`         | Redis engines, models, pipeline/multi, Lua-backed session primitives |
-| `packages/queue`         | BullMQ contracts, producers, queue names, and cron registrations     |
-| `packages/email`         | Transactional email templates, renderer, and provider abstractions   |
-| `packages/authorization` | Shared authorization primitives and ability logic                    |
-| `packages/ui`            | Shared UI primitives                                                 |
-| `.codex`                 | Repository-local instructions for AI-assisted engineering workflows  |
+| Path | Responsibility |
+| --- | --- |
+| `apps/web` | Next.js frontend |
+| `apps/api` | NestJS API with Fastify |
+| `apps/worker` | NestJS application context for BullMQ workers and cron jobs |
+| `packages/contracts` | Shared Zod schemas and Nest-facing DTOs |
+| `packages/domain` | Framework-agnostic domain types and shared vocabulary |
+| `packages/db` | PostgreSQL integration, schema typing, migrations |
+| `packages/redis` | Redis engines, models, pipeline/multi, Lua-backed session primitives |
+| `packages/queue` | BullMQ contracts, producers, queue names, and cron registrations |
+| `packages/email` | Transactional email templates, renderer, and provider abstractions |
+| `packages/authorization` | Shared authorization primitives and ability logic |
+| `packages/ui` | Shared UI primitives |
+| `.codex` | Repository-local instructions for AI-assisted engineering workflows |
+
+</details>
 
 ## Tech Stack
 
-| Layer            | Technology                  |
-| ---------------- | --------------------------- |
-| Frontend         | Next.js 16, React 19        |
-| Backend          | NestJS 11, Fastify, Swagger |
-| Contracts        | Zod                         |
-| Persistence      | PostgreSQL, Kysely          |
-| Cache / Sessions | Redis                       |
-| Background Jobs  | BullMQ                      |
-| Monorepo         | pnpm, Turborepo             |
-| Language         | TypeScript                  |
-| Tooling          | ESLint, Prettier, Jest      |
+| Layer | Technology |
+| --- | --- |
+| Frontend | Next.js 16, React 19 |
+| Backend | NestJS 11, Fastify, Swagger |
+| Contracts | Zod |
+| Persistence | PostgreSQL, Kysely |
+| Cache / Sessions | Redis |
+| Background Jobs | BullMQ |
+| Monorepo | pnpm, Turborepo |
+| Language | TypeScript |
+| Tooling | ESLint, Prettier, Jest |
 
 ## Engineering Standards
 
@@ -168,24 +162,6 @@ The repository follows a few non-negotiable standards:
 - refactor around touched areas when it improves structural clarity
 
 If a change works but degrades the architecture, it is not considered good enough.
-
-## Recent Platform Additions
-
-The infrastructure layer has recently been strengthened in a few places that matter to day-to-day development:
-
-- `packages/redis` now includes typed `pipeline()` and `multi()` support on top of the existing engines
-- `apps/worker` and `packages/queue` provide BullMQ-backed background jobs and cron registration
-- Redis scripts are versioned and reusable through the Lua runner in `packages/redis`
-- auth session flows now use shared Redis primitives instead of app-local orchestration
-- the Redis package documentation now explains how to define models, pipelines, multi blocks, and Lua scripts
-
-If you are touching cache, sessions, or composed Redis logic, start with [packages/redis/README.md](packages/redis/README.md).
-
-If you are touching async work, cron jobs, or queue producers, start with [docs/background-jobs.md](docs/background-jobs.md).
-
-If you are touching transactional email templates or delivery providers, start with [packages/email/README.md](packages/email/README.md).
-
-If you are touching persistence or migrations, start with [packages/db/README.md](packages/db/README.md).
 
 ## Local Development
 
@@ -235,17 +211,27 @@ Use filtered commands for narrow changes when appropriate, but do not skip valid
 
 ## Roadmap Direction
 
-The current direction of the project is centered around:
+- strengthen tournament domain modeling
+- expand registration and participation workflows
+- grow authorization coverage around event scopes
+- increase test depth on critical product flows
+- preserve a clean architecture while the feature surface expands
 
-- strengthening tournament domain modeling
-- expanding registration and participation workflows
-- growing authorization coverage around event scopes
-- increasing test depth on critical product flows
-- preserving a clean architecture while the feature surface expands
+## Collaboration
+
+> [!NOTE]
+> Collaboration is welcome, but it is coordinated. Contact the author before starting substantial work or opening a large pull request.
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the collaboration policy.
+
+**Author**
+
+- Andrea Bellomia
+- andreabellomia2001@gmail.com
 
 ## Licensing
 
-This repository is released under [PolyForm Noncommercial 1.0.0](/Users/andreabellomia/project/tourna/LICENSE).
+This repository is released under [PolyForm Noncommercial 1.0.0](./LICENSE).
 
 In practical terms:
 
@@ -256,26 +242,14 @@ In practical terms:
 
 This is a source-available repository, not a classic open source one.
 
-## Collaboration
-
-Collaboration is welcome, but it is coordinated.
-
-Anyone interested in contributing should contact the author before starting substantial work or opening a large pull request.
-
-See [CONTRIBUTING.md](/Users/andreabellomia/project/tourna/CONTRIBUTING.md) for the collaboration policy.
-
-**Author**
-
-- Andrea Bellomia
-- andreabellomia2001@gmail.com
-
 ## Project Instructions
 
 Repository-specific engineering and AI workflow instructions live here:
 
-- [AGENTS.md](/Users/andreabellomia/project/tourna/AGENTS.md)
-- [.codex/AGENTS.md](/Users/andreabellomia/project/tourna/.codex/AGENTS.md)
-- [.codex/README.md](/Users/andreabellomia/project/tourna/.codex/README.md)
+- [AGENTS.md](./AGENTS.md)
+- [.codex/AGENTS.md](./.codex/AGENTS.md)
+- [.codex/README.md](./.codex/README.md)
+- [.codex/skills/tourna-engineering/SKILL.md](./.codex/skills/tourna-engineering/SKILL.md)
 
 ---
 

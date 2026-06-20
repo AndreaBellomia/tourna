@@ -14,19 +14,18 @@
       "jest",
       "node"
     ],
-    "baseUrl": "./",
     "paths": {
       "~": [
-        "src"
+        "./src"
       ],
       "~/*": [
-        "src/*"
+        "./src/*"
       ],
       "@app/shared": [
-        "libs/shared/src"
+        "./libs/shared/src"
       ],
       "@app/shared/*": [
-        "libs/shared/src/*"
+        "./libs/shared/src/*"
       ]
     }
   }

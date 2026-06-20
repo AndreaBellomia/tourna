@@ -1,8 +1,8 @@
 'use client'
 
 import { Eye } from 'lucide-react'
-import { Badge } from '@repo/ui/badge'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui/card'
+import { Badge } from '@repo/ui/components/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui/components/card'
 import { useTranslations } from '~/lib/i18n/client'
 import { MarkdownContent } from './markdown-content'
 import { TeamDetailResponse } from '@repo/contracts'
@@ -24,7 +24,7 @@ export function TeamProfile({ team }: TeamProfileProps) {
         <MarkdownContent value={team.description} emptyLabel={t('detail.emptyDescription')} />
       </section>
 
-      <Card variant="muted">
+      <Card>
         <CardHeader>
           <CardTitle className="text-base">{t('detail.membershipTitle')}</CardTitle>
           <CardDescription>
@@ -34,7 +34,7 @@ export function TeamProfile({ team }: TeamProfileProps) {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
-          <Badge variant={team.visibility === 'public' ? 'success' : 'outline'}>
+          <Badge variant={team.visibility === 'public' ? 'secondary' : 'outline'}>
             {t(`visibility.${team.visibility}`)}
           </Badge>
           <Badge variant="outline">

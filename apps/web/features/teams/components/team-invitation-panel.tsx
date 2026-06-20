@@ -1,204 +1,330 @@
 'use client'
 
-import { useEffect, useState, useTransition, type FormEvent } from 'react'
-import { Check, Copy, LinkIcon, Send } from 'lucide-react'
-import { Alert } from '@repo/ui/alert'
-import { Button } from '@repo/ui/button'
-import { Card } from '@repo/ui/card'
-import { Input } from '@repo/ui/input'
-import { Label } from '@repo/ui/label'
-import { Select } from '@repo/ui/select'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Ban, LoaderCircle } from 'lucide-react'
+import { Alert } from '@repo/ui/components/alert'
+import { Badge } from '@repo/ui/components/badge'
+import { Button } from '@repo/ui/components/button'
+import { Card } from '@repo/ui/components/card'
 import type {
+  CursorPageInfo,
   TeamDetailResponse,
-  TeamInvitationInput,
-  TeamInvitationCreateResponse,
+  TeamInvitationResponse,
 } from '@repo/contracts'
-import { withLocale } from '~/lib/i18n/config'
-import { useI18n, useTranslations } from '~/lib/i18n/client'
-import { createTeamInvitation } from '~/features/teams/services/team-client'
+import { EmptyState } from '~/features/common/components/empty-state'
+import { useFormatters, useTranslations } from '~/lib/i18n/client'
+import {
+  fetchTeamInvitations,
+  revokeTeamInvitation,
+} from '~/features/teams/services/team-client'
 
-type InvitationRole = TeamInvitationInput['role']
-
-const invitationRoles: InvitationRole[] = ['player', 'substitute', 'coach', 'manager', 'captain']
+const PAGE_SIZE = 20
 
 type TeamInvitationPanelProps = {
+  refreshToken?: number
   team: Pick<TeamDetailResponse, 'id'>
 }
 
-export function TeamInvitationPanel({ team }: TeamInvitationPanelProps) {
-  const { locale } = useI18n()
+type DisplayInvitationStatus = TeamInvitationResponse['status'] | 'expired'
+
+export function TeamInvitationPanel({
+  refreshToken = 0,
+  team,
+}: TeamInvitationPanelProps) {
+  const format = useFormatters()
   const t = useTranslations('teams')
-  const [origin, setOrigin] = useState('')
-  const [role, setRole] = useState<InvitationRole>('player')
-  const [maxUses, setMaxUses] = useState(1)
-  const [expiresAt, setExpiresAt] = useState(defaultExpiryInputValue)
-  const [invitation, setInvitation] = useState<TeamInvitationCreateResponse | null>(null)
+  const [invitations, setInvitations] = useState<TeamInvitationResponse[]>([])
+  const [pageInfo, setPageInfo] = useState<CursorPageInfo | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
-  const [copied, setCopied] = useState<'code' | 'link' | null>(null)
-  const [isPending, startTransition] = useTransition()
+  const [error, setError] = useState<string | null>(null)
+  const [isLoadingInitial, setIsLoadingInitial] = useState(true)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [revokingId, setRevokingId] = useState<string | null>(null)
+  const sentinelRef = useRef<HTMLDivElement | null>(null)
+  const requestVersionRef = useRef(0)
 
   useEffect(() => {
-    setOrigin(window.location.origin)
-  }, [])
+    let active = true
+    const requestVersion = requestVersionRef.current + 1
 
-  const invitationLink =
-    invitation && origin
-      ? `${origin}${withLocale(locale, `/teams/invitations/${invitation.code}`)}`
-      : ''
+    requestVersionRef.current = requestVersion
+    setIsLoadingInitial(true)
+    setError(null)
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setNotice(null)
-    setCopied(null)
+    void fetchTeamInvitations(team.id, {
+      direction: 'next',
+      limit: PAGE_SIZE,
+    })
+      .then((page) => {
+        if (!active || requestVersion !== requestVersionRef.current) return
 
-    const expiresAtDate = new Date(expiresAt)
+        setInvitations(page.data)
+        setPageInfo(page.pageInfo)
+      })
+      .catch((loadError: unknown) => {
+        if (!active || requestVersion !== requestVersionRef.current) return
 
-    if (Number.isNaN(expiresAtDate.getTime())) {
-      setNotice(t('invites.invalid'))
+        setError(loadError instanceof Error ? loadError.message : t('invites.loadFailed'))
+      })
+      .finally(() => {
+        if (!active || requestVersion !== requestVersionRef.current) return
+
+        setIsLoadingInitial(false)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [refreshToken, t, team.id])
+
+  const loadNextPage = useCallback(async () => {
+    if (!pageInfo?.hasNextPage || !pageInfo.nextCursor || isLoadingInitial || isLoadingMore) {
       return
     }
 
-    startTransition(() => {
-      void createTeamInvitation(team.id, {
-        role,
-        maxUses,
-        expiresAt: expiresAtDate.toISOString(),
+    setIsLoadingMore(true)
+
+    try {
+      const page = await fetchTeamInvitations(team.id, {
+        cursor: pageInfo.nextCursor,
+        direction: 'next',
+        limit: PAGE_SIZE,
       })
-        .then((createdInvitation) => {
-          setInvitation(createdInvitation)
-          setNotice(t('invites.created'))
-        })
-        .catch((error: unknown) => {
-          setNotice(error instanceof Error ? error.message : t('invites.failed'))
-        })
-    })
-  }
 
-  function copyValue(value: string, target: 'code' | 'link') {
-    if (!value) return
+      setInvitations((current) => mergeInvitations(current, page.data))
+      setPageInfo(page.pageInfo)
+    } catch (loadError: unknown) {
+      setError(loadError instanceof Error ? loadError.message : t('invites.loadFailed'))
+    } finally {
+      setIsLoadingMore(false)
+    }
+  }, [isLoadingInitial, isLoadingMore, pageInfo, t, team.id])
 
-    void navigator.clipboard.writeText(value).then(() => {
-      setCopied(target)
-      setNotice(t('invites.copied'))
-    })
+  useEffect(() => {
+    const sentinel = sentinelRef.current
+
+    if (!sentinel || !pageInfo?.hasNextPage || isLoadingInitial || isLoadingMore) {
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          void loadNextPage()
+        }
+      },
+      { rootMargin: '240px' },
+    )
+
+    observer.observe(sentinel)
+
+    return () => observer.disconnect()
+  }, [isLoadingInitial, isLoadingMore, loadNextPage, pageInfo?.hasNextPage])
+
+  async function handleRevoke(invitationId: string) {
+    setNotice(null)
+    setError(null)
+    setRevokingId(invitationId)
+
+    try {
+      await revokeTeamInvitation(team.id, invitationId)
+      setInvitations((current) =>
+        current.map((invitation) =>
+          invitation.id === invitationId ? { ...invitation, status: 'revoked' } : invitation,
+        ),
+      )
+      setNotice(t('invites.revoked'))
+    } catch (revokeError: unknown) {
+      setError(revokeError instanceof Error ? revokeError.message : t('invites.revokeFailed'))
+    } finally {
+      setRevokingId(null)
+    }
   }
 
   return (
-    <Card className="p-4" variant="panel">
-      <form className="space-y-4" onSubmit={onSubmit}>
-        <div className="flex items-center justify-between gap-3">
+    <section className="space-y-4">
+      <Card className="space-y-4 p-4 sm:p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h3 className="text-base font-semibold">{t('invites.title')}</h3>
+            <h2 className="text-base font-semibold">{t('invites.listTitle')}</h2>
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              {t('invites.description')}
+              {t('invites.listDescription')}
             </p>
           </div>
-          <Button aria-label={t('invites.submit')} loading={isPending} size="icon" type="submit">
-            <Send aria-hidden="true" className="size-4" />
-          </Button>
+          <Badge variant="outline">{invitations.length}</Badge>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="team-invite-role">{t('invites.role')}</Label>
-            <Select
-              id="team-invite-role"
-              options={invitationRoles.map((option) => ({
-                value: option,
-                label: t(`invites.roles.${option}`),
-              }))}
-              value={role}
-              onValueChange={(value) => setRole(value as InvitationRole)}
-            />
-          </div>
+        {notice ? <Alert>{notice}</Alert> : null}
+        {error ? <Alert variant="destructive">{error}</Alert> : null}
 
-          <div className="space-y-2">
-            <Label htmlFor="team-invite-max-uses">{t('invites.maxUses')}</Label>
-            <Input
-              id="team-invite-max-uses"
-              max={100}
-              min={1}
-              type="number"
-              value={maxUses}
-              onChange={(event) => setMaxUses(Number(event.target.value))}
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="team-invite-expires-at">{t('invites.expiresAt')}</Label>
-          <Input
-            id="team-invite-expires-at"
-            min={formatDateTimeLocal(new Date())}
-            type="datetime-local"
-            value={expiresAt}
-            onChange={(event) => setExpiresAt(event.target.value)}
+        {isLoadingInitial && invitations.length === 0 ? (
+          <LoadingState label={t('invites.loading')} />
+        ) : invitations.length === 0 ? (
+          <EmptyState
+            description={t('invites.emptyDescription')}
+            title={t('invites.emptyTitle')}
           />
-        </div>
+        ) : (
+          <div className="space-y-3">
+            {invitations.map((invitation) => {
+              const displayStatus = getDisplayStatus(invitation)
+              const isRevoking = revokingId === invitation.id
+              const canRevoke = displayStatus === 'active'
 
-        {invitation ? (
-          <div className="space-y-3 rounded-md border border-border bg-muted/30 p-3">
-            <CopyField
-              copied={copied === 'code'}
-              label={t('invites.code')}
-              value={invitation.code}
-              onCopy={() => copyValue(invitation.code, 'code')}
-            />
-            <CopyField
-              copied={copied === 'link'}
-              icon="link"
-              label={t('invites.link')}
-              value={invitationLink}
-              onCopy={() => copyValue(invitationLink, 'link')}
-            />
+              return (
+                <Card key={invitation.id} className="space-y-4 p-4">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="space-y-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge>{t(`invites.roles.${invitation.role}`)}</Badge>
+                        <Badge variant={statusBadgeVariant(displayStatus)}>
+                          {statusLabel(displayStatus, t)}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {formatUsage(invitation, {
+                          limited: t('invites.useLimited', {
+                            max: invitation.maxUses ?? undefined,
+                            used: invitation.usedCount,
+                          }),
+                          unlimited: t('invites.useUnlimited', { used: invitation.usedCount }),
+                        })}
+                      </p>
+                    </div>
+
+                    <Button
+                      disabled={!canRevoke || isRevoking}
+                      size="sm"
+                      type="button"
+                      variant="outline"
+                      onClick={() => void handleRevoke(invitation.id)}
+                    >
+                      {isRevoking ? (
+                        <>
+                          <LoaderCircle aria-hidden="true" className="size-4 animate-spin" />
+                          {t('invites.revoking')}
+                        </>
+                      ) : (
+                        <>
+                          <Ban aria-hidden="true" className="size-4" />
+                          {t('invites.revoke')}
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  <div className="grid gap-3 text-sm sm:grid-cols-3">
+                    <InvitationMeta
+                      label={t('invites.createdAt')}
+                      value={format.dateTime(invitation.createdAt)}
+                    />
+                    <InvitationMeta
+                      label={t('invites.expiresAt')}
+                      value={
+                        invitation.expiresAt
+                          ? format.dateTime(invitation.expiresAt)
+                          : t('invites.neverExpires')
+                      }
+                    />
+                    <InvitationMeta
+                      label={t('invites.status')}
+                      value={statusLabel(displayStatus, t)}
+                    />
+                  </div>
+                </Card>
+              )
+            })}
+
+            <div ref={sentinelRef} className="h-1" />
+
+            {isLoadingMore ? <LoadingState label={t('invites.loading')} compact /> : null}
           </div>
-        ) : null}
-
-        {notice ? <Alert variant="info">{notice}</Alert> : null}
-      </form>
-    </Card>
+        )}
+      </Card>
+    </section>
   )
 }
 
-function CopyField({
-  copied,
-  icon = 'copy',
-  label,
-  value,
-  onCopy,
-}: {
-  copied: boolean
-  icon?: 'copy' | 'link'
-  label: string
-  value: string
-  onCopy: () => void
-}) {
-  const Icon = copied ? Check : icon === 'link' ? LinkIcon : Copy
-
+function InvitationMeta({ label, value }: { label: string; value: string }) {
   return (
-    <div className="space-y-2">
-      <Label>{label}</Label>
-      <div className="flex gap-2">
-        <Input className="font-mono text-xs" readOnly value={value} />
-        <Button aria-label={label} size="icon" type="button" variant="outline" onClick={onCopy}>
-          <Icon aria-hidden="true" className="size-4" />
-        </Button>
-      </div>
+    <div className="rounded-md border border-border/60 bg-muted/20 px-3 py-2">
+      <p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+        {label}
+      </p>
+      <p className="mt-1 text-sm text-foreground">{value}</p>
     </div>
   )
 }
 
-function defaultExpiryInputValue() {
-  const expiresAt = new Date()
-  expiresAt.setDate(expiresAt.getDate() + 7)
-
-  return formatDateTimeLocal(expiresAt)
+function LoadingState({ compact = false, label }: { compact?: boolean; label: string }) {
+  return (
+    <div
+      className={
+        compact
+          ? 'flex items-center justify-center gap-2 py-3 text-sm text-muted-foreground'
+          : 'flex min-h-40 items-center justify-center gap-3 rounded-md border border-dashed border-border bg-muted/20 px-4 py-10 text-sm text-muted-foreground'
+      }
+    >
+      <LoaderCircle aria-hidden="true" className="size-4 animate-spin" />
+      {label}
+    </div>
+  )
 }
 
-function formatDateTimeLocal(date: Date) {
-  const pad = (value: number) => value.toString().padStart(2, '0')
+function mergeInvitations(
+  current: TeamInvitationResponse[],
+  nextPage: TeamInvitationResponse[],
+): TeamInvitationResponse[] {
+  const byId = new Map(current.map((invitation) => [invitation.id, invitation]))
 
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
-    date.getHours(),
-  )}:${pad(date.getMinutes())}`
+  for (const invitation of nextPage) {
+    byId.set(invitation.id, invitation)
+  }
+
+  return Array.from(byId.values()).sort(
+    (left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime(),
+  )
+}
+
+function formatUsage(
+  invitation: TeamInvitationResponse,
+  labels: {
+    limited: string
+    unlimited: string
+  },
+) {
+  if (invitation.maxUses === null) {
+    return labels.unlimited
+  }
+
+  return labels.limited
+}
+
+function getDisplayStatus(invitation: TeamInvitationResponse): DisplayInvitationStatus {
+  if (invitation.status === 'revoked') {
+    return 'revoked'
+  }
+
+  if (invitation.expiresAt && new Date(invitation.expiresAt).getTime() <= Date.now()) {
+    return 'expired'
+  }
+
+  return 'active'
+}
+
+function statusBadgeVariant(status: DisplayInvitationStatus) {
+  if (status === 'revoked') return 'outline'
+  if (status === 'expired') return 'destructive'
+
+  return 'secondary'
+}
+
+function statusLabel(
+  status: DisplayInvitationStatus,
+  t: (key: 'invites.statusRevoked' | 'invites.statusExpired' | 'invites.statusActive') => string,
+) {
+  if (status === 'revoked') return t('invites.statusRevoked')
+  if (status === 'expired') return t('invites.statusExpired')
+
+  return t('invites.statusActive')
 }

@@ -14,15 +14,20 @@ import {
   Users,
   X,
 } from 'lucide-react'
-import { Alert } from '@repo/ui/alert'
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/avatar'
-import { Badge } from '@repo/ui/badge'
-import { Button, buttonVariants } from '@repo/ui/button'
-import { cardVariants } from '@repo/ui/card'
-import { Input } from '@repo/ui/input'
-import { Label } from '@repo/ui/label'
-import { Select } from '@repo/ui/select'
-import { cn } from '@repo/ui/utils'
+import { Alert } from '@repo/ui/components/alert'
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/components/avatar'
+import { Badge } from '@repo/ui/components/badge'
+import { Button, buttonVariants } from '@repo/ui/components/button'
+import { Input } from '@repo/ui/components/input'
+import { Label } from '@repo/ui/components/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@repo/ui/components/select'
+import { cn } from '@repo/ui/lib/utils'
 import { type TeamListResponse, type TeamSummaryResponse } from '@repo/contracts'
 import { EmptyState } from '~/features/common/components/empty-state'
 import { ListToolbar } from '~/features/common/components/list-toolbar'
@@ -164,7 +169,7 @@ export function TeamExplorer({ initialPage, initialError }: TeamExplorerProps) {
           onReset={resetFilters}
           activeFilters={
             <>
-              {searchValue.trim() ? <Badge variant="accent">{searchValue.trim()}</Badge> : null}
+              {searchValue.trim() ? <Badge variant="secondary">{searchValue.trim()}</Badge> : null}
               {visibilityValue !== 'all' ? (
                 <Badge variant="outline">{t(`visibility.${visibilityValue}`)}</Badge>
               ) : null}
@@ -214,24 +219,27 @@ export function TeamExplorer({ initialPage, initialError }: TeamExplorerProps) {
                 className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
               />
               <Select
-                id="team-visibility"
-                className="h-11 pl-9"
-                options={[
-                  { value: 'all', label: t('list.allVisibilities') },
-                  ...visibilityOptions.map((visibility) => ({
-                    value: visibility,
-                    label: t(`visibility.${visibility}`),
-                  })),
-                ]}
                 value={visibilityValue}
                 onValueChange={(value) =>
                   searchForm.setValue('visibility', value as SearchValues['visibility'])
                 }
-              />
+              >
+                <SelectTrigger id="team-visibility" className="h-11 w-full pl-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('list.allVisibilities')}</SelectItem>
+                  {visibilityOptions.map((visibility) => (
+                    <SelectItem key={visibility} value={visibility}>
+                      {t(`visibility.${visibility}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
-          <Button className="h-11 lg:w-44" loading={isPending} type="submit">
+          <Button className="h-11 lg:w-44" disabled={isPending} type="submit">
             <Search aria-hidden="true" className="size-4" />
             {t('list.search')}
           </Button>
@@ -267,7 +275,7 @@ export function TeamExplorer({ initialPage, initialError }: TeamExplorerProps) {
       <div ref={sentinelRef} className="h-1" />
       {pageInfo?.hasNextPage ? (
         <div className="flex justify-center">
-          <Button loading={isPending} type="button" variant="outline" onClick={loadNextPage}>
+          <Button disabled={isPending} type="button" variant="outline" onClick={loadNextPage}>
             {t('list.loadMore')}
           </Button>
         </div>
@@ -288,7 +296,9 @@ function TeamTile({ team }: { team: TeamSummaryResponse }) {
 
   return (
     <Link
-      className={cn(cardVariants({ variant: 'interactive' }), 'group block p-4')}
+      className={cn(
+        'group block rounded-xl border bg-card p-4 text-card-foreground shadow-sm transition-colors hover:bg-muted/40',
+      )}
       href={withLocale(locale, `/teams/${team.slug}`)}
     >
       <div className="flex items-start gap-3">
@@ -320,7 +330,7 @@ function TeamTile({ team }: { team: TeamSummaryResponse }) {
       </div>
 
       <div className="mt-4 flex items-center justify-between gap-3">
-        <Badge variant={team.visibility === 'public' ? 'success' : 'outline'}>
+        <Badge variant={team.visibility === 'public' ? 'secondary' : 'outline'}>
           {t(`visibility.${team.visibility}`)}
         </Badge>
         <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">

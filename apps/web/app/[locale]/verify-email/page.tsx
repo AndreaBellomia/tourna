@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { CheckCircle2, CircleAlert } from 'lucide-react'
-import { buttonVariants } from '@repo/ui/button'
+import { buttonVariants } from '@repo/ui/components/button'
 import { verifyEmail } from '~/lib/api/auth/auth.request'
 import { withLocale } from '~/lib/i18n/config'
 import { getMetadataTranslator, getPageI18n } from '~/lib/i18n/web-i18n'

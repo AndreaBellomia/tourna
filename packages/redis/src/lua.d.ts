@@ -1,6 +1,6 @@
 /**
  * Type declaration for raw Lua script imports.
- * Enabled by `--loader:.lua=text` in the tsup build command.
+ * Enabled by the `.lua` text loader in the tsdown config.
  * At runtime the module resolves to the raw Lua source as a string.
  */
 declare module '*.lua' {

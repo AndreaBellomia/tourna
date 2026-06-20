@@ -1,15 +1,16 @@
 'use client'
 
 import Link from 'next/link'
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/avatar'
-import { Button } from '@repo/ui/button'
-import { Card } from '@repo/ui/card'
-import { Separator } from '@repo/ui/separator'
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/components/avatar'
+import { Button } from '@repo/ui/components/button'
+import { Card } from '@repo/ui/components/card'
+import { Separator } from '@repo/ui/components/separator'
 import { MailPlus, Users } from 'lucide-react'
-import { Badge } from '@repo/ui/badge'
+import { Badge } from '@repo/ui/components/badge'
 import { withLocale } from '~/lib/i18n/config'
 import { useI18n, useTranslations } from '~/lib/i18n/client'
 import { useTeam } from '../hooks/team-provider'
+import { TeamInvitationModalForm } from './team-invitation-modal-form'
 
 export function TeamMembers() {
   const { locale } = useI18n()
@@ -30,12 +31,7 @@ export function TeamMembers() {
             {t('detail.membersDescription')}
           </p>
         </div>
-        {canManage ? (
-          <Button type="button" variant="outline" onClick={() => {}}>
-            <MailPlus aria-hidden="true" className="size-4" />
-            {t('detail.inviteButton')}
-          </Button>
-        ) : null}
+        {canManage ? <TeamInvitationModalForm team={team} /> : null}
       </div>
       <Separator />
 
@@ -64,7 +60,7 @@ export function TeamMembers() {
             </Link>
           ))
         ) : (
-          <Card className="border-dashed p-5 text-sm text-muted-foreground" variant="muted">
+          <Card className="border-dashed p-5 text-sm text-muted-foreground">
             {t('detail.emptyMembers')}
           </Card>
         )}

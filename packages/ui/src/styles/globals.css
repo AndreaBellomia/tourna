@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@source "../../../../apps/web";
+@source "../components";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  --background: #090b10;
+  --foreground: #f4f7fb;
+  --card: #12151c;
+  --card-foreground: #f4f7fb;
+  --popover: #151922;
+  --popover-foreground: #f4f7fb;
+  --primary: #d9ff3f;
+  --primary-foreground: #111607;
+  --secondary: #232837;
+  --secondary-foreground: #f4f7fb;
+  --muted: #1a1f2a;
+  --muted-foreground: #9ca8ba;
+  --accent: #6ee7c8;
+  --accent-foreground: #061513;
+  --destructive: #ff657f;
+  --destructive-foreground: #fff7f9;
+  --success: #51d88a;
+  --success-foreground: #05150d;
+  --warning: #f6c85f;
+  --warning-foreground: #1a1305;
+  --info: #7aa7ff;
+  --info-foreground: #071225;
+  --border: #29303c;
+  --input: #222938;
+  --ring: #d9ff3f;
+  --radius: 0.5rem;
+}
+
+@layer base {
+  html,
+  body {
+    min-height: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  body {
+    margin: 0;
+    background:
+      linear-gradient(180deg, #11151d 0%, var(--background) 24rem),
+      var(--background);
+    color: var(--foreground);
+    font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+    letter-spacing: 0;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--accent) 32%, transparent);
+    color: var(--foreground);
+  }
+
+  * {
+    box-sizing: border-box;
+    border-color: var(--border);
+    outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+}

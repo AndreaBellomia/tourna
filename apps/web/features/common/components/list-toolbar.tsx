@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
-import { Button } from '@repo/ui/button'
-import { Card } from '@repo/ui/card'
+import { Button } from '@repo/ui/components/button'
+import { Card } from '@repo/ui/components/card'
 
 type ListToolbarProps = {
   activeFilters?: ReactNode
@@ -18,7 +18,7 @@ export function ListToolbar({
   resetLabel,
 }: ListToolbarProps) {
   return (
-    <Card className="space-y-3 p-3" variant="panel">
+    <Card className="space-y-3 p-3">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-end">{children}</div>
       {activeFilters || onReset ? (
         <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">

@@ -4,15 +4,14 @@
   "license": "PolyForm-Noncommercial-1.0.0",
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --filter=api --filter=web --filter=worker --concurrency=12",
-    "dev:api": "turbo run dev --filter=api",
-    "dev:web": "turbo run dev --filter=web",
-    "dev:worker": "turbo run dev --filter=worker",
-    "dev:apps": "turbo run dev:app --filter=api --filter=web --filter=worker --concurrency=12",
-    "dev:api:app": "turbo run dev:app --filter=api",
-    "dev:web:app": "turbo run dev:app --filter=web",
-    "dev:worker:app": "turbo run dev:app --filter=worker",
-    "watch:packages": "node scripts/watch-packages.mjs",
+    "dev": "turbo watch build:dev dev --filter=api... --filter=web... --filter=worker... --ui=tui",
+    "dev:api": "turbo watch build:dev dev --filter=./apps/api... --ui=tui",
+    "dev:web": "turbo watch build:dev dev --filter=web... --ui=tui",
+    "dev:worker": "turbo watch build:dev dev --filter=worker... --ui=tui",
+    "dev:apps": "turbo watch build:dev dev:app --filter=api --filter=web --filter=worker --ui=tui",
+    "dev:api:app": "turbo watch build:dev dev:app --filter=api",
+    "dev:web:app": "turbo watch build:dev dev:app --filter=web",
+    "dev:worker:app": "turbo watch build:dev dev:app --filter=worker",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "test:integration": "turbo run test:integration",
@@ -26,11 +25,13 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "@typescript/native-preview": "7.0.0-dev.20260627.2",
     "jest": "^30.0.0",
     "prettier": "^3.7.4",
     "ts-jest": "^29.2.5",
+    "tsdown": "^0.22.3",
     "turbo": "^2.9.14",
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {

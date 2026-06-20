@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import type { z } from 'zod'
 import { authCookieNames } from '~/lib/auth/cookies'
+import { setAuthCookiesInStore } from '~/lib/auth/session'
 import { ApiError } from '~/lib/api/errors/api-error'
 import { unauthorized } from '~/lib/api/responses'
 import { apiRequest } from '~/lib/api/http'
@@ -27,7 +28,7 @@ export async function authenticatedServerApiRequest<TSchema extends z.ZodType>(
   }
 
   if (!accessToken) {
-    const auth = await refresh(refreshToken)
+    const auth = await refreshAndPersistSession(refreshToken)
 
     return requestWithAccessToken(path, schema, auth.accessToken, options)
   }
@@ -39,7 +40,7 @@ export async function authenticatedServerApiRequest<TSchema extends z.ZodType>(
       throw error
     }
 
-    const auth = await refresh(refreshToken)
+    const auth = await refreshAndPersistSession(refreshToken)
 
     return requestWithAccessToken(path, schema, auth.accessToken, options)
   }
@@ -87,6 +88,13 @@ function requestWithAccessToken<TSchema extends z.ZodType>(
     },
     locale: options.locale,
   })
+}
+
+async function refreshAndPersistSession(refreshToken: string) {
+  const auth = await refresh(refreshToken)
+  await setAuthCookiesInStore(auth)
+
+  return auth
 }
 
 function shouldRefreshAfterError(error: unknown): error is ApiError {

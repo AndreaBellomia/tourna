@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { Activity, GitBranch, RadioTower, Trophy } from 'lucide-react'
-import { Badge } from '@repo/ui/badge'
+import { Badge } from '@repo/ui/components/badge'
 import { authCookieNames } from '~/lib/auth/cookies'
 import { withLocale } from '~/lib/i18n/config'
 import { getMetadataTranslator, getPageI18n } from '~/lib/i18n/web-i18n'
@@ -43,7 +43,7 @@ export default async function LoginPage({ params }: LoginPageProps) {
                 <p className="mt-1 text-sm text-muted-foreground">{messages.loginPage.product}</p>
               </div>
             </div>
-            <Badge variant="success" className="gap-1.5">
+            <Badge variant="secondary" className="gap-1.5">
               <RadioTower aria-hidden="true" className="size-3.5" />
               {messages.loginPage.liveReady}
             </Badge>

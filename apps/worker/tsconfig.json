@@ -10,10 +10,9 @@
     "outDir": "./dist",
     "incremental": true,
     "types": ["jest", "node"],
-    "baseUrl": "./",
     "paths": {
-      "~": ["src"],
-      "~/*": ["src/*"]
+      "~": ["./src"],
+      "~/*": ["./src/*"]
     }
   }
 }

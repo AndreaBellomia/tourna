@@ -2,13 +2,13 @@
 
 import type { ComponentProps, ReactNode, RefObject } from 'react'
 import { Camera, Eye, FilePenLine, Trash2 } from 'lucide-react'
-import { Alert } from '@repo/ui/alert'
-import { Button } from '@repo/ui/button'
-import { Card } from '@repo/ui/card'
-import { Label } from '@repo/ui/label'
-import { Separator } from '@repo/ui/separator'
-import { Textarea } from '@repo/ui/textarea'
-import { cn } from '@repo/ui/utils'
+import { Alert } from '@repo/ui/components/alert'
+import { Button } from '@repo/ui/components/button'
+import { Card } from '@repo/ui/components/card'
+import { Label } from '@repo/ui/components/label'
+import { Separator } from '@repo/ui/components/separator'
+import { Textarea } from '@repo/ui/components/textarea'
+import { cn } from '@repo/ui/lib/utils'
 import { MarkdownContent } from '~/features/teams/components/markdown-content'
 
 export type EditorViewMode = 'edit' | 'preview'
@@ -31,7 +31,7 @@ export function EditorFormLayout({
       )}
       {...props}
     >
-      <Card className="min-w-0 p-5" variant="panel">
+      <Card className="min-w-0 p-5">
         {children}
       </Card>
       <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">{sidebar}</aside>
@@ -138,7 +138,7 @@ export function FormNotice({ message }: { message?: string | null }) {
   if (!message) return null
 
   return (
-    <Alert className="mt-4" variant="info">
+    <Alert className="mt-4">
       {message}
     </Alert>
   )
@@ -172,7 +172,7 @@ export function ImageUploadControl({
   removeLabel,
 }: ImageUploadControlProps) {
   return (
-    <Card className="p-5" variant="panel">
+    <Card className="p-5">
       <div className="flex items-center gap-4">
         <div className="relative flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-muted text-2xl font-semibold">
           {imageUrl ? (
@@ -184,7 +184,7 @@ export function ImageUploadControl({
           <Button
             aria-label={actionLabel}
             className="absolute bottom-2 right-2 size-9 border border-border bg-background/95"
-            loading={isUploading}
+            disabled={isUploading}
             size="icon"
             type="button"
             variant="outline"

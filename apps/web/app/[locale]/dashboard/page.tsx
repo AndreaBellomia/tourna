@@ -10,9 +10,9 @@ import {
   Trophy,
   UserCircle,
 } from 'lucide-react'
-import { Badge } from '@repo/ui/badge'
-import { buttonVariants } from '@repo/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/card'
+import { Badge } from '@repo/ui/components/badge'
+import { buttonVariants } from '@repo/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/components/card'
 import { AppShell } from '~/features/common/components/app-shell'
 import { EmptyState } from '~/features/common/components/empty-state'
 import { PageHeader } from '~/features/common/components/page-header'
@@ -73,7 +73,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
             const Icon = stat.icon
 
             return (
-              <Card key={stat.label} variant="panel">
+              <Card key={stat.label}>
                 <CardHeader className="flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
                     {stat.label}
@@ -108,7 +108,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               icon={<ShieldCheck aria-hidden="true" className="size-4" />}
               title={messages.common.nav.settings}
             />
-            <Card className="p-5" variant="muted">
+            <Card className="p-5">
               <div className="flex items-center gap-2">
                 <RadioTower aria-hidden="true" className="size-4 text-muted-foreground" />
                 <h2 className="font-semibold">{messages.common.nav.tournaments}</h2>

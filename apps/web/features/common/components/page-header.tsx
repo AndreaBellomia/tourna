@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react'
-import { Badge, type BadgeProps } from '@repo/ui/badge'
+import { Badge } from '@repo/ui/components/badge'
 
 type PageHeaderProps = {
   actions?: ReactNode
   badgeIcon?: ReactNode
-  badgeVariant?: BadgeProps['variant']
+  badgeVariant?: 'default' | 'secondary' | 'destructive' | 'outline' | 'ghost' | 'link'
   description?: string
   eyebrow?: string
   meta?: ReactNode

@@ -3,10 +3,10 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { ArrowLeft, CalendarDays, Eye } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/avatar'
-import { Badge } from '@repo/ui/badge'
-import { buttonVariants } from '@repo/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/card'
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/components/avatar'
+import { Badge } from '@repo/ui/components/badge'
+import { buttonVariants } from '@repo/ui/components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/components/card'
 import type { UserDetailResponse } from '@repo/contracts'
 import { withLocale } from '~/lib/i18n/config'
 import { useFormatters, useI18n, useTranslations } from '~/lib/i18n/client'
@@ -86,7 +86,7 @@ export function UserProfile({ initialUser }: UserProfileProps) {
           </div>
 
           <aside>
-            <Card variant="muted">
+            <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <CalendarDays aria-hidden="true" className="size-4" />

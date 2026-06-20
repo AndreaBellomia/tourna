@@ -4,14 +4,13 @@ import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ArrowRight, Search, SlidersHorizontal, UserRound, X } from 'lucide-react'
-import { Alert } from '@repo/ui/alert'
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/avatar'
-import { Badge } from '@repo/ui/badge'
-import { cardVariants } from '@repo/ui/card'
-import { Button } from '@repo/ui/button'
-import { Input } from '@repo/ui/input'
-import { Label } from '@repo/ui/label'
-import { cn } from '@repo/ui/utils'
+import { Alert } from '@repo/ui/components/alert'
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/components/avatar'
+import { Badge } from '@repo/ui/components/badge'
+import { Button } from '@repo/ui/components/button'
+import { Input } from '@repo/ui/components/input'
+import { Label } from '@repo/ui/components/label'
+import { cn } from '@repo/ui/lib/utils'
 import type { UserListResponse, UserSummaryResponse } from '@repo/contracts'
 import { EmptyState } from '~/features/common/components/empty-state'
 import { ListToolbar } from '~/features/common/components/list-toolbar'
@@ -156,7 +155,7 @@ export function UserExplorer({ initialPage, initialError }: UserExplorerProps) {
           resetLabel={t('list.reset')}
           onReset={resetFilters}
           activeFilters={
-            searchValue.trim() ? <Badge variant="accent">{searchValue.trim()}</Badge> : null
+            searchValue.trim() ? <Badge variant="secondary">{searchValue.trim()}</Badge> : null
           }
         >
           <div className="min-w-0 flex-1 space-y-2">
@@ -193,7 +192,7 @@ export function UserExplorer({ initialPage, initialError }: UserExplorerProps) {
             </div>
           </div>
 
-          <Button className="h-11 md:w-44" loading={isLoading} type="submit">
+          <Button className="h-11 md:w-44" disabled={isLoading} type="submit">
             <Search aria-hidden="true" className="size-4" />
             {t('list.search')}
           </Button>
@@ -220,7 +219,7 @@ export function UserExplorer({ initialPage, initialError }: UserExplorerProps) {
       <div ref={sentinelRef} className="h-1" />
       {pageInfo?.hasNextPage ? (
         <div className="flex justify-center">
-          <Button loading={isLoading} type="button" variant="outline" onClick={loadNextPage}>
+          <Button disabled={isLoading} type="button" variant="outline" onClick={loadNextPage}>
             {t('list.loadMore')}
           </Button>
         </div>
@@ -241,7 +240,9 @@ function UserTile({ user }: { user: UserSummaryResponse }) {
 
   return (
     <Link
-      className={cn(cardVariants({ variant: 'interactive' }), 'group block p-4')}
+      className={cn(
+        'group block rounded-xl border bg-card p-4 text-card-foreground shadow-sm transition-colors hover:bg-muted/40',
+      )}
       href={withLocale(locale, `/users/${user.nickname}`)}
     >
       <div className="flex items-start gap-3">

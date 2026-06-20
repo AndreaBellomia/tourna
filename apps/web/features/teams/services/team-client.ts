@@ -1,15 +1,19 @@
 'use client'
 
+import { z } from 'zod'
 import {
+  CursorPaginationQuerySchema,
   CreatePresignedUploadSchema,
   CreateTeamRequestSchema,
   FinalizeUploadSchema,
   StorageObjectResponseSchema,
   TeamDetailResponseSchema,
   TeamInvitationAcceptResponseSchema,
+  TeamInvitationListResponseSchema,
   TeamInvitationRequestSchema,
   TeamInvitationCreateResponseSchema,
   TeamListResponseSchema,
+  type CursorPaginationQuery,
   UpdateTeamRequestSchema,
   type CreateTeamInput,
   type TeamDetailResponse,
@@ -21,6 +25,7 @@ import { PresignedUploadResponseSchema } from '@repo/contracts/storage'
 import { clientApiRequest } from '~/features/common/services/client-api'
 
 export type ClientTeamListQuery = Partial<TeamListQuery>
+export type ClientCursorPaginationQuery = Partial<CursorPaginationQuery>
 
 export function fetchTeams(query: ClientTeamListQuery = {}) {
   return clientApiRequest({
@@ -72,6 +77,24 @@ export function createTeamInvitation(teamId: string, values: TeamInvitationInput
     method: 'POST',
     body: payload,
     fallbackErrorMessage: 'Unable to create invitation',
+  })
+}
+
+export function fetchTeamInvitations(teamId: string, query: ClientCursorPaginationQuery = {}) {
+  return clientApiRequest({
+    path: `/api/teams/${teamId}/invitations`,
+    schema: TeamInvitationListResponseSchema,
+    query: CursorPaginationQuerySchema.partial().parse(query),
+    fallbackErrorMessage: 'Unable to load invitations',
+  })
+}
+
+export function revokeTeamInvitation(teamId: string, invitationId: string) {
+  return clientApiRequest({
+    path: `/api/teams/${teamId}/invitations/${invitationId}/revoke`,
+    schema: z.null(),
+    method: 'POST',
+    fallbackErrorMessage: 'Unable to revoke invitation',
   })
 }
 

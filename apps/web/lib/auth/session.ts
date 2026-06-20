@@ -55,6 +55,23 @@ export function setAuthCookies(response: NextResponse, auth: AuthResponse): void
   })
 }
 
+export async function setAuthCookiesInStore(auth: AuthResponse): Promise<void> {
+  const cookieStore = await cookies()
+
+  cookieStore.set(authCookieNames.accessToken, auth.accessToken, {
+    ...authCookieOptions,
+    maxAge: accessTokenMaxAge,
+  })
+  cookieStore.set(authCookieNames.refreshToken, auth.refreshToken, {
+    ...authCookieOptions,
+    maxAge: refreshTokenMaxAge,
+  })
+  cookieStore.set(authCookieNames.sessionId, auth.sessionId, {
+    ...authCookieOptions,
+    maxAge: refreshTokenMaxAge,
+  })
+}
+
 export function clearAuthCookies(response: NextResponse): void {
   response.cookies.set(authCookieNames.accessToken, '', {
     ...authCookieOptions,

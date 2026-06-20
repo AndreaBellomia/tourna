@@ -1,6 +1,6 @@
 'use client'
 
-import { buttonVariants } from '@repo/ui/button'
+import { buttonVariants } from '@repo/ui/components/button'
 import { Pencil, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 import { SettingsSection } from '~/features/common/components/settings-section'

@@ -32,7 +32,7 @@ export const nestJsConfig = (dirname) =>
               'eslint.config.cjs',
               'postcss.config.js',
               'postcss.config.mjs',
-              'tsup.config.ts',
+              'tsdown.config.mts',
             ],
           },
           tsconfigRootDir: dirname,

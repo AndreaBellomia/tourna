@@ -4,11 +4,17 @@ import { useMemo, useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { Save } from 'lucide-react'
-import { Button } from '@repo/ui/button'
-import { Card } from '@repo/ui/card'
-import { Input } from '@repo/ui/input'
-import { Label } from '@repo/ui/label'
-import { Select } from '@repo/ui/select'
+import { Button } from '@repo/ui/components/button'
+import { Card } from '@repo/ui/components/card'
+import { Input } from '@repo/ui/components/input'
+import { Label } from '@repo/ui/components/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@repo/ui/components/select'
 import {
   CreateTeamRequestSchema,
   UpdateTeamRequestSchema,
@@ -143,16 +149,11 @@ export function TeamForm({ mode, team }: TeamFormProps) {
             />
           ) : null}
 
-          <Card className="p-5" variant="panel">
+          <Card className="p-5">
             <div className="space-y-2">
               <Label htmlFor="create-team-visibility">{t('form.visibility')}</Label>
               <Select
-                id="create-team-visibility"
                 disabled={!canSubmit}
-                options={visibilityOptions.map((option) => ({
-                  value: option,
-                  label: t(`visibility.${option}`),
-                }))}
                 value={visibility}
                 onValueChange={(value) =>
                   form.setValue('visibility', value as TeamFormValues['visibility'], {
@@ -160,15 +161,25 @@ export function TeamForm({ mode, team }: TeamFormProps) {
                     shouldValidate: true,
                   })
                 }
-              />
+              >
+                <SelectTrigger id="create-team-visibility" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {visibilityOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {t(`visibility.${option}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <FormNotice message={submitState.notice} />
 
             <Button
               className="mt-5 w-full"
-              disabled={!canSubmit}
-              loading={submitState.isPending}
+              disabled={!canSubmit || submitState.isPending}
               size="lg"
             >
               <Save aria-hidden="true" className="size-4" />

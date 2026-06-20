@@ -23,12 +23,16 @@ describe('TeamController', () => {
   }
   const teamInvitationServiceMock = {
     createReusableTeamInvitation: jest.fn(),
+    getInvitationsForTeam: jest.fn(),
+    revokeTeamInvitation: jest.fn(),
     acceptTeamInvitation: jest.fn(),
   }
 
   beforeEach(async () => {
     teamServiceMock.getTeams.mockReset()
     teamInvitationServiceMock.createReusableTeamInvitation.mockReset()
+    teamInvitationServiceMock.getInvitationsForTeam.mockReset()
+    teamInvitationServiceMock.revokeTeamInvitation.mockReset()
     teamInvitationServiceMock.acceptTeamInvitation.mockReset()
 
     const module: TestingModule = await Test.createTestingModule({
@@ -117,5 +121,42 @@ describe('TeamController', () => {
       'TNA-ABCD-2345',
       'user-1',
     )
+  })
+
+  it('returns paginated invitations for a team', async () => {
+    const response = {
+      data: [],
+      pageInfo: {
+        hasNextPage: false,
+        hasPreviousPage: false,
+        nextCursor: null,
+        previousCursor: null,
+      },
+    }
+
+    teamInvitationServiceMock.getInvitationsForTeam.mockResolvedValue(response)
+
+    await expect(
+      controller.getInvitations('team-1', {
+        limit: 20,
+        direction: 'next',
+      }),
+    ).resolves.toBe(response)
+    expect(teamInvitationServiceMock.getInvitationsForTeam).toHaveBeenCalledWith(
+      {
+        limit: 20,
+        direction: 'next',
+      },
+      'team-1',
+    )
+  })
+
+  it('revokes a team invitation through the invitation service', async () => {
+    await expect(controller.revokeInvitation('team-1', 'invitation-1')).resolves.toBeUndefined()
+
+    expect(teamInvitationServiceMock.revokeTeamInvitation).toHaveBeenCalledWith({
+      invitationId: 'invitation-1',
+      teamId: 'team-1',
+    })
   })
 })

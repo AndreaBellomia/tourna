@@ -36,52 +36,56 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
+
+    "build:dev": {
+      "dependsOn": ["^build:dev"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**"],
+      "cache": false
+    },
+
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "interruptible": true,
+      "dependsOn": ["^build:dev"]
+    },
+
     "lint": {
       "dependsOn": ["^lint"]
     },
+
     "format": {
       "dependsOn": ["^format"]
     },
+
     "check-types": {
       "dependsOn": ["^check-types"]
     },
+
     "test": {
       "dependsOn": ["^test"],
       "outputs": []
     },
+
     "test:integration": {
       "outputs": []
     },
+
     "test:all": {
       "outputs": []
     },
-    "dev": {
-      "cache": false,
-      "persistent": true,
-      "with": ["//#watch:packages"]
-    },
-    "dev:app": {
-      "cache": false,
-      "persistent": true,
-      "dependsOn": ["^build"]
-    },
-    "//#watch:packages": {
-      "cache": false,
-      "persistent": true
-    },
-    "watch": {
-      "cache": false,
-      "persistent": true,
-      "dependsOn": ["build"]
-    },
+
     "migrate:up": {
       "cache": false,
       "dependsOn": ["^build"]
     },
+
     "migrate:down": {
       "cache": false,
       "dependsOn": ["^build"]
     },
+
     "migrate:status": {
       "cache": false
     }

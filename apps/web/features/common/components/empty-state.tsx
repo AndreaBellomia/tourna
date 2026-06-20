@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Card } from '@repo/ui/card'
+import { Card } from '@repo/ui/components/card'
 
 type EmptyStateProps = {
   action?: ReactNode
@@ -9,7 +9,7 @@ type EmptyStateProps = {
 
 export function EmptyState({ action, description, title }: EmptyStateProps) {
   return (
-    <Card className="border-dashed px-5 py-10 text-center" variant="muted">
+    <Card className="border-dashed px-5 py-10 text-center">
       <p className="text-lg font-semibold">{title}</p>
       <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
         {description}

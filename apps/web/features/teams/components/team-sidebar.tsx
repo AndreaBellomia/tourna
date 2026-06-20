@@ -3,13 +3,13 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ArrowLeft, Eye, MailPlus, Pencil, Settings, Users } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/avatar'
-import { buttonVariants } from '@repo/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/components/avatar'
+import { buttonVariants } from '@repo/ui/components/button'
 
 import { useTeam } from '../hooks/team-provider'
 import { withLocale } from '~/lib/i18n/config'
 import { useI18n, useTranslations } from '~/lib/i18n/client'
-import { cn } from '@repo/ui/utils'
+import { cn } from '@repo/ui/lib/utils'
 
 type TeamSection = 'overview' | 'members' | 'invitations' | 'settings'
 

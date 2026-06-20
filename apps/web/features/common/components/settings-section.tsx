@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Card } from '@repo/ui/card'
+import { Card } from '@repo/ui/components/card'
 
 type SettingsSectionProps = {
   actions?: ReactNode
@@ -19,7 +19,7 @@ export function SettingsSection({
   return (
     <Card
       className={tone === 'destructive' ? 'border-destructive/30 p-5' : 'p-5'}
-      variant="panel"
+     
     >
       <div className="flex flex-col gap-3 border-b border-border pb-4 md:flex-row md:items-start md:justify-between">
         <div>

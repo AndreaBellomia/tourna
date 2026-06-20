@@ -1,36 +1,35 @@
 'use client'
 
+import { useState } from 'react'
 import { MailPlus } from 'lucide-react'
 import { useTranslations } from '~/lib/i18n/client'
 import { TeamInvitationPanel } from './team-invitation-panel'
 import { useTeam } from '../hooks/team-provider'
-import { Card, CardDescription, CardHeader, CardTitle } from '@repo/ui/card'
+import { PageHeader } from '~/features/common/components/page-header'
+import { TeamInvitationModalForm } from './team-invitation-modal-form'
 
 export function TeamInvitations() {
   const t = useTranslations('teams')
-  const { team } = useTeam()
+  const { team, canManage } = useTeam()
+  const [refreshToken, setRefreshToken] = useState(0)
 
   return (
-    <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
-      <div className="space-y-4">
-        <div>
-          <div className="flex items-center gap-2 text-lg font-semibold">
-            <MailPlus aria-hidden="true" className="size-4" />
-            {t('invites.title')}
-          </div>
-          <p className="mt-1 text-sm leading-6 text-muted-foreground">
-            {t('invites.description')}
-          </p>
-        </div>
-        <TeamInvitationPanel team={team} />
-      </div>
-
-      <Card variant="muted">
-        <CardHeader>
-          <CardTitle className="text-base">{t('invites.statusTitle')}</CardTitle>
-          <CardDescription>{t('invites.statusDescription')}</CardDescription>
-        </CardHeader>
-      </Card>
+    <section className="space-y-5">
+      <PageHeader
+        badgeIcon={<MailPlus aria-hidden="true" className="size-3.5" />}
+        description={t('invites.description')}
+        eyebrow={t('invites.eyebrow')}
+        title={t('invites.title')}
+        actions={
+          canManage ? (
+            <TeamInvitationModalForm
+              team={team}
+              onInvitationCreated={() => setRefreshToken((current) => current + 1)}
+            />
+          ) : null
+        }
+      />
+      <TeamInvitationPanel refreshToken={refreshToken} team={team} />
     </section>
   )
 }

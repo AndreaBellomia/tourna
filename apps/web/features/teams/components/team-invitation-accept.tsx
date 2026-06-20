@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowRight, CircleAlert, TicketCheck } from 'lucide-react'
-import { Button } from '@repo/ui/button'
+import { Button } from '@repo/ui/components/button'
 import { withLocale } from '~/lib/i18n/config'
 import { useI18n, useTranslations } from '~/lib/i18n/client'
 import { acceptTeamInvitation } from '~/features/teams/services/team-client'
@@ -57,7 +57,7 @@ export function TeamInvitationAccept({ code }: TeamInvitationAcceptProps) {
 
         {message ? <p className="mt-4 text-sm text-destructive">{message}</p> : null}
 
-        <Button className="mt-6 w-full" loading={isPending} size="lg" onClick={onAccept}>
+        <Button className="mt-6 w-full" disabled={isPending} size="lg" onClick={onAccept}>
           {t('inviteAccept.submit')}
           <ArrowRight aria-hidden="true" className="size-4" />
         </Button>

@@ -69,12 +69,22 @@ export class TeamInvitationRepository {
       .executeTakeFirstOrThrow()
   }
 
-  async revokeTeamInvitation(invitationId: string) {
-    await this.database.db
+  async revokeTeamInvitation({
+    invitationId,
+    teamId,
+  }: {
+    invitationId: string
+    teamId: string
+  }): Promise<boolean> {
+    const result = await this.database.db
       .updateTable('team_invitations')
       .set({ status: 'revoked' })
+      .where('team_id', '=', teamId)
+      .where('status', '=', 'active')
       .where('id', '=', invitationId)
-      .execute()
+      .executeTakeFirst()
+
+    return Number(result.numUpdatedRows) > 0
   }
 
   async findValidInvitationByCodeHash(codeHash: string): Promise<TeamInvitationLookup | undefined> {

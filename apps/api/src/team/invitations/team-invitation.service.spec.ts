@@ -20,6 +20,7 @@ describe('TeamInvitationService', () => {
     jest.clearAllMocks()
 
     teamInvitationRepositoryMock.checkIfCodeHashExists.mockResolvedValue(false)
+    teamInvitationRepositoryMock.revokeTeamInvitation.mockResolvedValue(true)
     teamInvitationRepositoryMock.acceptTeamInvitation.mockResolvedValue(true)
     service = new TeamInvitationService(teamInvitationRepositoryMock as never)
   })
@@ -61,9 +62,20 @@ describe('TeamInvitationService', () => {
   })
 
   it('revokes an invitation by ID', async () => {
-    await service.revokeTeamInvitation('invitation-1')
+    await service.revokeTeamInvitation({ invitationId: 'invitation-1', teamId: 'team-1' })
 
-    expect(teamInvitationRepositoryMock.revokeTeamInvitation).toHaveBeenCalledWith('invitation-1')
+    expect(teamInvitationRepositoryMock.revokeTeamInvitation).toHaveBeenCalledWith({
+      invitationId: 'invitation-1',
+      teamId: 'team-1',
+    })
+  })
+
+  it('throws NotFoundException when revoking a missing invitation', async () => {
+    teamInvitationRepositoryMock.revokeTeamInvitation.mockResolvedValue(false)
+
+    await expect(
+      service.revokeTeamInvitation({ invitationId: 'missing', teamId: 'team-1' }),
+    ).rejects.toThrow(NotFoundException)
   })
 
   it('accepts a reusable invitation', async () => {

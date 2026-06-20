@@ -5,11 +5,11 @@ import { useMemo, useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { CheckCircle2, MailCheck, Save, Send } from 'lucide-react'
-import { Badge } from '@repo/ui/badge'
-import { Button, buttonVariants } from '@repo/ui/button'
-import { Card } from '@repo/ui/card'
-import { Input } from '@repo/ui/input'
-import { Label } from '@repo/ui/label'
+import { Badge } from '@repo/ui/components/badge'
+import { Button, buttonVariants } from '@repo/ui/components/button'
+import { Card } from '@repo/ui/components/card'
+import { Input } from '@repo/ui/components/input'
+import { Label } from '@repo/ui/components/label'
 import {
   UpdateProfileRequestSchema,
   type ProfileSummaryResponse,
@@ -163,11 +163,11 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             }
           />
 
-          <Card className="p-5" variant="panel">
+          <Card className="p-5">
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <Label htmlFor="profile-email">{t('form.email')}</Label>
-                <Badge variant={currentProfile.emailVerified ? 'success' : 'outline'}>
+                <Badge variant={currentProfile.emailVerified ? 'secondary' : 'outline'}>
                   {currentProfile.emailVerified
                     ? t('form.emailVerified')
                     : t('form.emailUnverified')}
@@ -181,7 +181,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             {!currentProfile.emailVerified ? (
               <Button
                 className="mt-5 w-full"
-                loading={isResendingVerification}
+                disabled={isResendingVerification}
                 type="button"
                 variant="outline"
                 onClick={onResendVerificationEmail}
@@ -196,7 +196,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
               </div>
             )}
 
-            <Button className="mt-5 w-full" loading={submitState.isPending} size="lg">
+            <Button className="mt-5 w-full" disabled={submitState.isPending} size="lg">
               {currentProfile.emailVerified ? (
                 <Save aria-hidden="true" className="size-4" />
               ) : (

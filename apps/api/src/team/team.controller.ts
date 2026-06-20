@@ -120,14 +120,24 @@ export class TeamController {
   }
 
   @Get(':id/invitations')
+  @RequireTeamPolicy(Action.Manage)
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: TeamInvitationListResponseDto })
   async getInvitations(
-    @CurrentUser() user: JwtPayload,
     @Param('id') id: string,
     @Query() query: CursorPaginationQuery,
   ): Promise<TeamInvitationListResponseDto> {
     return await this.teamInvitationService.getInvitationsForTeam(query, id)
+  }
+
+  @RequireTeamPolicy(Action.Manage)
+  @Post(':id/invitations/:invitationId/revoke')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async revokeInvitation(
+    @Param('id') id: string,
+    @Param('invitationId') invitationId: string,
+  ): Promise<void> {
+    await this.teamInvitationService.revokeTeamInvitation({ invitationId, teamId: id })
   }
 
   @Post('invitations/:code/accept')

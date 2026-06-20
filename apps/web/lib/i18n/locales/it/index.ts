@@ -1,4 +1,4 @@
-import type { Messages } from '../../resources'
+import type { Messages } from '~/lib/i18n/resources'
 import auth from './auth'
 import common from './common'
 import dashboard from './dashboard'

@@ -3,7 +3,6 @@
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
-    "baseUrl": "${configDir}",
     "customConditions": ["source"],
     "esModuleInterop": true,
     "incremental": false,
@@ -14,8 +13,8 @@
     "moduleResolution": "NodeNext",
     "noUncheckedIndexedAccess": true,
     "paths": {
-      "~": ["src"],
-      "~/*": ["src/*"]
+      "~": ["./src"],
+      "~/*": ["./src/*"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,

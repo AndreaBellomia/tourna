@@ -2,8 +2,16 @@
   "name": "@repo/ui",
   "version": "0.0.0",
   "private": true,
+  "imports": {
+    "#components/*": "./src/components/*.tsx",
+    "#hooks/*": "./src/hooks/*.ts",
+    "#lib/*": "./src/lib/*.ts"
+  },
   "exports": {
-    "./*": "./src/*.tsx"
+    "./globals.css": "./src/styles/globals.css",
+    "./components/*": "./src/components/*.tsx",
+    "./hooks/*": "./src/hooks/*.ts",
+    "./lib/*": "./src/lib/*.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -16,13 +24,13 @@
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
-    "eslint": "^9.39.1",
-    "typescript": "5.9.2"
+    "eslint": "^9.39.1"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.16.0",
+    "radix-ui": "^1.6.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwind-merge": "^3.6.0"

@@ -102,8 +102,18 @@ export class TeamInvitationService {
     }
   }
 
-  async revokeTeamInvitation(invitationId: string): Promise<void> {
-    await this.teamInvitations.revokeTeamInvitation(invitationId)
+  async revokeTeamInvitation({
+    invitationId,
+    teamId,
+  }: {
+    invitationId: string
+    teamId: string
+  }): Promise<void> {
+    const revoked = await this.teamInvitations.revokeTeamInvitation({ invitationId, teamId })
+
+    if (!revoked) {
+      throw new NotFoundException('Invitation not found')
+    }
   }
 
   async acceptTeamInvitation(
